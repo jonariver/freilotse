@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------ */
-/* js/data-sources.js – Anbindung externer Datenquellen (Feiertage-API,  */
-/* OpenHolidays, schulferien-api.de): Netzwerkabruf, quellenspezifische  */
+/* js/data-sources.js – Anbindung externer Datenquellen (OpenHolidays    */
+/* API, schulferien-api.de): Netzwerkabruf, quellenspezifische           */
 /* Normalisierung, Fallback-Orchestrierung, eindeutige Statuswerte. Kein */
 /* React, keine Abhängigkeit von window.I18N. Wird unverändert per       */
 /* <script src="js/data-sources.js"> geladen (kein Modulsystem, siehe    */
@@ -9,26 +9,49 @@
 (function () {
   "use strict";
 
-  /* --- Feiertage: feiertage-api.de (Primärquelle), integrierte          --- */
+  /* --- Feiertage: OpenHolidays API (Primärquelle), integrierte          --- */
   /* --- Berechnung (js/calendar.js: holidayMap) bleibt unveränderter Fallback --- */
 
-  // Fragt feiertage-api.de ab und liefert ein strukturiertes Ergebnis.
+  // Fragt die OpenHolidays API (PublicHolidays) ab und liefert ein
+  // strukturiertes Ergebnis im unveränderten Format { status, holidays }.
   // status "api": Abruf erfolgreich UND mindestens ein Feiertag enthalten.
-  // status "lokal": HTTP-/Netzwerkfehler, kein gültiges JSON oder leeres
+  // status "lokal": HTTP-/Netzwerkfehler, kein gültiges JSON-Array oder leeres
   // Ergebnis -> Aufrufer verwendet die integrierte Berechnung als Fallback.
   // Wirft nie – jeder Fehlerfall wird als { status: "lokal", holidays: null }
   // codiert, damit ein Ausfall nie zum Absturz führt.
   async function loadPublicHolidays(year, stateCode) {
     try {
-      const r = await fetch(`https://feiertage-api.de/api/?jahr=${year}&nur_land=${stateCode}`);
+      // Interne Bundeslandcodes (z. B. "BY") bleiben unverändert; nur für die
+      // Anfrage wird daraus der OpenHolidays-Subdivision-Code "DE-BY".
+      const url = `https://openholidaysapi.org/PublicHolidays?countryIsoCode=DE&subdivisionCode=DE-${stateCode}&languageIsoCode=DE&validFrom=${year}-01-01&validTo=${year}-12-31`;
+      const r = await fetch(url);
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const json = await r.json();
+      if (!Array.isArray(json)) throw new Error("kein Array");
       const map = {};
-      for (const [name, info] of Object.entries(json)) {
-        if (!info || !info.datum) continue;
-        if (name.toLowerCase().includes("augsburg")) continue; // gilt nur in der Stadt Augsburg
-        const [yy, mm, dd] = info.datum.split("-").map((x) => parseInt(x, 10));
-        if (yy === year && mm >= 1 && dd >= 1) map[`${mm - 1}-${dd}`] = name;
+      for (const e of json) {
+        if (!e || typeof e !== "object" || e.type !== "Public") continue;
+        // Nur landesweite bzw. exakt für dieses Bundesland gültige Feiertage.
+        // Kommunale Sonderfälle liefert die API mit tieferer Subdivision (z. B.
+        // Augsburger Friedensfest als "DE-BY-AU") und fällt damit heraus –
+        // gleiche Wirkung wie der frühere Augsburg-Filter bei feiertage-api.de.
+        const appliesToState = e.nationwide === true ||
+          (Array.isArray(e.subdivisions) && e.subdivisions.some(
+            (s) => s && (s.shortName === stateCode || s.code === `DE-${stateCode}`)
+          ));
+        if (!appliesToState) continue;
+        // Gesetzliche Feiertage sind eintägig -> startDate genügt ("YYYY-MM-DD").
+        if (typeof e.startDate !== "string") continue;
+        const [yy, mm, dd] = e.startDate.split("-").map((x) => parseInt(x, 10));
+        if (yy !== year || !(mm >= 1) || !(dd >= 1)) continue;
+        let name = null;
+        if (Array.isArray(e.name)) {
+          const de = e.name.find((n) => n && n.language === "DE" && typeof n.text === "string");
+          const first = e.name.find((n) => n && typeof n.text === "string");
+          name = (de || first || {}).text || null;
+        }
+        if (!name) continue;
+        map[`${mm - 1}-${dd}`] = name;
       }
       if (Object.keys(map).length === 0) throw new Error("keine Daten");
       return { status: "api", holidays: map };

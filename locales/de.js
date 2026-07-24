@@ -353,7 +353,7 @@
       vacationDays: "Urlaubstage",
       overtimeDaysLabel: "Überstundenabbau (Tage)",
       holidaySource: "Feiertagsquelle:",
-      holidaySourceApi: "feiertage-api.de (online)",
+      holidaySourceApi: "OpenHolidays API (online)",
       holidaySourceLoading: "wird geladen …",
       holidaySourceLocal: "integrierte Berechnung (API nicht erreichbar)",
       schoolHolidaySourceLabel: "Schulferienquelle:",

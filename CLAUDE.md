@@ -49,7 +49,7 @@ innerhalb von `app.jsx` unverändert (keine Umbenennungen).
 | `locales/de.js` | `window.I18N` | Übersetzungen/Fallback-Texte, `t(key, params)` (siehe Abschnitt „Internationalisierung" unten). Muss als Erstes geladen werden. |
 | `js/planning.js` | `window.FREILOTSE.planning` | `plan()`, `minimalBridgeBudget()`. Rein deterministisch: kein React, kein DOM, kein `fetch()`, keine Abhängigkeit von `window.I18N`. |
 | `js/calendar.js` | `window.FREILOTSE.calendar` | `DAY`, `easterUTC()`, `holidayMap()`, `buildDays()`, `vacationDayMap()`. Reine Kalenderlogik ohne Netzwerkzugriff. `holidayMap`/`buildDays`/`vacationDayMap` erhalten die Übersetzungsfunktion `t` als **Parameter** (z. B. `buildDays(year, st, xmasRule, extHolidays, t, workingWeekdays)`) statt selbst auf `window.I18N` zuzugreifen. `workingWeekdays` ist optional (Fallback Montag–Freitag) – siehe Abschnitt „Regelmäßige Arbeitstage". |
-| `js/data-sources.js` | `window.FREILOTSE.dataSources` | Anbindung externer Quellen: `loadPublicHolidays(year, stateCode)` (liefert `{ status: "api"\|"lokal", holidays }`, Ersatz für den früheren feiertage-api.de-`useEffect`), `loadSchoolHolidays()`, Normalisierer `normalizeOpenHolidaysPeriod`/`normalizeSchulferienApiPeriod`. Kein React, keine Abhängigkeit von `window.I18N`. |
+| `js/data-sources.js` | `window.FREILOTSE.dataSources` | Anbindung externer Quellen: `loadPublicHolidays(year, stateCode)` (OpenHolidays-API-Endpunkt `PublicHolidays`; liefert `{ status: "api"\|"lokal", holidays }` – bei `"lokal"` greift der Aufrufer auf die integrierte Berechnung `holidayMap()` zurück; nur landesweite bzw. exakt zum Bundesland passende Einträge, kommunale Sonderfälle wie das Augsburger Friedensfest mit Subdivision `DE-BY-AU` werden herausgefiltert), `loadSchoolHolidays()`, Normalisierer `normalizeOpenHolidaysPeriod`/`normalizeSchulferienApiPeriod`. Kein React, keine Abhängigkeit von `window.I18N`. |
 | `js/share-link.js` | `window.FREILOTSE.shareLink` | Gesamte Share-Link-Logik (siehe Abschnitt „Share-Link-Funktion" unten). `validateSharePayload`/`decodeShare` erhalten bekannte Bundesland-Codes als Parameter (`knownStateCodes`) statt direkt auf `STATES` zuzugreifen. |
 | `jsx/common-components.jsx` | `window.FREILOTSE.ui` | `CollapsibleCard`, `InfoHint`. |
 | `jsx/kofi-components.jsx` | `window.FREILOTSE.ui` | `internalNavigate`, `SiteLink`, `CoffeeIcon`, `KofiFooterLink`, `KofiFloatingButton`, `SiteFooter` (Site-Chrome + Ko-fi, eng gekoppelt). |
@@ -388,9 +388,9 @@ umzubauen.
   Formen an die Locale-Funktion übergeben werden (z. B. `vac` für die Anzeige
   und `vacRaw` für den Vergleich). Ein Vergleich darf nie gegen den bereits
   formatierten String erfolgen.
-- Von externen APIs gelieferte Inhalte (z. B. Feiertagsnamen von
-  `feiertage-api.de`, Ferienbezeichnungen von OpenHolidays API oder der
-  Ersatzquelle `schulferien-api.de`) dürfen **unverändert** angezeigt werden
+- Von externen APIs gelieferte Inhalte (z. B. Feiertagsnamen und
+  Ferienbezeichnungen von der OpenHolidays API oder der Ersatzquelle
+  `schulferien-api.de`) dürfen **unverändert** angezeigt werden
   und müssen nicht künstlich übersetzt werden.
 - Von der Anwendung selbst definierte **Fallback-Texte** (z. B. „Schulferien",
   wenn die API keinen Namen liefert) sowie **intern berechnete Feiertagsnamen**

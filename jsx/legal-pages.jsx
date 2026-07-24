@@ -101,7 +101,7 @@
   function DatenschutzPage() {
     return (
       <LegalLayout title="Datenschutzerklärung">
-        <p>Stand: 22. Juli 2026</p>
+        <p>Stand: 24. Juli 2026</p>
 
         <LegalSection title="1. Verantwortlicher">
           <ProviderDetailsImage />
@@ -115,7 +115,7 @@
         </LegalSection>
 
         <LegalSection title="3. Feiertags- und Schulferiendaten">
-          <p>Der Urlaubsplaner ruft Feiertagsdaten von <ExternalLegalLink href="https://feiertage-api.de/">feiertage-api.de</ExternalLegalLink> ab. Schulferiendaten werden vorrangig von <ExternalLegalLink href="https://openholidaysapi.org/">OpenHolidays API</ExternalLegalLink> und bei einem technischen Fehler oder fehlenden Daten ersatzweise von <ExternalLegalLink href="https://schulferien-api.de/">schulferien-api.de</ExternalLegalLink> direkt aus deinem Browser ab. Dabei werden technisch bedingt insbesondere deine IP-Adresse sowie das ausgewählte Jahr und das Kürzel des ausgewählten Bundeslands an den jeweiligen Anbieter übertragen.</p>
+          <p>Der Urlaubsplaner ruft Feiertags- und Schulferiendaten vorrangig von <ExternalLegalLink href="https://openholidaysapi.org/">OpenHolidays API</ExternalLegalLink> direkt aus deinem Browser ab. Schulferiendaten werden bei einem technischen Fehler oder fehlenden Daten ersatzweise von <ExternalLegalLink href="https://schulferien-api.de/">schulferien-api.de</ExternalLegalLink> bezogen; Feiertage werden in diesem Fall lokal in deinem Browser berechnet, ohne dass ein weiterer Anbieter abgefragt wird. Bei den Abfragen werden technisch bedingt insbesondere deine IP-Adresse sowie das ausgewählte Jahr und das Kürzel des ausgewählten Bundeslands an den jeweiligen Anbieter übertragen.</p>
           <p>Die Abfragen sind erforderlich, um die ausgewählten Kalenderdaten anzuzeigen und passende Planungsvorschläge zu berechnen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Mein berechtigtes Interesse liegt in der korrekten und aktuellen Bereitstellung der Planungsfunktion.</p>
         </LegalSection>
 

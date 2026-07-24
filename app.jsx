@@ -273,7 +273,7 @@ function Urlaubsplaner({ onPlanReady }) {
     return Number.isFinite(x) && x >= 0 ? x : fallback;
   };
 
-  // Feiertage bevorzugt von der öffentlichen API beziehen (feiertage-api.de).
+  // Feiertage bevorzugt von der öffentlichen OpenHolidays API beziehen.
   // Schlägt der Abruf fehl (offline, blockiert), greift die integrierte Berechnung.
   const [apiHolidays, setApiHolidays] = useState(null);
   const [apiStatus, setApiStatus] = useState("laedt"); // "laedt" | "api" | "lokal"
