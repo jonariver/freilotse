@@ -15,6 +15,20 @@
   const t = window.I18N.t;
   const { SiteLink, SiteFooter, KOFI_URL } = window.FREILOTSE.ui;
 
+  const LINKEDIN_URL = "https://www.linkedin.com/in/jonathan-rivera-a701a817b";
+
+  // Kleines Inline-SVG (nur "in"-Schriftzug, ohne Marken-Hintergrundquadrat),
+  // damit es sich per currentColor in die bestehende Mint-/Slate-Farbwelt
+  // einfügt statt als eigenständiges blaues LinkedIn-Badge zu wirken.
+  function LinkedInIcon({ className = "" }) {
+    return (
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="14" height="14"
+        className={className} fill="currentColor">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.368-1.85 3.601 0 4.268 2.37 4.268 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.554V9h3.565v11.452z" />
+      </svg>
+    );
+  }
+
   function AboutPage() {
     const [dark, setDark] = useState(true);
 
@@ -93,7 +107,19 @@
                 />
                 <div className="space-y-3">
                   <p className={`text-lg font-semibold ${dark ? "text-slate-200" : "text-slate-800"}`}>{t("about.intro")}</p>
-                  <p className={`text-sm leading-7 ${softTextCls}`}>{t("about.body")}</p>
+                  <p className={`text-sm leading-7 ${softTextCls}`}>{t("about.body1")}</p>
+                  <p className={`text-sm leading-7 ${softTextCls}`}>{t("about.body2")}</p>
+                  {/* Dezenter Text-Button im bestehenden Emerald-Akzent (analog zum
+                      Theme-Umschalter oben) statt einer dominanten CTA-Pille wie beim
+                      Ko-fi-Button weiter unten. */}
+                  <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
+                    aria-label={t("about.linkedin.ariaLabel")}
+                    className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                      dark ? "border-emerald-800 text-emerald-400 hover:bg-emerald-950/40" : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                    }`}>
+                    <LinkedInIcon />
+                    {t("about.linkedin.linkText")}
+                  </a>
                 </div>
               </div>
             </div>

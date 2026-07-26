@@ -196,7 +196,12 @@
       pageTitle: "Über FREILOTSE",
       portraitAlt: "Jonathan, Entwickler von FREILOTSE",
       intro: "Hallo, ich bin Jonathan.",
-      body: "Ich entwickle FREILOTSE als persönliches, unabhängiges Projekt. Die Idee entstand aus dem Wunsch nach einem Urlaubsplaner, der nicht nur Feiertage anzeigt, sondern wirklich dabei hilft, freie Zeit sinnvoll zu planen – einfach, verständlich und auch für unterschiedliche Arbeitsmodelle.",
+      body1: "Beruflich arbeite ich als Wirtschaftsinformatiker in der IT. FREILOTSE ist als persönliches Projekt entstanden, weil ich ausprobieren wollte, wie weit ich eine eigene Idee mithilfe moderner KI-Werkzeuge umsetzen kann.",
+      body2: "Dabei wollte ich nicht bloß Feiertage auflisten, sondern konkrete Vorschläge machen: Wie lassen sich Urlaubstage so einsetzen, dass möglichst lange freie Zeiträume entstehen? Wichtig war mir außerdem, dass der Planer auch für Menschen funktioniert, die nicht klassisch von Montag bis Freitag arbeiten.",
+      linkedin: {
+        linkText: "LinkedIn-Profil ansehen ↗",
+        ariaLabel: "LinkedIn-Profil von Jonathan ansehen (öffnet in neuem Tab)",
+      },
       values: {
         heading: "Was mir bei FREILOTSE wichtig ist",
         items: [
