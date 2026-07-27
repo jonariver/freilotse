@@ -310,6 +310,7 @@
           items: [
             "Neben Deutschland können jetzt auch Österreich und die Schweiz als Land ausgewählt werden, inklusive der jeweiligen Feiertage und Bundesländer/Kantone.",
             "FREILOTSE erkennt anhand deines Standorts automatisch ein passendes Land als Vorauswahl – du kannst sie jederzeit manuell ändern.",
+            "Die automatische Standort-Erkennung reagiert jetzt zuverlässiger, auch wenn ein VPN oder eine Firewall die Abfrage blockiert.",
           ],
         },
         {

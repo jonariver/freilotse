@@ -178,16 +178,25 @@
   /* dieser Aufruf fehl (offline, durch Tracking-/Werbeblocker verhindert), */
   /* wird ersatzweise die Browsersprache ausgewertet (z. B. "de-AT"). Liefert */
   /* auch das nichts, gibt die Funktion null zurück – der Aufrufer behält   */
-  /* dann seinen bisherigen Standard (Deutschland).                         */
+  /* dann seinen bisherigen Standard (Deutschland). Eigener Timeout, weil    */
+  /* manche VPNs/Firewalls die Anfrage nicht ablehnen, sondern verschlucken  */
+  /* ("blackholen") – ohne Timeout würde erst der sehr lange Browser-/OS-    */
+  /* Standard-Timeout den Sprach-Fallback auslösen.                         */
   /* ------------------------------------------------------------------ */
   async function detectCountry(knownCountries) {
     try {
-      const r = await fetch("https://get.geojs.io/v1/ip/country.json");
-      if (r.ok) {
-        const j = await r.json();
-        if (j && typeof j.country === "string" && knownCountries.includes(j.country)) return j.country;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      try {
+        const r = await fetch("https://get.geojs.io/v1/ip/country.json", { signal: controller.signal });
+        if (r.ok) {
+          const j = await r.json();
+          if (j && typeof j.country === "string" && knownCountries.includes(j.country)) return j.country;
+        }
+      } finally {
+        clearTimeout(timeoutId);
       }
-    } catch (e) { /* nicht erreichbar/blockiert -> Sprach-Fallback unten */ }
+    } catch (e) { /* nicht erreichbar/blockiert/Timeout -> Sprach-Fallback unten */ }
 
     const langs = (typeof navigator !== "undefined" && Array.isArray(navigator.languages) && navigator.languages.length)
       ? navigator.languages
