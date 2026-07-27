@@ -56,6 +56,7 @@ innerhalb von `app.jsx` unverändert (keine Umbenennungen).
 | `jsx/landing-page.jsx` | `window.FREILOTSE.ui` | `ExplainerVideoSection`, `LandingPage`. Nutzt `SiteFooter` aus `kofi-components.jsx`. |
 | `jsx/legal-pages.jsx` | `window.FREILOTSE.ui` | `LegalLayout`, `LegalSection`, `ExternalLegalLink`, `ProviderDetailsImage`, `ImpressumPage`, `DatenschutzPage`. Nutzt `SiteLink`/`SiteFooter` aus `kofi-components.jsx`. |
 | `jsx/about-page.jsx` | `window.FREILOTSE.ui` | `AboutPage` (Seite „Über FREILOTSE" unter `/ueber-freilotse`). Nutzt `SiteLink`/`SiteFooter`/`KOFI_URL` aus `kofi-components.jsx`. Anders als `LegalLayout` bewusst **ohne** „noindex" (soll indexierbar sein) und mit eigenem, lokalem Dark/Light-State (kein Zugriff auf den Dark-State von `Urlaubsplaner`, da eigenständig über `App()` geroutet). |
+| `jsx/changelog-page.jsx` | `window.FREILOTSE.ui` | `ChangelogPage` (Seite „Neuigkeiten" unter `/neuigkeiten`). Nutzt `SiteLink`/`SiteFooter` aus `kofi-components.jsx`. Analog zu `about-page.jsx` bewusst **ohne** „noindex" (soll indexierbar sein) und mit eigenem, lokalem Dark/Light-State. |
 | `app.jsx` | – (Wurzel) | `Urlaubsplaner` (zentrale Komponente, bewusst nicht weiter aufgeteilt – zu große/kritische Prop-Kette), `App` (Routing), Rendering-Helfer (`fmtNum`, `dayClass`, `dayTitle` u. Ä.), Mount (`ReactDOM.createRoot(...).render(...)`). |
 
 ### Erforderliche Ladereihenfolge (siehe `index.html`)
@@ -63,8 +64,9 @@ innerhalb von `app.jsx` unverändert (keine Umbenennungen).
 2. `js/planning.js`, `js/calendar.js`, `js/data-sources.js`, `js/share-link.js`
    (Reihenfolge untereinander unkritisch, keine Abhängigkeiten untereinander)
 3. `jsx/common-components.jsx`, dann `jsx/kofi-components.jsx` (wird von den
-   folgenden genutzt), dann `jsx/landing-page.jsx`, `jsx/legal-pages.jsx` und
-   `jsx/about-page.jsx` (Reihenfolge dieser drei untereinander unkritisch)
+   folgenden genutzt), dann `jsx/landing-page.jsx`, `jsx/legal-pages.jsx`,
+   `jsx/about-page.jsx` und `jsx/changelog-page.jsx` (Reihenfolge dieser vier
+   untereinander unkritisch)
 4. `app.jsx` (mountet die Anwendung, muss zuletzt laden)
 
 Bei Änderungen an einer dieser Dateien die Cache-Busting-Version in
@@ -448,3 +450,37 @@ einem stillen Absturz, sondern ist im Entwicklungsfall sofort erkennbar.
    Sprachumschalter ergänzen – beides ist ausdrücklich **nicht** Teil der
    aktuellen Vorbereitung und erfordert eine gesonderte, ausdrückliche
    Anweisung.
+
+## Neuigkeiten-Seite (Changelog)
+
+### Zweck
+Zeigt Nutzer:innen unter `/neuigkeiten` (`jsx/changelog-page.jsx`) in
+umgekehrt-chronologischer Reihenfolge, was sich an FREILOTSE zuletzt getan
+hat. Inhalt liegt vollständig in `locales/de.js` unter `changelog.entries`
+(Array aus `{ date, title, items[] }`), reines Datenobjekt ohne eigene
+Rendering-Logik in der Seite selbst.
+
+### Verbindliche Pflege-Regel
+Bei **jeder** nutzersichtbaren Änderung an FREILOTSE (neues Feature,
+spürbare Verhaltensänderung, wichtiger Bugfix mit Nutzer-Auswirkung) wird
+**automatisch, ohne gesonderte Nachfrage**, ein neuer Eintrag in
+`changelog.entries` ergänzt (neuester Eintrag zuerst). Ausgenommen sind rein
+interne/technische Änderungen ohne sichtbare Auswirkung (Refactorings,
+Testanpassungen, reine Kommentar-/Dokupflege, CLAUDE.md-Änderungen wie diese
+hier).
+
+Anforderungen an einen neuen Eintrag:
+- `date`: Datum der Änderung im Format `"D. Monat JJJJ"` (siehe bestehende
+  Einträge), **kein** Platzhalter/TODO.
+- `title`: kurzer, nutzerorientierter Titel (kein Commit-Titel, keine
+  technische Formulierung).
+- `items`: 1–3 kurze Stichpunkte, die erklären, was sich für Nutzer:innen
+  konkret ändert/verbessert – in demselben knappen, freundlichen Ton wie die
+  bestehenden Einträge. Rohe Git-Commit-Nachrichten werden **nicht** 1:1
+  übernommen, sondern in verständliches Deutsch übersetzt.
+- Bei mehreren zusammenhängenden Änderungen innerhalb derselben Anfrage/
+  desselben Tages: ein gemeinsamer Eintrag statt mehrerer Mini-Einträge.
+
+Diese Regel gilt unabhängig davon, ob der Nutzer die Neuigkeiten-Seite in der
+jeweiligen Anfrage erwähnt – sie ist Teil des normalen Abschlusses einer
+sichtbaren Änderung, genau wie das Hochzählen der Cache-Busting-Version.

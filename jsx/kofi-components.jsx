@@ -83,14 +83,14 @@
 
     useEffect(() => {
       if (!planReady || autoShownRef.current) return;
-      if (path === "/impressum" || path === "/datenschutz" || path === "/ueber-freilotse") return;
+      if (path === "/impressum" || path === "/datenschutz" || path === "/ueber-freilotse" || path === "/neuigkeiten") return;
       // Einmaliger 1-Minuten-Timer nach dem ersten sichtbaren Planungsergebnis;
       // sofort gesperrt, damit eine erneute Berechnung keinen zweiten Timer
       // startet.
       autoShownRef.current = true;
       delayTimerRef.current = setTimeout(() => {
         delayTimerRef.current = null;
-        if (pathRef.current === "/impressum" || pathRef.current === "/datenschutz" || pathRef.current === "/ueber-freilotse") return;
+        if (pathRef.current === "/impressum" || pathRef.current === "/datenschutz" || pathRef.current === "/ueber-freilotse" || pathRef.current === "/neuigkeiten") return;
         // Auf schmalen Smartphone-Displays wird der automatische Hinweis
         // unterdrückt, da der längere Hinweistext dort Inhalte verdecken
         // könnte; Tippen öffnet Ko-fi weiterhin direkt (unverändertes
@@ -145,6 +145,7 @@
             <SiteLink to="/impressum" className={hover}>Impressum</SiteLink>
             <SiteLink to="/datenschutz" className={hover}>Datenschutz</SiteLink>
             <SiteLink to="/ueber-freilotse" className={hover}>{t("about.footerLink")}</SiteLink>
+            <SiteLink to="/neuigkeiten" className={hover}>{t("changelog.footerLink")}</SiteLink>
             <KofiFooterLink dark={dark} />
           </nav>
         </div>

@@ -9,8 +9,14 @@ const t = window.I18N.t;
 
 // Anzeigenamen kommen aus der Locale; die Codes (Schlüssel) selbst sind
 // sprachunabhängig und werden u. a. für die Share-Link-Validierung benötigt.
-const STATES = t("states");
-const STATE_CODES = Object.keys(STATES);
+// STATES ist jetzt länderabhängig (siehe country-State in Urlaubsplaner) und
+// kann deshalb nicht mehr modulglobal/statisch berechnet werden – die
+// vollständige, länderweise verschachtelte Struktur (t("states")) wird bei
+// Bedarf direkt gelesen (z. B. für die Share-Link-Validierung), die für die
+// UI relevante STATES-Map für das aktuell gewählte Land wird als useMemo
+// innerhalb von Urlaubsplaner gebildet.
+const COUNTRIES = t("countries");
+const COUNTRY_CODES = Object.keys(COUNTRIES);
 
 const MONTHS = t("months");
 const DOWS = t("weekdaysApiOrder");
@@ -24,7 +30,7 @@ const DOWS = t("weekdaysApiOrder");
 /* ------------------------------------------------------------------ */
 const { plan, minimalBridgeBudget } = window.FREILOTSE.planning;
 const { DAY, buildDays, vacationDayMap } = window.FREILOTSE.calendar;
-const { loadPublicHolidays, loadSchoolHolidays } = window.FREILOTSE.dataSources;
+const { loadPublicHolidays, loadSchoolHolidays, detectCountry } = window.FREILOTSE.dataSources;
 const {
   SHARE_MAX_URL, SHARE_MAX_DECODED, HAS_COMPRESSION,
   buildSharePayload, encodePlain, validateSharePayload, decodeShare,
@@ -37,7 +43,7 @@ const {
   SiteFooter, KofiFloatingButton,
   LandingPage,
   ImpressumPage, DatenschutzPage,
-  AboutPage,
+  AboutPage, ChangelogPage,
 } = window.FREILOTSE.ui;
 
 /* ------------------------------------------------------------------ */
@@ -101,13 +107,13 @@ function dayClass(day, selType, dark) {
 // Erkennung erfolgt bewusst über Datum + Bundesland statt über den
 // Feiertagsnamen-String, damit sie unabhängig von der exakten Schreibweise der
 // jeweils aktiven Quelle (lokale Berechnung oder externe API) funktioniert.
-const isBavarianPartialAssumptionDay = (day, st) => st === "BY" && day.m === 7 && day.d === 15 && !!day.holiday;
-const withAssumptionDayCaveat = (name, day, st) =>
-  isBavarianPartialAssumptionDay(day, st) ? `${name} ${t("holidayCaveats.assumptionDayInline")}` : name;
+const isBavarianPartialAssumptionDay = (day, st, country) => country === "DE" && st === "BY" && day.m === 7 && day.d === 15 && !!day.holiday;
+const withAssumptionDayCaveat = (name, day, st, country) =>
+  isBavarianPartialAssumptionDay(day, st, country) ? `${name} ${t("holidayCaveats.assumptionDayInline")}` : name;
 
-function dayTitle(day, selType, st, inPeriod) {
+function dayTitle(day, selType, st, country, inPeriod) {
   const parts = [fmtDate(day)];
-  if (day.holiday) parts.push(withAssumptionDayCaveat(day.holiday, day, st));
+  if (day.holiday) parts.push(withAssumptionDayCaveat(day.holiday, day, st, country));
   if (day.special) parts.push(day.special);
   // Nur dort ergänzen, wo die reine Zellfarbe allein nicht eindeutig wäre:
   // ein echtes Wochenende behält sein Styling auch als persönlicher Arbeitstag
@@ -142,14 +148,45 @@ function Urlaubsplaner({ onPlanReady }) {
   const sharedRef = useRef(undefined);
   if (sharedRef.current === undefined) {
     const frag = readShareFragment(typeof window !== "undefined" ? window.location.hash : "");
-    const parsed = frag && frag.type === "plan" ? decodeShare(frag.raw, STATE_CODES) : null;
+    const parsed = frag && frag.type === "plan" ? decodeShare(frag.raw, t("states")) : null;
     sharedRef.current = { frag, parsed, had: !!frag };
   }
   const shared = sharedRef.current.parsed ? sharedRef.current.parsed.state : null;
 
   const [year, setYear] = useState(shared ? shared.year : currentYear);
   const [dark, setDark] = useState(true); // Dark-Mode ist Standard, umschaltbar im Kopfbereich
+  // Land (DE/AT/CH) – bestimmt, welche Bundesländer/Kantone (STATES) zur
+  // Auswahl stehen sowie countryIsoCode/subdivisionCode für die API-Aufrufe.
+  // Ohne geteilte Planung wird das Land nachträglich per IP-/Sprach-Erkennung
+  // vorbelegt (siehe detectCountry-Effekt weiter unten) – "DE" ist nur der
+  // Startwert, bis diese Erkennung (falls überhaupt) abgeschlossen ist.
+  const [country, setCountry] = useState(shared ? shared.country : "DE");
   const [st, setSt] = useState(shared ? shared.st : "BY");
+  // Für das aktuell gewählte Land gültige Bundesländer/Kantone. Muss reaktiv
+  // sein (kein modulglobales STATES mehr, siehe oben), da sich die Liste beim
+  // Länderwechsel ändert.
+  const STATES = useMemo(() => t("states")[country], [country]);
+  // Setzt Land UND Region gemeinsam, damit st nie auf einen im neuen Land
+  // ungültigen Code stehen bleibt (z. B. "BY" nach Wechsel zu CH).
+  const handleCountryChange = (newCountry) => {
+    setCountry(newCountry);
+    setSt(t("defaultRegion")[newCountry]);
+  };
+  // Land-Vorauswahl per IP-/Sprach-Erkennung (bestmöglich, siehe detectCountry
+  // in js/data-sources.js) – NUR beim ersten Laden OHNE Share-Link, damit eine
+  // bereits geladene geteilte Planung niemals überschrieben wird (gilt für
+  // beide Share-Link-Formate, siehe sharedRef.current.had). Gleiches
+  // ignore-Muster wie bei den übrigen Lade-Effekten weiter unten.
+  useEffect(() => {
+    if (sharedRef.current.had) return;
+    let ignore = false;
+    detectCountry(COUNTRY_CODES).then((detected) => {
+      if (ignore || !detected) return;
+      handleCountryChange(detected);
+    });
+    return () => { ignore = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [vac, setVac] = useState(shared ? shared.vac : 30);
   const [ot, setOt] = useState(shared ? shared.ot : 0);
   const [xmasRule, setXmasRule] = useState(shared ? shared.xmasRule : "50"); // Standard: halber Urlaubstag am 24./31.12.
@@ -285,16 +322,16 @@ function Urlaubsplaner({ onPlanReady }) {
     let ignore = false;
     setApiStatus("laedt");
     setApiHolidays(null);
-    loadPublicHolidays(year, st).then((result) => {
+    loadPublicHolidays(year, st, country).then((result) => {
       if (ignore) return;
       setApiHolidays(result.holidays);
       setApiStatus(result.status);
     });
     return () => { ignore = true; };
-  }, [year, st, view]);
+  }, [year, st, country, view]);
 
-  const days = useMemo(() => buildDays(year, st, xmasRule, apiHolidays, t, workingWeekdays),
-    [year, st, xmasRule, apiHolidays, workingWeekdays]);
+  const days = useMemo(() => buildDays(year, st, xmasRule, apiHolidays, t, workingWeekdays, country),
+    [year, st, xmasRule, apiHolidays, workingWeekdays, country]);
 
   // Schulferien: Primärquelle OpenHolidays API, automatische Ersatzquelle
   // schulferien-api.de (siehe loadSchoolHolidays() oben). Nur Planungshinweis
@@ -310,7 +347,7 @@ function Urlaubsplaner({ onPlanReady }) {
     // year/st noch auf Standardwerten.
     if (view === "loading") return;
     let ignore = false;
-    const cacheKey = `${year}-${st}`;
+    const cacheKey = `${country}-${year}-${st}`;
     const cached = vacCache.current[cacheKey];
     if (cached) {
       setVacations(cached.periods);
@@ -320,14 +357,14 @@ function Urlaubsplaner({ onPlanReady }) {
     setVacStatus("laedt");
     setVacations([]);
     (async () => {
-      const result = await loadSchoolHolidays(year, st);
-      if (ignore) return; // Jahr/Bundesland wurde zwischenzeitlich gewechselt
+      const result = await loadSchoolHolidays(year, st, country);
+      if (ignore) return; // Jahr/Land/Bundesland wurde zwischenzeitlich gewechselt
       vacCache.current[cacheKey] = result;
       setVacations(result.periods);
       setVacStatus(result.status);
     })();
     return () => { ignore = true; };
-  }, [year, st, view]);
+  }, [year, st, country, view]);
 
   // Ferien-Tagesmap fürs sichtbare Jahr (beide Modi nutzen dieselben Daten)
   const vacationDays = useMemo(() => vacationDayMap(vacations, year, t), [vacations, year]);
@@ -511,7 +548,7 @@ function Urlaubsplaner({ onPlanReady }) {
   // Schulferien, Plan) bleiben draußen. yearOverrides = manuelle Tage des Jahres.
   const currentSharePayload = () =>
     buildSharePayload({
-      year, st, vac: num(vac), ot: num(ot), xmasRule,
+      year, country, st, vac: num(vac), ot: num(ot), xmasRule,
       uiMode, simpleGoal, simpleStarted, schoolHolidayPreference,
       autoVac, autoOt, spendFirst, autoFrom,
       blocks, overridesMd: yearOverrides, workingWeekdays,
@@ -535,7 +572,7 @@ function Urlaubsplaner({ onPlanReady }) {
   // Geteilten (validierten) Zustand auf die States anwenden – nur für den
   // asynchronen #p=-Pfad; #plan= ist bereits in den Initialwerten enthalten.
   const applySharedState = (s) => {
-    setYear(s.year); setSt(s.st); setVac(s.vac); setOt(s.ot); setXmasRule(s.xmasRule);
+    setYear(s.year); setCountry(s.country); setSt(s.st); setVac(s.vac); setOt(s.ot); setXmasRule(s.xmasRule);
     setUiMode(s.uiMode); setSimpleGoal(s.simpleGoal); setSimpleStarted(s.simpleStarted);
     setSchoolHolidayPreference(s.schoolHolidayPreference);
     setAutoVac(s.autoVac); setAutoOt(s.autoOt); setSpendFirst(s.spendFirst);
@@ -637,7 +674,7 @@ function Urlaubsplaner({ onPlanReady }) {
       try {
         if (info.frag.raw.length <= SHARE_MAX_DECODED) {
           const json = await inflateFromB64url(info.frag.raw);
-          res = validateSharePayload(json, STATE_CODES);
+          res = validateSharePayload(json, t("states"));
         }
       } catch (e) { res = null; }
       if (cancelled) return;
@@ -905,7 +942,7 @@ function Urlaubsplaner({ onPlanReady }) {
     const seenH = new Set();
     for (const d of days) {
       if (d.m !== m || !d.holiday) continue;
-      if (!seenH.has(d.holiday)) { seenH.add(d.holiday); holidayNames.push(withAssumptionDayCaveat(d.holiday, d, st)); }
+      if (!seenH.has(d.holiday)) { seenH.add(d.holiday); holidayNames.push(withAssumptionDayCaveat(d.holiday, d, st, country)); }
     }
     let holidaysText = null;
     if (holidayNames.length > 0) {
@@ -963,6 +1000,12 @@ function Urlaubsplaner({ onPlanReady }) {
             {MONTHS.map((mName, m) => {
               const mDays = days.filter((d) => d.m === m);
               const lead = (mDays[0].dow + 6) % 7; // Woche beginnt Montag
+              // Immer auf 6 Wochenzeilen auffüllen (42 Zellen): ohne das variiert
+              // die Anzahl der Kalenderzeilen je nach Monat (4-6), wodurch die
+              // Trennlinie zu Feiertage/Schulferien darunter uneinheitlich hoch
+              // sitzt. Leere Füllzellen am Monatsende sorgen für eine über alle
+              // Monatskarten gleiche Tagesraster-Höhe.
+              const trail = 42 - lead - mDays.length;
               const summary = monthSummary(m);
               return (
                 <div key={m} ref={(el) => { monthRefs.current[m] = el; }}
@@ -974,7 +1017,7 @@ function Urlaubsplaner({ onPlanReady }) {
                     {t("calendar.weekdaysMonFirst").map((w) => <span key={w}>{w}</span>)}
                   </div>
                   <div className="grid grid-cols-7 gap-1">
-                    {Array.from({ length: lead }).map((_, i) => <span key={`x${i}`} />)}
+                    {Array.from({ length: lead }).map((_, i) => <span key={`x${i}`} className="h-7" />)}
                     {mDays.map((day) => {
                       const selType = result.sel[day.i];
                       const clickable = day.cost > 0;
@@ -1000,7 +1043,7 @@ function Urlaubsplaner({ onPlanReady }) {
                             start: vac.start.toLocaleDateString("de-DE"), end: vac.end.toLocaleDateString("de-DE"),
                           })
                         : null;
-                      const titleText = dayTitle(day, selType, st, !!periodInfo);
+                      const titleText = dayTitle(day, selType, st, country, !!periodInfo);
                       return (
                         <button key={day.i} type="button"
                           title={vacTipText ? `${titleText} · ${vacTipText}` : titleText}
@@ -1052,21 +1095,20 @@ function Urlaubsplaner({ onPlanReady }) {
                         </button>
                       );
                     })}
+                    {Array.from({ length: trail }).map((_, i) => <span key={`t${i}`} className="h-7" />)}
                   </div>
-                  {(summary.holidaysText || summary.vacationsText) && (
-                    <div className={`mt-2 pt-2 border-t space-y-0.5 ${dark ? "border-slate-800" : "border-slate-100"}`}>
-                      {summary.holidaysText && (
-                        <p className={`text-[10px] leading-snug ${dark ? "text-rose-400/80" : "text-rose-600/80"}`}>
-                          {t("calendar.summary.publicHolidays")} {summary.holidaysText}
-                        </p>
-                      )}
-                      {summary.vacationsText && (
-                        <p className={`text-[10px] leading-snug ${dark ? "text-orange-400/80" : "text-orange-600/80"}`}>
-                          {t("calendar.summary.schoolHolidays")} {summary.vacationsText}
-                        </p>
-                      )}
-                    </div>
-                  )}
+                  <div className={`mt-2 pt-2 border-t space-y-0.5 ${dark ? "border-slate-800" : "border-slate-100"}`}>
+                    {summary.holidaysText && (
+                      <p className={`text-[10px] leading-snug ${dark ? "text-rose-400/80" : "text-rose-600/80"}`}>
+                        {t("calendar.summary.publicHolidays")} {summary.holidaysText}
+                      </p>
+                    )}
+                    {summary.vacationsText && (
+                      <p className={`text-[10px] leading-snug ${dark ? "text-orange-400/80" : "text-orange-600/80"}`}>
+                        {t("calendar.summary.schoolHolidays")} {summary.vacationsText}
+                      </p>
+                    )}
+                  </div>
                 </div>
               );
             })}
@@ -1285,7 +1327,16 @@ function Urlaubsplaner({ onPlanReady }) {
                 </div>
 
                 <div className="space-y-2">
-                  <p className={labelCls}>{t("simple.step3Question")}</p>
+                  <p className={labelCls}>{t("simple.stepCountryQuestion")}</p>
+                  <select className={inputCls} value={country} onChange={(e) => handleCountryChange(e.target.value)}>
+                    {COUNTRY_CODES.map((k) => (
+                      <option key={k} value={k}>{COUNTRIES[k]}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <p className={labelCls}>{t("simple.step3Question", { region: t("regionLabel")[country] })}</p>
                   <select className={inputCls} value={st} onChange={(e) => setSt(e.target.value)}>
                     {Object.entries(STATES).map(([k, v]) => (
                       <option key={k} value={k}>{v}</option>
@@ -1489,7 +1540,15 @@ function Urlaubsplaner({ onPlanReady }) {
                     </select>
                   </div>
                   <div>
-                    <label className={labelCls}>{t("settings.federalState")}</label>
+                    <label className={labelCls}>{t("settings.country")}</label>
+                    <select className={inputCls} value={country} onChange={(e) => handleCountryChange(e.target.value)}>
+                      {COUNTRY_CODES.map((k) => (
+                        <option key={k} value={k}>{COUNTRIES[k]}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelCls}>{t("regionLabel")[country]}</label>
                     <select className={inputCls} value={st} onChange={(e) => setSt(e.target.value)}>
                       {Object.entries(STATES).map(([k, v]) => (
                         <option key={k} value={k}>{v}</option>
@@ -1856,7 +1915,7 @@ function Urlaubsplaner({ onPlanReady }) {
 
           <p className="text-xs text-slate-400 leading-relaxed">
             {t("footerHint.text")}
-            <InfoHint dark={dark} text={t("footerHint.detail")} />
+            <InfoHint dark={dark} text={t("footerHint.detail", { country })} />
           </p>
         </div>
           </div>
@@ -1954,6 +2013,7 @@ function App() {
   const page = path === "/impressum" ? <ImpressumPage />
     : path === "/datenschutz" ? <DatenschutzPage />
     : path === "/ueber-freilotse" ? <AboutPage />
+    : path === "/neuigkeiten" ? <ChangelogPage />
     : <Urlaubsplaner onPlanReady={() => setPlanReady(true)} />;
 
   return (

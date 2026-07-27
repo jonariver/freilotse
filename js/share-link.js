@@ -1,9 +1,10 @@
 /* ------------------------------------------------------------------ */
 /* js/share-link.js – versionierter Share-Link im URL-Fragment. Reine   */
 /* Kodier-/Dekodier-/Validierungslogik, kein React, keine Abhängigkeit  */
-/* von window.I18N. Bekannte Bundesland-Codes werden als Parameter       */
-/* übergeben (validateSharePayload/decodeShare), statt direkt auf die    */
-/* aus der Locale abgeleiteten STATES zuzugreifen. Wird unverändert per  */
+/* von window.I18N. Die bekannte, länderweise verschachtelte Bundesland-/ */
+/* Kantons-Struktur wird als Parameter übergeben (validateSharePayload/  */
+/* decodeShare), statt direkt auf die aus der Locale abgeleiteten STATES */
+/* zuzugreifen. Wird unverändert per                                     */
 /* <script src="js/share-link.js"> geladen (kein Modulsystem, siehe      */
 /* CLAUDE.md). Öffentliche Oberfläche: window.FREILOTSE.shareLink.       */
 /*                                                                       */
@@ -32,6 +33,11 @@
   const SIMPLE_GOALS = ["free", "blocks", "short"];
   const SCHOOL_PREFS = ["prefer", "avoid", "neutral"];
   const SPEND_FIRST = ["vac", "ot"];
+  // Fallback-Region je Land, falls st fehlt/ungültig ist – gleiche Werte wie
+  // t("defaultRegion") in locales/de.js (dort maßgeblich; hier als kleine,
+  // stabile Konstante dupliziert, analog zu den übrigen Enums oben, damit
+  // dieses Modul weiterhin unabhängig von window.I18N bleibt).
+  const DEFAULT_REGION_BY_COUNTRY = { DE: "BY", AT: "WI", CH: "ZH" };
 
   // Kompression nur nutzen, wenn beide Stream-APIs vorhanden sind
   // (Chrome/Edge ≥80, Firefox ≥113, Safari ≥16.4 – Desktop und Mobil).
@@ -99,7 +105,7 @@
     return {
       version: SHARE_VERSION,
       state: {
-        y: s.year, st: s.st, vac: s.vac, ot: s.ot, x: s.xmasRule,
+        y: s.year, ct: s.country, st: s.st, vac: s.vac, ot: s.ot, x: s.xmasRule,
         m: s.uiMode, g: s.simpleGoal, ss: s.simpleStarted ? 1 : 0,
         sh: s.schoolHolidayPreference, av: s.autoVac, ao: s.autoOt,
         sf: s.spendFirst, af: s.autoFrom,
@@ -119,13 +125,17 @@
 
   // Validiert einen bereits dekodierten JSON-String (gilt für beide Formate:
   // #plan= liefert ihn synchron über atob, #p= asynchron über inflate).
-  // knownStateCodes: Array bekannter Bundesland-Codes (z. B. STATE_CODES aus
-  // app.jsx) – wird als Parameter übergeben, damit dieses Modul nicht direkt
-  // von der aus window.I18N abgeleiteten STATES-Liste abhängt.
+  // statesByCountry: länderweise verschachtelte Bundesland-/Kantons-Struktur
+  // (z. B. t("states") aus locales/de.js, Form { DE: {...}, AT: {...},
+  // CH: {...} }) – wird als Parameter übergeben, damit dieses Modul nicht
+  // direkt von der aus window.I18N abgeleiteten STATES-Liste abhängt. Land
+  // (ct) wird zuerst validiert, danach st gegen die für dieses Land gültige
+  // Kürzel-Liste geprüft – notwendig, weil sich DE-/CH-Kürzel überschneiden
+  // können (z. B. "BE" = Berlin in DE, Bern in CH).
   // Rückgabe:
   //   { state, warning }  – ladbar (warning=true: Teile korrigiert/verworfen)
   //   null                – nicht ladbar (kaputt / falsche Version / zu groß)
-  function validateSharePayload(jsonStr, knownStateCodes) {
+  function validateSharePayload(jsonStr, statesByCountry) {
     if (typeof jsonStr !== "string" || jsonStr.length > SHARE_MAX_DECODED) return null;
     let payload;
     try { payload = JSON.parse(jsonStr); } catch (e) { return null; }
@@ -136,7 +146,7 @@
 
     let warn = false;
     const out = {
-      year: new Date().getFullYear(), st: "BY", vac: 30, ot: 0, xmasRule: "50",
+      year: new Date().getFullYear(), country: "DE", st: "BY", vac: 30, ot: 0, xmasRule: "50",
       uiMode: "einfach", simpleGoal: "free", simpleStarted: false,
       schoolHolidayPreference: "neutral", autoVac: "", autoOt: "0",
       spendFirst: "vac", autoFrom: 0, blocks: [], overridesMd: {},
@@ -146,7 +156,23 @@
 
     const y = parseInt(raw.y, 10);
     if (Number.isInteger(y) && y >= 1970 && y <= 2100) out.year = y; else bad(raw.y !== undefined);
-    if (typeof raw.st === "string" && knownStateCodes.includes(raw.st)) out.st = raw.st; else bad(raw.st !== undefined);
+    // ct (Land): optional/rückwärtskompatibel, gleiches Muster wie ww weiter
+    // unten – fehlt es komplett (Links vor dieser Erweiterung), gilt still und
+    // OHNE Warnung Deutschland (out-Skeleton oben). Ist es vorhanden, aber
+    // unbekannt, wird auf Deutschland zurückgesetzt UND gewarnt.
+    const knownCountries = Object.keys(statesByCountry || {});
+    if (typeof raw.ct === "string" && knownCountries.includes(raw.ct)) out.country = raw.ct;
+    else bad(raw.ct !== undefined);
+    const knownStateCodes = Object.keys((statesByCountry && statesByCountry[out.country]) || {});
+    if (typeof raw.st === "string" && knownStateCodes.includes(raw.st)) {
+      out.st = raw.st;
+    } else {
+      // Fallback muss zum (bereits validierten) Land passen – "BY" allein wäre
+      // z. B. für ct="CH" kein gültiger Kanton.
+      const fallbackRegion = DEFAULT_REGION_BY_COUNTRY[out.country];
+      out.st = knownStateCodes.includes(fallbackRegion) ? fallbackRegion : (knownStateCodes[0] || "BY");
+      bad(raw.st !== undefined);
+    }
     const vac = Number(raw.vac); if (Number.isFinite(vac) && vac >= 0 && vac <= 366) out.vac = vac; else bad(raw.vac !== undefined);
     const ot = Number(raw.ot); if (Number.isFinite(ot) && ot >= 0 && ot <= 366) out.ot = ot; else bad(raw.ot !== undefined);
     if (XMAS_RULES.includes(raw.x)) out.xmasRule = raw.x; else bad(raw.x !== undefined);
@@ -226,7 +252,8 @@
   }
 
   // Synchroner Dekoder für das alte #plan=-Format (base64url(JSON)).
-  function decodeShare(enc, knownStateCodes) {
+  // statesByCountry: siehe validateSharePayload().
+  function decodeShare(enc, statesByCountry) {
     if (!enc || typeof enc !== "string" || enc.length > SHARE_MAX_DECODED) return null;
     let jsonStr;
     try {
@@ -234,7 +261,7 @@
       if (bytes.length > SHARE_MAX_DECODED) return null;
       jsonStr = new TextDecoder().decode(bytes);
     } catch (e) { return null; }
-    return validateSharePayload(jsonStr, knownStateCodes);
+    return validateSharePayload(jsonStr, statesByCountry);
   }
 
   // Wert eines Schlüssels aus dem URL-Fragment lesen (robust ggü. mehreren

@@ -12,13 +12,46 @@
   "use strict";
 
   const DE = {
-    /* ---- Bundesländer (Codes bleiben sprachunabhängig, nur Namen) ---- */
+    /* ---- Länder (Codes bleiben sprachunabhängig, nur Namen) ---- */
+    countries: {
+      DE: "Deutschland", AT: "Österreich", CH: "Schweiz",
+    },
+
+    /* ---- Bezeichnung der Region-Auswahl je Land ("Bundesland"/"Kanton") ---- */
+    regionLabel: {
+      DE: "Bundesland", AT: "Bundesland", CH: "Kanton",
+    },
+
+    /* ---- Vorbelegte Region beim Länderwechsel (bewusst kuratiert: größte/
+       bekannteste Region, nicht alphabetisch – analog zum bisherigen DE-
+       Standard "BY") ---- */
+    defaultRegion: {
+      DE: "BY", AT: "WI", CH: "ZH",
+    },
+
+    /* ---- Bundesländer/Kantone je Land (Codes bleiben sprachunabhängig, nur
+       Namen; entsprechen den OpenHolidays-Subdivision-Kürzeln ohne
+       Länderpräfix, z. B. "BY" für "DE-BY", "WI" für "AT-WI") ---- */
     states: {
-      BW: "Baden-Württemberg", BY: "Bayern", BE: "Berlin", BB: "Brandenburg",
-      HB: "Bremen", HH: "Hamburg", HE: "Hessen", MV: "Mecklenburg-Vorpommern",
-      NI: "Niedersachsen", NW: "Nordrhein-Westfalen", RP: "Rheinland-Pfalz",
-      SL: "Saarland", SN: "Sachsen", ST: "Sachsen-Anhalt",
-      SH: "Schleswig-Holstein", TH: "Thüringen",
+      DE: {
+        BW: "Baden-Württemberg", BY: "Bayern", BE: "Berlin", BB: "Brandenburg",
+        HB: "Bremen", HH: "Hamburg", HE: "Hessen", MV: "Mecklenburg-Vorpommern",
+        NI: "Niedersachsen", NW: "Nordrhein-Westfalen", RP: "Rheinland-Pfalz",
+        SL: "Saarland", SN: "Sachsen", ST: "Sachsen-Anhalt",
+        SH: "Schleswig-Holstein", TH: "Thüringen",
+      },
+      AT: {
+        BL: "Burgenland", KÄ: "Kärnten", NÖ: "Niederösterreich", OÖ: "Oberösterreich",
+        SB: "Salzburg", SM: "Steiermark", TI: "Tirol", VA: "Vorarlberg", WI: "Wien",
+      },
+      CH: {
+        AG: "Aargau", AI: "Appenzell Innerrhoden", AR: "Appenzell Ausserrhoden",
+        BE: "Bern", BL: "Basel-Landschaft", BS: "Basel-Stadt", FR: "Freiburg",
+        GE: "Genf", GL: "Glarus", GR: "Graubünden", JU: "Jura", LU: "Luzern",
+        NE: "Neuenburg", NW: "Nidwalden", OW: "Obwalden", SG: "St. Gallen",
+        SH: "Schaffhausen", SO: "Solothurn", SZ: "Schwyz", TG: "Thurgau",
+        TI: "Tessin", UR: "Uri", VD: "Waadt", VS: "Wallis", ZG: "Zug", ZH: "Zürich",
+      },
     },
 
     /* ---- Monate (Index 0 = Januar) ---- */
@@ -53,6 +86,42 @@
       christmasDay1: "1. Weihnachtstag",
       christmasDay2: "2. Weihnachtstag",
       dayOfRepentance: "Buß- und Bettag",
+
+      /* ---- Österreich: eigene Bezeichnungen für Feiertage, die dort anders
+         heißen als in Deutschland (Termine ohne eigenen Namen s. o., z. B.
+         Ostermontag/Christi Himmelfahrt/Pfingstmontag/Fronleichnam/
+         Allerheiligen/Mariä Himmelfahrt/Heilige Drei Könige) ---- */
+      at: {
+        staatsfeiertag: "Staatsfeiertag",
+        nationalfeiertag: "Nationalfeiertag",
+        mariaEmpfaengnis: "Mariä Empfängnis",
+        christtag: "Christtag",
+        stefanitag: "Stefanitag",
+      },
+
+      /* ---- Schweiz: eigene Bezeichnungen für kantonal unterschiedliche bzw.
+         landesweite Feiertage (Termine ohne eigenen Namen s. o., z. B.
+         Karfreitag/Ostermontag/Pfingstmontag/Fronleichnam/Allerheiligen/
+         Mariä Himmelfahrt) ---- */
+      ch: {
+        neujahrstag: "Neujahrstag",
+        berchtoldstag: "Berchtoldstag",
+        dreikoenigstag: "Dreikönigstag",
+        jahrestagRepublik: "Jahrestag der Ausrufung der Republik",
+        josephstag: "Josephstag",
+        tagDerArbeit: "Tag der Arbeit",
+        auffahrt: "Auffahrt",
+        festDerUnabhaengigkeit: "Fest der Unabhängigkeit",
+        peterUndPaul: "Peter und Paul",
+        bundesfeiertag: "Bundesfeiertag",
+        genferBettag: "Genfer Bettag",
+        bettagsmontag: "Bettagsmontag",
+        eidgBettag: "Eidgenössischer Dank-, Buss- und Bettag",
+        mariaEmpfaengnis: "Mariä Empfängnis",
+        stephanstag: "Stephanstag",
+        weihnachten: "Weihnachten",
+        wiederherstellungRepublik: "Wiederherstellung der Republik",
+      },
     },
 
     /* ---- Sondertage (24./31.12.) ---- */
@@ -119,7 +188,7 @@
     landing: {
       hero: {
         heading: "Mach mehr aus deinen Urlaubstagen",
-        description: "Nutze Feiertage, Brückentage und Schulferien passend zu deinem Bundesland. Lass dir automatisch eine Planung erstellen und passe sie anschließend direkt im Kalender an.",
+        description: "Nutze Feiertage, Brückentage und Schulferien passend zu deinem Bundesland oder Kanton. Lass dir automatisch eine Planung erstellen und passe sie anschließend direkt im Kalender an.",
         example: "4 Urlaubstage können bis zu 10 freie Tage ergeben.",
       },
       modes: {
@@ -167,14 +236,14 @@
       steps: {
         heading: "So funktioniert es",
         items: [
-          { title: "Angaben machen", text: "Jahr, Bundesland und Urlaubstage festlegen." },
+          { title: "Angaben machen", text: "Land, Region und Urlaubstage festlegen." },
           { title: "Wünsche auswählen", text: "Ziel und Umgang mit Schulferien bestimmen." },
           { title: "Planung anpassen", text: "Vorschläge prüfen und direkt im Kalender verändern." },
         ],
       },
       trust: {
         items: [
-          "Feiertage passend zum Bundesland",
+          "Feiertage passend zu Bundesland oder Kanton",
           "Schulferien werden berücksichtigt",
           "Keine Anmeldung erforderlich",
           "Planung als Link teilbar",
@@ -224,6 +293,49 @@
         prefix: "Du hast Feedback oder eine Idee für FREILOTSE? Schreib mir gerne an ",
         suffix: ".",
       },
+    },
+
+    /* ---- Seite „Neuigkeiten" (/neuigkeiten) ---- */
+    changelog: {
+      documentTitle: "Neuigkeiten – FREILOTSE",
+      metaDescription: "Alle Neuerungen und Updates von FREILOTSE im Überblick.",
+      footerLink: "Neuigkeiten",
+      backToPlanner: "Zum Urlaubsplaner",
+      pageTitle: "Neuigkeiten",
+      intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
+      entries: [
+        {
+          date: "27. Juli 2026",
+          title: "Österreich und Schweiz werden unterstützt",
+          items: [
+            "Neben Deutschland können jetzt auch Österreich und die Schweiz als Land ausgewählt werden, inklusive der jeweiligen Feiertage und Bundesländer/Kantone.",
+            "FREILOTSE erkennt anhand deines Standorts automatisch ein passendes Land als Vorauswahl – du kannst sie jederzeit manuell ändern.",
+          ],
+        },
+        {
+          date: "24. Juli 2026",
+          title: "Umstellung auf eine neue Feiertagsquelle",
+          items: [
+            "Feiertage und Schulferien werden jetzt über die OpenHolidays-API bezogen – die Grundlage für die neue Mehrländer-Unterstützung.",
+          ],
+        },
+        {
+          date: "22. Juli 2026",
+          title: "Regelmäßige Arbeitstage frei einstellbar",
+          items: [
+            "Du kannst jetzt festlegen, an welchen Wochentagen du regelmäßig arbeitest, z. B. bei Teilzeit nur Montag bis Donnerstag.",
+            "Die Urlaubsplanung berücksichtigt deine persönlichen Arbeitstage statt automatisch von Montag bis Freitag auszugehen.",
+          ],
+        },
+        {
+          date: "20. Juli 2026",
+          title: "Neue Startseite und Überstunden-Rechner",
+          items: [
+            "Eine neue Startseite lässt dich zwischen Einfach-Modus und Profi-Modus wählen, bevor es losgeht.",
+            "Ein neuer Überstunden-Rechner rechnet vorhandene Überstunden direkt in freie Tage um.",
+          ],
+        },
+      ],
     },
 
     share: {
@@ -301,21 +413,23 @@
       stepperTitle: "Deine Planung – Schritt für Schritt",
       step1Question: "1 · Wie viele Urlaubstage hast du?",
       step2Question: "2 · Für welches Jahr möchtest du planen?",
-      step3Question: "3 · In welchem Bundesland arbeitest du?",
-      // Neuer Schritt 4 (Arbeitstage) zwischen Bundesland und 24./31.12.-Regel;
-      // nachfolgende Schritte deshalb um eins verschoben (4->5, 5->6, 6->7).
-      // Schlüsselnamen bewusst unverändert gelassen, nur die sichtbaren
-      // Nummern in den Textwerten wurden angepasst.
-      stepWorkdaysQuestion: "4 · An welchen Tagen arbeitest du normalerweise?",
-      step4Question: "5 · Wie gelten der 24.12. und 31.12. bei dir?",
+      // Neuer Schritt 3 (Land) vor der Region; nachfolgende Schritte deshalb um
+      // eins verschoben (vormals 3->4, 4->5, 5->6, 6->7 wurde zu 4->5, 5->6,
+      // 6->7, 7->8). Schlüsselnamen bewusst unverändert gelassen, nur die
+      // sichtbaren Nummern in den Textwerten wurden angepasst.
+      stepCountryQuestion: "3 · In welchem Land lebst du?",
+      // region: "Bundesland" oder "Kanton" (siehe regionLabel), abhängig vom Land.
+      step3Question: (p) => `4 · In welchem ${p.region} arbeitest du?`,
+      stepWorkdaysQuestion: "5 · An welchen Tagen arbeitest du normalerweise?",
+      step4Question: "6 · Wie gelten der 24.12. und 31.12. bei dir?",
       step4Options: {
         full: "Ich muss jeweils einen ganzen Urlaubstag nehmen.",
         half: "Sie zählen jeweils als halber Urlaubstag.",
         none: "Ich habe an beiden Tagen frei und benötige keinen Urlaub.",
       },
       step4Hint: "Viele Arbeitgeber behandeln Heiligabend und Silvester unterschiedlich. Wähle einfach die Regel aus, die für dich gilt.",
-      step5Question: "6 · Wie sollen Schulferien berücksichtigt werden?",
-      step6Question: "7 · Was ist dir wichtig?",
+      step5Question: "7 · Wie sollen Schulferien berücksichtigt werden?",
+      step6Question: "8 · Was ist dir wichtig?",
       goal: {
         free: "Möglichst viele freie Tage",
         blocks: "Lange Urlaubsblöcke",
@@ -354,7 +468,7 @@
     settings: {
       panelTitle: "Allgemein",
       year: "Jahr",
-      federalState: "Bundesland",
+      country: "Land",
       vacationDays: "Urlaubstage",
       overtimeDaysLabel: "Überstundenabbau (Tage)",
       holidaySource: "Feiertagsquelle:",
@@ -491,8 +605,20 @@
 
     footerHint: {
       text: "Wunschblöcke zuerst, dann Brückentage streng nach Rendite.",
-      detail:
-        "Mariä Himmelfahrt gilt in Bayern nur in Gemeinden mit überwiegend katholischer Bevölkerung; Fronleichnam gilt in Sachsen und Thüringen nur in einzelnen Regionen und ist hier nicht berücksichtigt. Die Optimierung setzt Wunschblöcke zuerst; der 24.12. und der 31.12. werden bei 100%- oder 50%-Regelung immer fest eingeplant, damit sie die Feiertagsserie nicht unterbrechen. Die automatische Verteilung kauft mit dem Minimalbudget nur isolierte 1-Tages-Brücken (1 Tag → 4 freie Tage); mehr Budget schaltet 2-, 3- und 4-Tages-Lücken frei – verteilt über das Jahr, höchstens eine Lücke je Monat pro Runde. Reine Urlaubswochen ohne Feiertag werden nie automatisch verplant; nicht eingesetzte Tage bleiben als Rest übrig.",
+      // Länderspezifischer Hinweis (vorangestellt) + länderunabhängige
+      // Erklärung der Optimierung. Nur der zum gewählten Land (p.country)
+      // passende Hinweis wird angezeigt, damit z. B. beim Land Schweiz nicht
+      // die deutschen Bundesland-Sonderfälle erscheinen und umgekehrt.
+      // Österreich hat aktuell keinen Eintrag, da dort alle Feiertage
+      // bundesweit gelten (keine Sonderfälle abzubilden).
+      detail: (p) => {
+        const regionalCaveats = {
+          DE: "Mariä Himmelfahrt gilt in Bayern nur in Gemeinden mit überwiegend katholischer Bevölkerung; Fronleichnam gilt in Sachsen und Thüringen nur in einzelnen Regionen und ist hier nicht berücksichtigt. ",
+          CH: "Es werden nur kantonsweite Feiertage berücksichtigt; Feiertage, die nur in einzelnen Bezirken oder Gemeinden eines Kantons gelten (z. B. Teile des Kantons Aargau), sowie rein lokale Bräuche wie Sechseläuten oder Knabenschiessen (Stadt Zürich) werden nicht berücksichtigt. ",
+        };
+        const intro = "Die Optimierung setzt Wunschblöcke zuerst; der 24.12. und der 31.12. werden bei 100%- oder 50%-Regelung immer fest eingeplant, damit sie die Feiertagsserie nicht unterbrechen. Die automatische Verteilung kauft mit dem Minimalbudget nur isolierte 1-Tages-Brücken (1 Tag → 4 freie Tage); mehr Budget schaltet 2-, 3- und 4-Tages-Lücken frei – verteilt über das Jahr, höchstens eine Lücke je Monat pro Runde. Reine Urlaubswochen ohne Feiertag werden nie automatisch verplant; nicht eingesetzte Tage bleiben als Rest übrig.";
+        return `${regionalCaveats[p.country] || ""}${intro}`;
+      },
     },
 
     /* ---- Kalender ---- */

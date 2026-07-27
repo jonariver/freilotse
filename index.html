@@ -21,25 +21,26 @@
 <body class="bg-slate-950">
   <div id="root"></div>
   <noscript>Bitte JavaScript aktivieren, um den Urlaubsplaner zu nutzen.</noscript>
-  <script src="locales/de.js?v=5"></script>
+  <script src="locales/de.js?v=8"></script>
   <!-- Reine Planungs-/Kalender-/Datenmodule (kein Modulsystem -> window.FREILOTSE.*,
        siehe CLAUDE.md, Abschnitt „Architektur/Module"). Reihenfolge untereinander
        ist unkritisch (keine Abhängigkeiten untereinander), muss aber vor den
        JSX-Dateien geladen sein. -->
   <script src="js/planning.js?v=1"></script>
-  <script src="js/calendar.js?v=1"></script>
-  <script src="js/data-sources.js?v=2"></script>
-  <script src="js/share-link.js?v=1"></script>
+  <script src="js/calendar.js?v=2"></script>
+  <script src="js/data-sources.js?v=3"></script>
+  <script src="js/share-link.js?v=2"></script>
   <!-- Ausgelagerte JSX-Komponenten (über Babel-Standalone verarbeitet). Reihenfolge:
        common-components zuerst (keine Abhängigkeiten), dann kofi-components
-       (SiteFooter/SiteLink), danach landing-page, legal-pages und about-page
-       (alle drei nutzen Komponenten aus kofi-components). app.jsx lädt zuletzt
-       und mountet die App. -->
+       (SiteFooter/SiteLink), danach landing-page, legal-pages, about-page und
+       changelog-page (alle vier nutzen Komponenten aus kofi-components).
+       app.jsx lädt zuletzt und mountet die App. -->
   <script type="text/babel" data-presets="react" src="jsx/common-components.jsx?v=1"></script>
-  <script type="text/babel" data-presets="react" src="jsx/kofi-components.jsx?v=2"></script>
+  <script type="text/babel" data-presets="react" src="jsx/kofi-components.jsx?v=3"></script>
   <script type="text/babel" data-presets="react" src="jsx/landing-page.jsx?v=4"></script>
-  <script type="text/babel" data-presets="react" src="jsx/legal-pages.jsx?v=2"></script>
+  <script type="text/babel" data-presets="react" src="jsx/legal-pages.jsx?v=3"></script>
   <script type="text/babel" data-presets="react" src="jsx/about-page.jsx?v=3"></script>
-  <script type="text/babel" data-presets="react" src="app.jsx?v=7"></script>
+  <script type="text/babel" data-presets="react" src="jsx/changelog-page.jsx?v=1"></script>
+  <script type="text/babel" data-presets="react" src="app.jsx?v=12"></script>
 </body>
 </html>

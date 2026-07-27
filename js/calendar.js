@@ -24,7 +24,22 @@
     return Date.UTC(y, month - 1, day);
   }
 
-  function holidayMap(year, st, t) {
+  // Verteilt auf holidayMapDE/AT/CH je nach `country` (Default "DE" für
+  // Abwärtskompatibilität mit Aufrufern, die country weglassen). Reiner
+  // lokaler Fallback, falls die OpenHolidays API nicht erreichbar ist (siehe
+  // js/data-sources.js) – für AT/CH bewusst mit Live-Daten der API als
+  // Grundlage kuratiert (siehe CLAUDE.md, Abschnitt „Regelmäßige
+  // Arbeitstage"/PR-Beschreibung), nicht vollständig (z. B. rein
+  // informative/sub-kantonale Schweizer Bräuche wie Sechseläuten fehlen
+  // bewusst, analog zur bestehenden Augsburg-Ausnahme bei DE).
+  function holidayMap(year, st, t, country) {
+    const c = country || "DE";
+    if (c === "AT") return holidayMapAT(year, t);
+    if (c === "CH") return holidayMapCH(year, st, t);
+    return holidayMapDE(year, st, t);
+  }
+
+  function holidayMapDE(year, st, t) {
     const H = {}; // key "m-d" (m: 0-basiert)
     const fix = (m, d, name, states) => {
       if (!states || states.includes(st)) H[`${m}-${d}`] = name;
@@ -69,6 +84,94 @@
     return H;
   }
 
+  // Österreich: alle 9 Bundesländer haben dieselben 13 gesetzlichen
+  // Feiertage (bundesweit, keine landesspezifischen Ausnahmen wie in
+  // Deutschland/der Schweiz – live über die OpenHolidays API geprüft).
+  function holidayMapAT(year, t) {
+    const H = {};
+    const fix = (m, d, name) => { H[`${m}-${d}`] = name; };
+    const easter = easterUTC(year);
+    const rel = (offset, name) => {
+      const dt = new Date(easter + offset * DAY);
+      H[`${dt.getUTCMonth()}-${dt.getUTCDate()}`] = name;
+    };
+
+    fix(0, 1, t("holidays.newYear"));
+    fix(0, 6, t("holidays.epiphany"));
+    rel(1, t("holidays.easterMonday"));
+    fix(4, 1, t("holidays.at.staatsfeiertag"));
+    rel(39, t("holidays.ascensionDay"));
+    rel(50, t("holidays.pentecostMonday"));
+    rel(60, t("holidays.corpusChristi"));
+    fix(7, 15, t("holidays.assumptionDay"));
+    fix(9, 26, t("holidays.at.nationalfeiertag"));
+    fix(10, 1, t("holidays.allSaintsDay"));
+    fix(11, 8, t("holidays.at.mariaEmpfaengnis"));
+    fix(11, 25, t("holidays.at.christtag"));
+    fix(11, 26, t("holidays.at.stefanitag"));
+    return H;
+  }
+
+  // Schweiz: nur 4 Feiertage sind gesamtschweizerisch, der Rest ist kantonal
+  // unterschiedlich. Kantonslisten stammen aus einer Live-Abfrage der
+  // OpenHolidays API (PublicHolidays, countryIsoCode=CH) für das Jahr 2026;
+  // rein informative/sub-kantonale Einträge ohne eigene Kantons-Subdivision
+  // (z. B. Sechseläuten/Knabenschiessen – nur Stadt Zürich) sind bewusst
+  // ausgeschlossen. Näfelser Fahrt (GL) fehlt bewusst (seltener Einzelfall
+  // mit unüblicher Datumsregel).
+  function holidayMapCH(year, st, t) {
+    const H = {};
+    const fix = (m, d, name, cantons) => {
+      if (!cantons || cantons.includes(st)) H[`${m}-${d}`] = name;
+    };
+    const easter = easterUTC(year);
+    const rel = (offset, name, cantons) => {
+      if (cantons && !cantons.includes(st)) return;
+      const dt = new Date(easter + offset * DAY);
+      H[`${dt.getUTCMonth()}-${dt.getUTCDate()}`] = name;
+    };
+    const ALL_CANTONS = ["AG", "AI", "AR", "BE", "BL", "BS", "FR", "GE", "GL", "GR", "JU", "LU", "NE",
+      "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "TI", "UR", "VD", "VS", "ZG", "ZH"];
+    const withoutCantons = (...excluded) => ALL_CANTONS.filter((c) => !excluded.includes(c));
+
+    // Gesamtschweizerisch
+    fix(0, 1, t("holidays.ch.neujahrstag"));
+    rel(39, t("holidays.ch.auffahrt"));
+    fix(7, 1, t("holidays.ch.bundesfeiertag"));
+    fix(11, 25, t("holidays.ch.weihnachten"));
+
+    // Kantonal (Berchtoldstag: bewusst OHNE ZH – dort laut OpenHolidays API
+    // nur "Optional"/Brauch, kein gesetzlicher Feiertag, siehe type="Optional")
+    fix(0, 2, t("holidays.ch.berchtoldstag"), ["BE", "GL", "JU", "LU", "NW", "OW", "SG", "SH", "SO", "TG", "VD", "VS", "ZG"]);
+    fix(0, 6, t("holidays.ch.dreikoenigstag"), ["SZ", "TI", "UR"]);
+    fix(2, 1, t("holidays.ch.jahrestagRepublik"), ["NE"]);
+    fix(2, 19, t("holidays.ch.josephstag"), ["NW", "SZ", "TI", "UR", "VS"]);
+    rel(-2, t("holidays.goodFriday"), withoutCantons("TI", "VS"));
+    rel(1, t("holidays.easterMonday"), withoutCantons("AG"));
+    fix(4, 1, t("holidays.ch.tagDerArbeit"), ["AG", "BL", "BS", "JU", "NE", "SH", "TG", "TI", "ZH"]);
+    rel(50, t("holidays.pentecostMonday"), withoutCantons("AG"));
+    rel(60, t("holidays.corpusChristi"), ["AI", "FR", "JU", "LU", "NE", "NW", "OW", "SZ", "TI", "UR", "VS", "ZG"]);
+    fix(5, 23, t("holidays.ch.festDerUnabhaengigkeit"), ["JU"]);
+    fix(5, 29, t("holidays.ch.peterUndPaul"), ["TI"]);
+    fix(7, 15, t("holidays.assumptionDay"), ["AI", "FR", "JU", "LU", "NW", "OW", "SZ", "TI", "UR", "VS", "ZG"]);
+    fix(8, 10, t("holidays.ch.genferBettag"), ["GE"]);
+    // Berechnete September-Termine: 3. Sonntag im September (Eidgenössischer
+    // Dank-, Buss- und Bettag) sowie der darauffolgende Montag
+    // (Bettagsmontag, nur Waadt/VD).
+    let firstSunday = 1;
+    for (let d = 1; d <= 7; d++) {
+      if (new Date(Date.UTC(year, 8, d)).getUTCDay() === 0) { firstSunday = d; break; }
+    }
+    const thirdSunday = firstSunday + 14;
+    fix(8, thirdSunday, t("holidays.ch.eidgBettag"), ["BE", "BL", "BS", "GL", "GR", "LU", "NE", "NW", "OW", "SG", "SH", "SZ", "TG", "UR", "VS", "ZG", "ZH"]);
+    fix(8, thirdSunday + 1, t("holidays.ch.bettagsmontag"), ["VD"]);
+    fix(10, 1, t("holidays.allSaintsDay"), ["AI", "FR", "GL", "GR", "JU", "LU", "NW", "OW", "SG", "SZ", "TI", "UR", "VS", "ZG"]);
+    fix(11, 8, t("holidays.ch.mariaEmpfaengnis"), ["AI", "FR", "LU", "NW", "OW", "SZ", "TI", "UR", "VS", "ZG"]);
+    fix(11, 26, t("holidays.ch.stephanstag"), ["AR", "BE", "BL", "BS", "FR", "GL", "GR", "LU", "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "TI", "UR", "VS", "ZG", "ZH"]);
+    fix(11, 31, t("holidays.ch.wiederherstellungRepublik"), ["GE"]);
+    return H;
+  }
+
   // Standard-Arbeitswoche (Montag bis Freitag), falls workingWeekdays fehlt
   // oder leer ist (z. B. ältere Aufrufer) – identisch zum bisherigen fest
   // codierten Montag-bis-Freitag-Verhalten.
@@ -79,11 +182,11 @@
   // Bestimmt AUSSCHLIESSLICH, an welchen Wochentagen ein Urlaubstag benötigt
   // würde ("persönlicher regulärer Arbeitstag") – keine wechselnden
   // Schichtpläne, keine wochenabhängigen Muster, keine Stunden/Teilzeitquoten.
-  function buildDays(year, st, xmasRule, extHolidays, t, workingWeekdays) {
+  function buildDays(year, st, xmasRule, extHolidays, t, workingWeekdays, country) {
     const ww = Array.isArray(workingWeekdays) && workingWeekdays.length > 0
       ? workingWeekdays : DEFAULT_WORKING_WEEKDAYS;
     // Externe Daten (API) haben Vorrang; sonst integrierte Berechnung als Fallback
-    const H = extHolidays || holidayMap(year, st, t);
+    const H = extHolidays || holidayMap(year, st, t, country);
     const days = [];
     for (let ts = Date.UTC(year, 0, 1); ; ts += DAY) {
       const dt = new Date(ts);
