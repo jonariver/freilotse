@@ -40,8 +40,8 @@
   function SupportFooterLink({ dark }) {
     return (
       <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer"
-        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-          dark ? "bg-emerald-900/40 text-emerald-300 hover:bg-emerald-900/60" : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+          dark ? "bg-beckenwasser-hell/20 text-beckenwasser-hell hover:bg-beckenwasser-hell/30" : "bg-beckenwasser-hell/60 text-beckenwasser hover:bg-beckenwasser-hell"
         }`}>
         <HeartIcon />
         {t("support.footerLinkText")}
@@ -118,8 +118,8 @@
           onMouseLeave={() => { if (canHoverRef.current) setInteractiveExpanded(false); }}
           onFocus={() => setInteractiveExpanded(true)}
           onBlur={() => setInteractiveExpanded(false)}
-          className="support-fab z-30 flex items-center overflow-hidden rounded-l-full border border-r-0 border-emerald-400/30 bg-slate-900 py-3 pl-3 pr-3 text-white shadow-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-          <HeartIcon className="shrink-0 text-emerald-400" />
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center gap-2 rounded-l-2xl bg-sonnenkoralle px-3 py-2.5 text-kalkstein shadow-warm hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
+          <HeartIcon className="shrink-0 text-kalkstein" />
           <span className={`support-fab-label text-sm font-semibold${expanded ? " is-expanded" : ""}`}>
             {autoExpanded ? t("support.floatingHintText") : t("support.floatingLabelText")}
           </span>
@@ -129,10 +129,10 @@
   }
 
   function SiteFooter({ dark = true }) {
-    const muted = dark ? "text-slate-400" : "text-slate-500";
-    const hover = dark ? "hover:text-white" : "hover:text-slate-900";
+    const muted = dark ? "text-sonnencreme/60" : "text-espresso/60";
+    const hover = dark ? "hover:text-kalkstein" : "hover:text-tiefwasser";
     return (
-      <footer className={`border-t ${dark ? "border-slate-800 bg-slate-950" : "border-slate-200 bg-white"}`}>
+      <footer className={`border-t ${dark ? "border-tiefwasser-hell bg-tiefwasser" : "border-beckenwasser/20 bg-kalkstein"}`}>
         <div className={`mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-xs sm:flex-row sm:items-center sm:justify-between ${muted}`}>
           <p>© {new Date().getFullYear()} FREILOTSE</p>
           <nav aria-label="Rechtliches und Unterstützung" className="flex flex-wrap items-center gap-x-4 gap-y-2">
