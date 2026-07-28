@@ -35,17 +35,17 @@
     }, []);
 
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-        <header className="border-b border-slate-800 bg-slate-900">
+      <div className="min-h-screen bg-tiefwasser text-sonnencreme flex flex-col font-body">
+        <header className="border-b border-tiefwasser-hell bg-tiefwasser-hell">
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-5">
-            <SiteLink to="/" className="font-bold tracking-tight text-white hover:text-emerald-400">FREILOTSE</SiteLink>
-            <SiteLink to="/" className="text-sm text-slate-300 hover:text-white">Zum Urlaubsplaner</SiteLink>
+            <SiteLink to="/" className="font-bold tracking-tight text-sonnencreme hover:text-beckenwasser-hell">FREILOTSE</SiteLink>
+            <SiteLink to="/" className="text-sm text-sonnencreme/80 hover:text-sonnencreme">Zum Urlaubsplaner</SiteLink>
           </div>
         </header>
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
-          <article className="rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-sm sm:p-8">
+          <article className="rounded-3xl border border-tiefwasser-hell bg-tiefwasser-hell p-5 shadow-warm-dark sm:p-8">
             <h1 className="mb-8 text-3xl font-bold tracking-tight">{title}</h1>
-            <div className="space-y-7 text-sm leading-7 text-slate-300">{children}</div>
+            <div className="space-y-7 text-sm leading-7 text-sonnencreme/80">{children}</div>
           </article>
         </main>
         <SiteFooter dark />
@@ -55,13 +55,13 @@
 
   const LegalSection = ({ title, children }) => (
     <section>
-      <h2 className="mb-2 text-lg font-bold text-white">{title}</h2>
+      <h2 className="mb-2 text-lg font-bold text-sonnencreme">{title}</h2>
       <div className="space-y-3">{children}</div>
     </section>
   );
 
   const ExternalLegalLink = ({ href, children }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="text-emerald-400 underline decoration-emerald-400/40 underline-offset-2 hover:text-emerald-300">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="text-beckenwasser-hell underline decoration-beckenwasser-hell/40 underline-offset-2 hover:text-beckenwasser">
       {children}
     </a>
   );
@@ -73,9 +73,9 @@
         alt="Name und ladungsfähige Anschrift des Anbieters als Grafik"
         width="1000"
         height="320"
-        className="h-auto w-full rounded-lg border border-slate-700"
+        className="h-auto w-full rounded-2xl border border-tiefwasser-hell"
       />
-      <figcaption className="mt-2 text-xs leading-5 text-slate-400">
+      <figcaption className="mt-2 text-xs leading-5 text-sonnencreme/60">
         Die Anbieterangaben werden zum Schutz vor einfachem automatisiertem Auslesen als Grafik dargestellt.
       </figcaption>
     </figure>
@@ -85,11 +85,11 @@
     return (
       <LegalLayout title="Impressum">
         <LegalSection title="Angaben gemäß § 5 DDG">
-          <p><strong className="text-white">FREILOTSE</strong></p>
+          <p><strong className="text-sonnencreme">FREILOTSE</strong></p>
           <ProviderDetailsImage />
         </LegalSection>
         <LegalSection title="Kontakt">
-          <p>E-Mail: <a className="text-emerald-400 hover:text-emerald-300" href="mailto:freilotse@outlook.de">freilotse@outlook.de</a></p>
+          <p>E-Mail: <a className="text-beckenwasser-hell hover:text-beckenwasser" href="mailto:freilotse@outlook.de">freilotse@outlook.de</a></p>
         </LegalSection>
         <LegalSection title="Verbraucherstreitbeilegung">
           <p>Ich bin nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
@@ -105,7 +105,7 @@
 
         <LegalSection title="1. Verantwortlicher">
           <ProviderDetailsImage />
-          <p>E-Mail: <a className="text-emerald-400 hover:text-emerald-300" href="mailto:freilotse@outlook.de">freilotse@outlook.de</a></p>
+          <p>E-Mail: <a className="text-beckenwasser-hell hover:text-beckenwasser" href="mailto:freilotse@outlook.de">freilotse@outlook.de</a></p>
         </LegalSection>
 
         <LegalSection title="2. Hosting über Netlify">
