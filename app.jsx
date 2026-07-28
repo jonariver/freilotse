@@ -74,8 +74,8 @@ const fmtDDMM = (ts) => {
 };
 
 function dayClass(day, selType, dark) {
-  if (selType === "vac") return "bg-emerald-600 text-white";
-  if (selType === "ot") return "bg-sky-600 text-white";
+  if (selType === "vac") return "bg-beckenwasser text-kalkstein";
+  if (selType === "ot") return "bg-lagune text-kalkstein";
   // Feiertag: ausschließlich der persönliche Arbeitsstatus entscheidet, NICHT
   // der kalendarische Wochentag. Ein Feiertag an einem persönlichen
   // Arbeitstag (auch Sa/So bei individueller Arbeitswoche) wäre regulär ein
@@ -83,27 +83,27 @@ function dayClass(day, selType, dark) {
   // einem ohnehin regelmäßig freien Tag (auch Mo-Fr bei individueller
   // Arbeitswoche) bringt keinen zusätzlichen Vorteil und bleibt dezent.
   if (day.holiday) {
-    if (day.isWorkingDay) return "bg-rose-600 text-white";
-    return dark ? "bg-rose-900/70 text-rose-300" : "bg-rose-200 text-rose-800";
+    if (day.isWorkingDay) return "bg-ziegelrot text-kalkstein";
+    return dark ? "bg-ziegelrot/30 text-ziegelrot-hell" : "bg-ziegelrot-hell text-ziegelrot";
   }
-  if (day.special && day.cost === 0 && !day.weekend) return dark ? "bg-amber-400 text-amber-950" : "bg-amber-300 text-amber-900";
-  if (day.special && day.cost === 0.5) return dark ? "bg-amber-900/70 text-amber-300" : "bg-amber-100 text-amber-800";
+  if (day.special && day.cost === 0 && !day.weekend) return dark ? "bg-sonnengelb text-tiefwasser" : "bg-sonnengelb text-tiefwasser";
+  if (day.special && day.cost === 0.5) return dark ? "bg-sonnengelb/30 text-sonnengelb-hell" : "bg-sonnengelb-hell text-tiefwasser/80";
   // Echtes Kalenderwochenende behält bewusst IMMER das bestehende Wochenend-
   // Styling, auch wenn Samstag/Sonntag laut individueller Arbeitswoche
   // tatsächlich ein persönlicher Arbeitstag ist (z. B. Di–Sa) – die konkrete
   // Belegung/Kosten sind dann trotzdem über selType (grün/blau) bzw. den
   // Tooltip (dayTitle) erkennbar.
-  if (day.weekend) return dark ? "bg-slate-800 text-slate-600" : "bg-slate-200 text-slate-400";
+  if (day.weekend) return dark ? "bg-tiefwasser-hell/60 text-sonnencreme/40" : "bg-espresso/10 text-espresso/40";
   // Persönlicher regulärer freier Werktag (kein echtes Wochenende, aber laut
   // workingWeekdays trotzdem arbeitsfrei) – eigenes, aber verwandtes Styling
   // (gleiche gedämpfte Farbfamilie wie Wochenende, gestrichelter Rahmen zur
   // Unterscheidung), siehe Legende "Regelmäßig frei".
   if (!day.isWorkingDay) {
     return dark
-      ? "bg-slate-800/60 text-slate-500 border border-dashed border-slate-700"
-      : "bg-slate-100 text-slate-400 border border-dashed border-slate-300";
+      ? "bg-tiefwasser-hell/30 text-sonnencreme/30 border border-dashed border-tiefwasser-hell"
+      : "bg-espresso/5 text-espresso/30 border border-dashed border-espresso/20";
   }
-  return dark ? "bg-slate-800 text-slate-200 border border-slate-600" : "bg-white text-slate-700 border border-slate-200";
+  return dark ? "bg-tiefwasser-hell text-sonnencreme border border-tiefwasser-hell" : "bg-kalkstein text-espresso border border-beckenwasser/20";
 }
 
 // Mariä Himmelfahrt (15.8.) ist in Bayern gesetzlich nur in Gemeinden mit
@@ -1354,9 +1354,9 @@ function Urlaubsplaner({ onPlanReady }) {
                       const hi = drag ? Math.max(drag.anchor, drag.current) : -1;
                       const inDrag = drag && clickable && !selType && day.i >= lo && day.i <= hi;
                       const ring = inDrag
-                        ? clickMode === "vac" ? "ring-2 ring-emerald-500" : "ring-2 ring-sky-500"
-                        : manual && manual !== "none" ? (dark ? "ring-2 ring-slate-300" : "ring-2 ring-slate-500")
-                        : clickable ? "hover:ring-2 hover:ring-emerald-400" : "";
+                        ? clickMode === "vac" ? "ring-2 ring-beckenwasser" : "ring-2 ring-lagune"
+                        : manual && manual !== "none" ? (dark ? "ring-2 ring-sonnencreme/50" : "ring-2 ring-tiefwasser/40")
+                        : clickable ? "hover:ring-2 hover:ring-beckenwasser/60" : "";
                       // Freizeitband: Tag-Index -> Zeitraum ausschließlich über die
                       // oben aus result.periods abgeleitete periodDayInfo-Map (Single
                       // Source of Truth, keine doppelte Berechnung).
@@ -1391,7 +1391,7 @@ function Urlaubsplaner({ onPlanReady }) {
                               setDrag({ anchor: day.i, current: day.i });
                             }
                           }}
-                          className={`relative h-7 rounded-md flex items-center justify-center text-[11px] tabular-nums select-none ${
+                          className={`relative h-7 aspect-square rounded-full flex items-center justify-center text-[11px] font-data tabular-nums select-none ${
                             clickable ? "cursor-pointer" : "cursor-default"
                           } ${ring} ${dayClass(day, selType, dark)}`}>
                           {day.d}
@@ -1405,11 +1405,11 @@ function Urlaubsplaner({ onPlanReady }) {
                                Kurz-Hervorhebung (highlightedPeriodValid) kräftiger/deckend statt dezent. */
                             <span aria-hidden="true"
                               className={`pointer-events-none absolute inset-0.5 border-t-2 border-b-2 transition-colors duration-300 ${
-                                periodInfo.isStart ? "rounded-l-md border-l-2" : "border-l-0"
-                              } ${periodInfo.isEnd ? "rounded-r-md border-r-2" : "border-r-0"} ${
+                                periodInfo.isStart ? "rounded-l-full border-l-2" : "border-l-0"
+                              } ${periodInfo.isEnd ? "rounded-r-full border-r-2" : "border-r-0"} ${
                                 inHighlightedPeriod
-                                  ? (dark ? "border-emerald-300" : "border-emerald-600")
-                                  : (dark ? "border-emerald-300/50" : "border-emerald-600/40")
+                                  ? (dark ? "border-beckenwasser-hell" : "border-beckenwasser")
+                                  : (dark ? "border-beckenwasser-hell/50" : "border-beckenwasser/40")
                               }`} />
                           )}
                           {vac && (
