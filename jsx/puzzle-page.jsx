@@ -48,7 +48,7 @@
   }
 
   function PuzzlePage() {
-    const [dark, setDark] = useState(true);
+    const [dark, setDark] = useState(false);
 
     useEffect(() => {
       const previousTitle = document.title;
@@ -210,14 +210,14 @@
       }
     };
 
-    const softTextCls = dark ? "text-slate-300" : "text-slate-600";
-    const mutedTextCls = dark ? "text-slate-400" : "text-slate-500";
+    const softTextCls = dark ? "text-sonnencreme/80" : "text-espresso/80";
+    const mutedTextCls = dark ? "text-sonnencreme/60" : "text-espresso/60";
     const cardCls = dark
-      ? "bg-slate-900 border border-slate-800 rounded-xl shadow-sm"
-      : "bg-white border border-slate-200 rounded-xl shadow-sm";
+      ? "bg-tiefwasser-hell border border-tiefwasser-hell rounded-3xl shadow-warm-dark"
+      : "bg-kalkstein border border-beckenwasser/20 rounded-3xl shadow-warm";
     const inputCls = dark
-      ? "w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100"
-      : "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900";
+      ? "w-full rounded-xl border border-tiefwasser-hell bg-tiefwasser px-3 py-2 text-sm text-sonnencreme"
+      : "w-full rounded-xl border border-beckenwasser/30 bg-kalkstein px-3 py-2 text-sm text-espresso";
 
     const monthDays = puzzle.monthDays;
     const firstDow = monthDays[0].dow; // 0=So..6=Sa
@@ -225,20 +225,20 @@
     const trailBlanks = (7 - ((leadBlanks + monthDays.length) % 7)) % 7;
 
     return (
-      <div className={`min-h-screen flex flex-col ${dark ? "bg-slate-950 text-slate-100" : "bg-slate-100 text-slate-900"}`}>
-        <header className={dark ? "border-b border-slate-800 bg-slate-900" : "border-b border-slate-200 bg-white"}>
+      <div className={`min-h-screen flex flex-col font-body ${dark ? "bg-tiefwasser text-sonnencreme" : "bg-sonnencreme text-espresso"}`}>
+        <header className={dark ? "border-b border-tiefwasser-hell bg-tiefwasser-hell" : "border-b border-beckenwasser/20 bg-kalkstein"}>
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-5">
-            <SiteLink to="/" className={`font-bold tracking-tight ${dark ? "text-white hover:text-emerald-400" : "text-slate-900 hover:text-emerald-600"}`}>
+            <SiteLink to="/" className={`font-bold tracking-tight ${dark ? "text-kalkstein hover:text-beckenwasser-hell" : "text-espresso hover:text-beckenwasser"}`}>
               FREILOTSE
             </SiteLink>
             <div className="flex items-center gap-4">
-              <SiteLink to="/" className={`text-sm ${dark ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-900"}`}>
+              <SiteLink to="/" className={`text-sm ${dark ? "text-sonnencreme/80 hover:text-kalkstein" : "text-espresso/80 hover:text-espresso"}`}>
                 {t("puzzle.backToPlanner")}
               </SiteLink>
               <button onClick={() => setDark(!dark)}
                 title={t("theme.toggleTitle")}
-                className={`rounded-md border px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                  dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                className={`rounded-xl border px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+                  dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser/5"
                 }`}>
                 {dark ? t("theme.toLight") : t("theme.toDark")}
               </button>
@@ -249,14 +249,14 @@
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
           <article className={`${cardCls} space-y-6 p-5 sm:p-8`}>
             <div>
-              <p className={`text-xs font-semibold uppercase tracking-wide ${dark ? "text-emerald-400" : "text-emerald-600"}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wide ${dark ? "text-beckenwasser-hell" : "text-beckenwasser"}`}>
                 {t("puzzle.intro.puzzleNumberLabel", { number: puzzle.puzzleNumber })}
               </p>
-              <h1 className="mt-1 text-3xl font-bold tracking-tight">{t("puzzle.pageTitle")}</h1>
+              <h1 className="mt-1 text-3xl font-display font-bold tracking-tight">{t("puzzle.pageTitle")}</h1>
               <p className={`mt-2 text-sm leading-7 ${softTextCls}`}>
                 {t("puzzle.intro.stateAndMonth", { state: STATE_NAMES[puzzle.st], month: MONTHS[puzzle.month], year: puzzle.year })}
               </p>
-              <p className={`mt-1 flex items-center gap-1.5 text-sm font-semibold ${dark ? "text-amber-400" : "text-amber-600"}`}>
+              <p className={`mt-1 flex items-center gap-1.5 text-sm font-semibold ${dark ? "text-sonnengelb-hell" : "text-tiefwasser"}`}>
                 {t("puzzle.intro.rulesHint", { budget: puzzle.budget })}
                 <InfoHint dark={dark} text={t("puzzle.intro.rulesDetail")} />
               </p>
@@ -266,15 +266,15 @@
               <>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
                   <span className="flex items-center gap-1.5">
-                    <span aria-hidden="true" className={`inline-block h-3 w-3 rounded ${dark ? "bg-emerald-900/40" : "bg-emerald-100"}`} />
+                    <span aria-hidden="true" className={`inline-block h-3 w-3 rounded-full ${dark ? "bg-beckenwasser-hell/20" : "bg-beckenwasser-hell/60"}`} />
                     {t("puzzle.calendar.legendFree")}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span aria-hidden="true" className={`inline-block h-3 w-3 rounded ${dark ? "bg-amber-600" : "bg-amber-400"}`} />
+                    <span aria-hidden="true" className="inline-block h-3 w-3 rounded-full bg-beckenwasser" />
                     {t("puzzle.calendar.legendSelected")}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span aria-hidden="true" className={`inline-block h-3 w-3 rounded ${dark ? "bg-slate-800" : "border border-slate-300 bg-white"}`} />
+                    <span aria-hidden="true" className={`inline-block h-3 w-3 rounded-full ${dark ? "bg-tiefwasser-hell" : "border border-beckenwasser/20 bg-kalkstein"}`} />
                     {t("puzzle.calendar.legendWorking")}
                   </span>
                 </div>
@@ -292,14 +292,14 @@
                       <button key={idx} type="button" onClick={() => toggleDay(idx)}
                         disabled={!clickable}
                         title={day.holiday || undefined}
-                        className={`rounded-md py-2 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                        className={`rounded-full aspect-square flex items-center justify-center text-sm font-semibold font-data transition-colors focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
                           isFree
-                            ? (dark ? "bg-emerald-900/40 text-emerald-300" : "bg-emerald-100 text-emerald-700")
+                            ? (dark ? "bg-beckenwasser-hell/20 text-sonnencreme" : "bg-beckenwasser-hell/60 text-espresso")
                             : isSelected
-                            ? (dark ? "bg-amber-600 text-white" : "bg-amber-400 text-amber-950")
+                            ? "bg-beckenwasser text-kalkstein"
                             : (dark
-                                ? "bg-slate-800 text-slate-200 hover:bg-slate-700 cursor-pointer"
-                                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 cursor-pointer")
+                                ? "bg-tiefwasser-hell text-sonnencreme hover:bg-tiefwasser cursor-pointer"
+                                : "border border-beckenwasser/20 bg-kalkstein text-espresso hover:bg-beckenwasser-hell/30 cursor-pointer")
                         }`}>
                         {day.d}
                       </button>
@@ -314,11 +314,11 @@
                   </p>
                   <div className="flex gap-2">
                     <button onClick={() => setPlayerSel(new Array(monthDays.length).fill(null))}
-                      className={`rounded-md px-3 py-2 text-xs font-semibold ${dark ? "text-slate-400 hover:bg-slate-800" : "text-slate-500 hover:bg-slate-100"}`}>
+                      className={`rounded-xl px-3 py-2 text-xs font-semibold ${dark ? "text-sonnencreme/60 hover:bg-tiefwasser-hell" : "text-espresso/60 hover:bg-beckenwasser-hell/30"}`}>
                       {t("puzzle.actions.resetButton")}
                     </button>
                     <button onClick={handleEvaluate}
-                      className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                      className="rounded-xl bg-sonnenkoralle px-4 py-2 text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                       {t("puzzle.actions.evaluateButton")}
                     </button>
                   </div>
@@ -326,14 +326,18 @@
               </>
             ) : (
               <div className="space-y-4">
-                <div className={`rounded-lg p-4 ${dark ? "bg-slate-950/50 border border-slate-800" : "bg-slate-50 border border-slate-200"}`}>
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                <div className={`rounded-2xl p-4 ${dark ? "bg-tiefwasser/50 border border-tiefwasser-hell" : "bg-kalkstein border border-beckenwasser/20"}`}>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${mutedTextCls}`}>
                     {t("puzzle.locked.title")}
                   </p>
                   <p className={`mt-1 text-sm ${softTextCls}`}>{t("puzzle.locked.description")}</p>
                 </div>
 
-                <p className={`text-xs font-semibold uppercase tracking-wide ${practiceResult ? mutedTextCls : (dark ? "text-emerald-400" : "text-emerald-600")}`}>
+                <p className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wide ${
+                  practiceResult
+                    ? "bg-sonnengelb text-tiefwasser"
+                    : (dark ? "bg-beckenwasser-hell/20 text-beckenwasser-hell" : "bg-beckenwasser-hell text-beckenwasser")
+                }`}>
                   {practiceResult ? t("puzzle.result.practiceBadge") : t("puzzle.result.officialBadge")}
                 </p>
                 <p className="text-lg font-bold">
@@ -359,11 +363,11 @@
 
                 <div className="flex flex-wrap items-center gap-3">
                   <button onClick={handleShareResult}
-                    className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    className="rounded-xl bg-sonnenkoralle px-4 py-2 text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                     {t("puzzle.actions.shareButton")}
                   </button>
                   <button onClick={handleRetry}
-                    className={`rounded-md border px-4 py-2 text-sm font-semibold ${dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"}`}>
+                    className={`rounded-xl border px-4 py-2 text-sm font-semibold ${dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"}`}>
                     {t("puzzle.actions.retryButton")}
                   </button>
                   <p className={`text-xs ${mutedTextCls}`}>
@@ -371,7 +375,7 @@
                   </p>
                 </div>
 
-                <div className={`rounded-lg p-4 ${dark ? "bg-slate-950/50 border border-slate-800" : "bg-slate-50 border border-slate-200"}`}>
+                <div className={`rounded-2xl p-4 ${dark ? "bg-tiefwasser/50 border border-tiefwasser-hell" : "bg-kalkstein border border-beckenwasser/20"}`}>
                   <p className="text-sm font-bold">{t("puzzle.stats.title")}</p>
                   {statsAvailable ? (
                     <div className="mt-2 grid grid-cols-3 gap-3 text-center">
@@ -394,7 +398,7 @@
                 </div>
 
                 <SiteLink to="/"
-                  className="block w-full rounded-lg bg-emerald-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  className="block w-full rounded-2xl bg-sonnenkoralle px-4 py-3 text-center text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                   {t("puzzle.actions.ctaButton")}
                 </SiteLink>
               </div>
@@ -406,20 +410,20 @@
 
         {copyUrl && (
           <div role="dialog" aria-modal="true" aria-label={t("puzzle.actions.shareButton")}
-            className={`fixed inset-0 z-[60] flex items-center justify-center p-4 ${dark ? "bg-black/60" : "bg-slate-900/40"}`}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-tiefwasser/60"
             onClick={() => setCopyUrl(null)}>
-            <div className={`w-full max-w-md rounded-xl p-4 shadow-xl space-y-3 ${dark ? "bg-slate-900 border border-slate-700" : "bg-white"}`}
+            <div className={`w-full max-w-md rounded-3xl p-4 space-y-3 ${dark ? "bg-tiefwasser-hell border border-tiefwasser-hell shadow-warm-dark" : "bg-kalkstein shadow-warm"}`}
               onClick={(e) => e.stopPropagation()}>
               <p className="text-sm font-bold">{t("puzzle.actions.shareButton")}</p>
               <textarea id="puzzle-share-input" readOnly value={copyUrl} rows={4}
                 onFocus={(e) => e.target.select()} className={inputCls} />
               <div className="flex gap-2">
                 <button onClick={copyFromModal}
-                  className="flex-1 rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  className="flex-1 rounded-xl bg-sonnenkoralle px-3 py-2 text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                   {t("share.modal.copyButton")}
                 </button>
                 <button onClick={() => setCopyUrl(null)}
-                  className={`rounded-md px-3 py-2 text-sm ${dark ? "text-slate-400 hover:bg-slate-800" : "text-slate-500 hover:bg-slate-100"}`}>
+                  className={`rounded-xl px-3 py-2 text-sm ${dark ? "text-sonnencreme/60 hover:bg-tiefwasser" : "text-espresso/60 hover:bg-beckenwasser-hell/30"}`}>
                   {t("share.modal.closeButton")}
                 </button>
               </div>
@@ -429,7 +433,7 @@
 
         {toast && (
           <div role="status" aria-live="polite"
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70] rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70] rounded-2xl border border-tiefwasser-hell bg-tiefwasser-hell px-4 py-2 text-sm text-kalkstein shadow-warm-dark">
             {toast}
           </div>
         )}
