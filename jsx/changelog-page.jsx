@@ -17,7 +17,7 @@
   const { SiteLink, SiteFooter } = window.FREILOTSE.ui;
 
   function ChangelogPage() {
-    const [dark, setDark] = useState(true);
+    const [dark, setDark] = useState(false);
 
     // document.title + Meta-Description setzen und beim Verlassen wieder
     // herstellen (analog zu jsx/about-page.jsx, bewusst OHNE den Robots-Tag
@@ -44,26 +44,26 @@
       };
     }, []);
 
-    const softTextCls = dark ? "text-slate-300" : "text-slate-600";
+    const softTextCls = dark ? "text-sonnencreme/80" : "text-espresso/80";
     const cardCls = dark
-      ? "bg-slate-900 border border-slate-800 rounded-xl shadow-sm"
-      : "bg-white border border-slate-200 rounded-xl shadow-sm";
+      ? "bg-tiefwasser-hell border border-tiefwasser-hell rounded-2xl shadow-warm-dark"
+      : "bg-kalkstein border border-beckenwasser/20 rounded-2xl shadow-warm";
 
     return (
-      <div className={`min-h-screen flex flex-col ${dark ? "bg-slate-950 text-slate-100" : "bg-slate-100 text-slate-900"}`}>
-        <header className={dark ? "border-b border-slate-800 bg-slate-900" : "border-b border-slate-200 bg-white"}>
+      <div className={`min-h-screen flex flex-col font-body ${dark ? "bg-tiefwasser text-sonnencreme" : "bg-sonnencreme text-espresso"}`}>
+        <header className={dark ? "border-b border-tiefwasser-hell bg-tiefwasser-hell" : "border-b border-beckenwasser/20 bg-kalkstein"}>
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-5">
-            <SiteLink to="/" className={`font-bold tracking-tight ${dark ? "text-white hover:text-emerald-400" : "text-slate-900 hover:text-emerald-600"}`}>
+            <SiteLink to="/" className={`font-bold tracking-tight ${dark ? "text-kalkstein hover:text-beckenwasser-hell" : "text-espresso hover:text-beckenwasser"}`}>
               FREILOTSE
             </SiteLink>
             <div className="flex items-center gap-4">
-              <SiteLink to="/" className={`text-sm ${dark ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-900"}`}>
+              <SiteLink to="/" className={`text-sm ${dark ? "text-sonnencreme/80 hover:text-kalkstein" : "text-espresso/80 hover:text-espresso"}`}>
                 {t("changelog.backToPlanner")}
               </SiteLink>
               <button onClick={() => setDark(!dark)}
                 title={t("theme.toggleTitle")}
-                className={`rounded-md border px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                  dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                className={`rounded-xl border px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+                  dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser/5"
                 }`}>
                 {dark ? t("theme.toLight") : t("theme.toDark")}
               </button>
@@ -78,19 +78,19 @@
               <p className={`text-sm leading-7 ${softTextCls}`}>{t("changelog.intro")}</p>
             </div>
 
-            <ol className="space-y-6 border-l-2 border-emerald-600/30 pl-6">
+            <ol className="space-y-6 border-l-2 border-beckenwasser/30 pl-6">
               {t("changelog.entries").map((entry) => (
                 <li key={entry.date} className="relative">
                   <span aria-hidden="true"
-                    className="absolute -left-[1.65rem] top-1.5 h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${dark ? "text-emerald-400" : "text-emerald-600"}`}>
+                    className="absolute -left-[1.65rem] top-1.5 h-2.5 w-2.5 rounded-full bg-beckenwasser" />
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${dark ? "text-beckenwasser-hell" : "text-beckenwasser"}`}>
                     {entry.date}
                   </p>
                   <h2 className="mt-1 text-base font-bold">{entry.title}</h2>
                   <ul className="mt-2 space-y-1.5 text-sm">
                     {entry.items.map((item) => (
                       <li key={item} className="flex items-start gap-2">
-                        <span aria-hidden="true" className="text-emerald-500">•</span>
+                        <span aria-hidden="true" className="text-beckenwasser">•</span>
                         <span className={softTextCls}>{item}</span>
                       </li>
                     ))}
