@@ -9,16 +9,44 @@
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/logo/freilotse-favicon-16.png">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/logo/apple-touch-icon.png">
-  <meta name="theme-color" content="#0B203A">
+  <meta name="theme-color" content="#F7F1E4">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="FREILOTSE">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Manrope:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sonnencreme: "#F7F1E4",
+            kalkstein: "#FFFDF8",
+            beckenwasser: { DEFAULT: "#0E9A70", hell: "#BFE8DC" },
+            tiefwasser: { DEFAULT: "#0B1E36", hell: "#15304F" },
+            sonnenkoralle: "#FF8A5B",
+            espresso: "#4A3F35",
+            lagune: { DEFAULT: "#2E8FC2", hell: "#CFE7F3" },
+            ziegelrot: { DEFAULT: "#C4432A", hell: "#F2D3C8" },
+            sonnengelb: { DEFAULT: "#F4C542", hell: "#FBEAB0" }
+          },
+          fontFamily: {
+            display: ["Manrope", "system-ui", "sans-serif"],
+            body: ["Figtree", "system-ui", "sans-serif"],
+            data: ['"Space Mono"', "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="css/theme.css?v=1">
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
 </head>
-<body class="bg-slate-950">
+<body class="bg-sonnencreme">
   <div id="root"></div>
   <noscript>Bitte JavaScript aktivieren, um den Urlaubsplaner zu nutzen.</noscript>
   <script src="locales/de.js?v=18"></script>
