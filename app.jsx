@@ -36,14 +36,20 @@ const {
   buildSharePayload, encodePlain, validateSharePayload, decodeShare,
   readShareFragment, deflateToB64url, inflateFromB64url,
 } = window.FREILOTSE.shareLink;
-// jsx/common-components.jsx, jsx/kofi-components.jsx, jsx/landing-page.jsx
+const {
+  MAX_PLANS: LOCAL_PLANS_MAX,
+  makePlan, findPlan, parseStore, serializeStore,
+  addPlan, updatePlanPayload, renamePlan, removePlan, setActivePlanId,
+} = window.FREILOTSE.localPlans;
+const LOCAL_PLANS_STORAGE_KEY = window.FREILOTSE.localPlans.STORAGE_KEY;
+// jsx/common-components.jsx, jsx/support-components.jsx, jsx/landing-page.jsx
 // und jsx/legal-pages.jsx müssen vor app.jsx geladen sein (siehe index.html).
 const {
   CollapsibleCard, InfoHint,
-  SiteFooter, KofiFloatingButton,
+  SiteFooter, SupportFloatingButton,
   LandingPage,
   ImpressumPage, DatenschutzPage,
-  AboutPage, ChangelogPage,
+  AboutPage, ChangelogPage, GuidePage, PuzzlePage,
 } = window.FREILOTSE.ui;
 
 /* ------------------------------------------------------------------ */
@@ -153,15 +159,46 @@ function Urlaubsplaner({ onPlanReady }) {
   }
   const shared = sharedRef.current.parsed ? sharedRef.current.parsed.state : null;
 
-  const [year, setYear] = useState(shared ? shared.year : currentYear);
+  // Lokal gespeicherte Pläne (localStorage) synchron lesen, bevor die States
+  // initialisiert werden – gleiches Muster wie sharedRef oben. Ein Share-Link
+  // in der URL hat immer Vorrang: die lokale Wiederherstellung greift nur,
+  // wenn KEIN Fragment vorliegt (weder #plan= noch #p=). localStorage kann in
+  // manchen Kontexten (z. B. Safaris privates Fenster) beim Schreiben werfen –
+  // eine kurze Probe entscheidet, ob das Feature in dieser Sitzung überhaupt
+  // verfügbar ist (stille Degradierung, kein Absturz).
+  const localStoreRef = useRef(undefined);
+  if (localStoreRef.current === undefined) {
+    let raw = null, available = true;
+    try {
+      window.localStorage.setItem("__freilotse_probe__", "1");
+      window.localStorage.removeItem("__freilotse_probe__");
+      raw = window.localStorage.getItem(LOCAL_PLANS_STORAGE_KEY);
+    } catch (e) { available = false; }
+    const parsed = available ? parseStore(raw) : { plans: [], activePlanId: null, corrupted: false };
+    localStoreRef.current = { available, ...parsed };
+  }
+  const activeLocalPlan = !sharedRef.current.had
+    ? findPlan(localStoreRef.current, localStoreRef.current.activePlanId)
+    : undefined;
+  // validateSharePayload prüft den Plan-INHALT (Enums, Bundesland-Gültigkeit
+  // usw.) – exakt dieselbe Funktion wie beim Share-Link, da ein gespeicherter
+  // Plan dieselbe {version, state}-Hülle verwendet (buildSharePayload).
+  const restoredLocal = activeLocalPlan
+    ? validateSharePayload(JSON.stringify(activeLocalPlan.payload), t("states"))
+    : null;
+  // Gemeinsamer Initialwert für alle folgenden useState-Aufrufe: ein Share-Link
+  // gewinnt immer, sonst ein wiederhergestellter lokaler Plan, sonst Standard.
+  const initialState = shared || (restoredLocal ? restoredLocal.state : null);
+
+  const [year, setYear] = useState(initialState ? initialState.year : currentYear);
   const [dark, setDark] = useState(true); // Dark-Mode ist Standard, umschaltbar im Kopfbereich
   // Land (DE/AT/CH) – bestimmt, welche Bundesländer/Kantone (STATES) zur
   // Auswahl stehen sowie countryIsoCode/subdivisionCode für die API-Aufrufe.
   // Ohne geteilte Planung wird das Land nachträglich per IP-/Sprach-Erkennung
   // vorbelegt (siehe detectCountry-Effekt weiter unten) – "DE" ist nur der
   // Startwert, bis diese Erkennung (falls überhaupt) abgeschlossen ist.
-  const [country, setCountry] = useState(shared ? shared.country : "DE");
-  const [st, setSt] = useState(shared ? shared.st : "BY");
+  const [country, setCountry] = useState(initialState ? initialState.country : "DE");
+  const [st, setSt] = useState(initialState ? initialState.st : "BY");
   // Für das aktuell gewählte Land gültige Bundesländer/Kantone. Muss reaktiv
   // sein (kein modulglobales STATES mehr, siehe oben), da sich die Liste beim
   // Länderwechsel ändert.
@@ -187,29 +224,29 @@ function Urlaubsplaner({ onPlanReady }) {
     return () => { ignore = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [vac, setVac] = useState(shared ? shared.vac : 30);
-  const [ot, setOt] = useState(shared ? shared.ot : 0);
-  const [xmasRule, setXmasRule] = useState(shared ? shared.xmasRule : "50"); // Standard: halber Urlaubstag am 24./31.12.
+  const [vac, setVac] = useState(initialState ? initialState.vac : 30);
+  const [ot, setOt] = useState(initialState ? initialState.ot : 0);
+  const [xmasRule, setXmasRule] = useState(initialState ? initialState.xmasRule : "50"); // Standard: halber Urlaubstag am 24./31.12.
   // Regelmäßige Arbeitstage – gemeinsamer Zustand für Einfach- UND Profi-Modus
   // (siehe CLAUDE.md, Abschnitt „Regelmäßige Arbeitstage"). Format: Array von
   // Date.getUTCDay()-Indizes (0=So…6=Sa), Standard Montag–Freitag. NUR für
   // dauerhaft gleichbleibende Wochenmuster – keine wechselnden Schichten.
-  const [workingWeekdays, setWorkingWeekdays] = useState(shared ? shared.workingWeekdays : [1, 2, 3, 4, 5]);
-  const [blocks, setBlocks] = useState(shared ? shared.blocks : []);
+  const [workingWeekdays, setWorkingWeekdays] = useState(initialState ? initialState.workingWeekdays : [1, 2, 3, 4, 5]);
+  const [blocks, setBlocks] = useState(initialState ? initialState.blocks : []);
   // Budget der automatischen Verteilung; "" = automatisch das Minimum nutzen
-  const [autoVac, setAutoVac] = useState(shared ? shared.autoVac : "");
-  const [autoOt, setAutoOt] = useState(shared ? shared.autoOt : "0");
-  const [spendFirst, setSpendFirst] = useState(shared ? shared.spendFirst : "vac"); // "vac" | "ot"
-  const [autoFrom, setAutoFrom] = useState(shared ? shared.autoFrom : 0); // Automatik plant ab diesem Monat (0 = Januar)
+  const [autoVac, setAutoVac] = useState(initialState ? initialState.autoVac : "");
+  const [autoOt, setAutoOt] = useState(initialState ? initialState.autoOt : "0");
+  const [spendFirst, setSpendFirst] = useState(initialState ? initialState.spendFirst : "vac"); // "vac" | "ot"
+  const [autoFrom, setAutoFrom] = useState(initialState ? initialState.autoFrom : 0); // Automatik plant ab diesem Monat (0 = Januar)
   // Schulferien-Präferenz – gemeinsame Variable für Einfach- UND Profi-Modus
-  const [schoolHolidayPreference, setSchoolHolidayPreference] = useState(shared ? shared.schoolHolidayPreference : "neutral"); // prefer | avoid | neutral
+  const [schoolHolidayPreference, setSchoolHolidayPreference] = useState(initialState ? initialState.schoolHolidayPreference : "neutral"); // prefer | avoid | neutral
   // Manuelles Planen per Klick im Kalender
   const [clickMode, setClickMode] = useState("vac"); // Klick setzt "vac" | "ot"
-  // Manuelle Tage aus dem Link mit dem geteilten Jahr rekonstruieren ("jahr:m-d").
+  // Manuelle Tage aus dem Link/lokalen Plan mit dem geteilten Jahr rekonstruieren ("jahr:m-d").
   const [overrides, setOverrides] = useState(() => {
-    if (!shared) return {};
+    if (!initialState) return {};
     const o = {};
-    for (const [md, val] of Object.entries(shared.overridesMd || {})) o[`${shared.year}:${md}`] = val;
+    for (const [md, val] of Object.entries(initialState.overridesMd || {})) o[`${initialState.year}:${md}`] = val;
     return o;
   }); // "jahr:m-d" -> "vac" | "ot" | "none"
   // Teilen-UI: kurze Bestätigung (Toast) und Fallback-Dialog zum manuellen Kopieren
@@ -217,6 +254,23 @@ function Urlaubsplaner({ onPlanReady }) {
   const [copyUrl, setCopyUrl] = useState(null);
   const toastTimer = useRef(null);
   const shareUrlRef = useRef(null); // vorab erzeugter (komprimierter) Link – für Safari/iOS-Aktivierung
+  // Lokal gespeicherte Pläne: React-State (für Re-Renders), abgeleitet aus
+  // dem synchron gelesenen localStoreRef. Rein UI-lokal, nicht Teil des
+  // Share-Link-Payloads.
+  // Bei einem Share-Link in der URL startet KEIN Plan als "aktiv" – sonst
+  // würde der nächste Autosave-Tick den zuvor aktiven lokalen Plan mit dem
+  // Inhalt des (fremden) Share-Links überschreiben. Der Share-Link bleibt so
+  // lange unverbindlich ansehbar, bis der Nutzer ihn explizit als eigenen
+  // Plan speichert.
+  const [plansStore, setPlansStore] = useState(() => ({
+    plans: localStoreRef.current.plans,
+    activePlanId: sharedRef.current.had ? null : localStoreRef.current.activePlanId,
+  }));
+  const localStorageAvailable = localStoreRef.current.available;
+  const [plansDialogOpen, setPlansDialogOpen] = useState(false);
+  const [renamingPlanId, setRenamingPlanId] = useState(null);
+  const [renameDraft, setRenameDraft] = useState("");
+  const [newPlanName, setNewPlanName] = useState("");
   const [dialogDay, setDialogDay] = useState(null); // Index des angeklickten geplanten Tags
   const [drag, setDrag] = useState(null); // { anchor, current } während einer Zieh-Auswahl
   const [vacTip, setVacTip] = useState(null); // { text } – Ferien-Info per Antippen (mobil)
@@ -233,12 +287,15 @@ function Urlaubsplaner({ onPlanReady }) {
   const [view, setView] = useState(() => {
     if (shared) return "planner";
     if (sharedRef.current.had && sharedRef.current.frag.type === "p") return "loading";
+    // Kein Share-Link, aber ein wiederhergestellter lokaler Plan: Landing
+    // Page/Einfach-Wizard genauso überspringen wie bei einem Share-Link.
+    if (restoredLocal) return "planner";
     return "landing";
   });
   // Einfach-/Profi-Modus: neuer UI-Modus, die Logik bleibt unverändert
-  const [uiMode, setUiMode] = useState(shared ? shared.uiMode : "einfach"); // "einfach" | "profi"
-  const [simpleGoal, setSimpleGoal] = useState(shared ? shared.simpleGoal : "free"); // free | blocks | short
-  const [simpleStarted, setSimpleStarted] = useState(shared ? shared.simpleStarted : false);
+  const [uiMode, setUiMode] = useState(initialState ? initialState.uiMode : "einfach"); // "einfach" | "profi"
+  const [simpleGoal, setSimpleGoal] = useState(initialState ? initialState.simpleGoal : "free"); // free | blocks | short
+  const [simpleStarted, setSimpleStarted] = useState(initialState ? initialState.simpleStarted : false);
   const [showSimpleCal, setShowSimpleCal] = useState(false);
   // Nur lokaler UI-Zustand (Einfachmodus): ist die Wochentags-Auswahl gerade
   // aufgeklappt? Nicht Teil von workingWeekdays selbst, nicht im Share-Link.
@@ -417,6 +474,68 @@ function Urlaubsplaner({ onPlanReady }) {
     return plan(days, cfg);
   }, [days, vac, ot, blocks, effAutoVac, effAutoOt, spendFirst, autoFrom, yearOverrides, effectiveSchoolHolidayPreference, hasVacationData, vacationDays]);
 
+  /* --- Jahreswechsel-Erweiterung (nur Profi-Modus) ---
+     Der reguläre Plan und sämtliche Kennzahlen bleiben strikt einjährig. Nur
+     wenn sein letzter Zeitraum bis zum 31.12. reicht, laden wir den Kalender
+     des Folgejahres. Dessen kostenloser Präfix wird sicher angehängt; eine von
+     plan() gefundene, kostenpflichtige Fortsetzung bleibt ein unverbindlicher
+     Hinweis, da das Folgejahr-Kontingent unbekannt ist. */
+  const lastPeriod = result.periods.length > 0 ? result.periods[result.periods.length - 1] : null;
+  const needsYearTransition = uiMode === "profi" && !!lastPeriod && lastPeriod.e === days.length - 1;
+  const [apiHolidaysNext, setApiHolidaysNext] = useState(null);
+  const [apiHolidaysNextReady, setApiHolidaysNextReady] = useState(false);
+  useEffect(() => {
+    let ignore = false;
+    setApiHolidaysNext(null);
+    setApiHolidaysNextReady(false);
+    if (!needsYearTransition) return () => { ignore = true; };
+    loadPublicHolidays(year + 1, st, country).then((nextResult) => {
+      if (ignore) return;
+      setApiHolidaysNext(nextResult.holidays);
+      setApiHolidaysNextReady(true);
+    });
+    return () => { ignore = true; };
+  }, [needsYearTransition, year, st, country]);
+
+  const nextYearDays = useMemo(() => {
+    if (!needsYearTransition || !apiHolidaysNextReady) return null;
+    return buildDays(year + 1, st, xmasRule, apiHolidaysNext, t, workingWeekdays, country);
+  }, [needsYearTransition, apiHolidaysNextReady, apiHolidaysNext, year, st, xmasRule, workingWeekdays, country]);
+
+  const yearTransition = useMemo(() => {
+    if (!needsYearTransition || !nextYearDays || nextYearDays.length === 0) return null;
+
+    // Nur der lückenlose kostenlose Präfix ab Neujahr ist sicher. Kostenlose
+    // Tage hinter einer noch nicht genommenen Urlaubslücke dürfen hier nicht
+    // mitgezählt werden.
+    let freeExtensionDays = 0;
+    while (freeExtensionDays < nextYearDays.length && nextYearDays[freeExtensionDays].cost === 0) {
+      freeExtensionDays++;
+    }
+    if (freeExtensionDays === 0) return null;
+
+    const hypo = plan(nextYearDays, {
+      vac: 10, ot: 0,
+      autoVac: 10, autoOt: 0,
+      spendFirst: "vac",
+      autoFromMonth: 0,
+      schoolHolidayPreference: "neutral",
+      vacationDays: null,
+      overrides: {},
+      blocks: [],
+    });
+    const hypotheticalPeriod = hypo.periods.find((p) => p.s === 0) || null;
+    const neededVac = hypotheticalPeriod ? hypotheticalPeriod.vac : 0;
+    const optionalEnd = hypotheticalPeriod ? hypotheticalPeriod.e : freeExtensionDays - 1;
+    return {
+      freeExtensionDays,
+      certainEndDate: nextYearDays[freeExtensionDays - 1],
+      neededVac,
+      totalLen: lastPeriod.len + optionalEnd + 1,
+      endDate: nextYearDays[optionalEnd],
+    };
+  }, [needsYearTransition, nextYearDays, lastPeriod]);
+
   // Zuordnung Tag-Index -> Zeitraum, EINMAL aus result.periods abgeleitet
   // (Single Source of Truth, keine doppelte Berechnung, kein eigener
   // persistenter State) – aktualisiert sich automatisch bei jeder
@@ -430,7 +549,7 @@ function Urlaubsplaner({ onPlanReady }) {
     return map;
   }, [result.periods]);
 
-  // Ko-fi-Hinweis: einmalig pro Seitenaufruf, sobald erstmals ein echtes
+  // Support-Hinweis: einmalig pro Seitenaufruf, sobald erstmals ein echtes
   // Planungsergebnis mit mindestens einem Urlaubsblock sichtbar ist (Einfach-
   // Modus: nach Klick auf "Beste Planung berechnen"; Profi-Modus: sobald das
   // Ergebnis, das dort ohnehin live berechnet wird, Blöcke enthält). Löst
@@ -583,6 +702,59 @@ function Urlaubsplaner({ onPlanReady }) {
     setOverrides(o);
   };
 
+  /* --- Lokal gespeicherte Pläne --- */
+  // Einziger Schreibpfad: hält React-State und localStorage synchron. Ein
+  // fehlgeschlagenes Schreiben (Quota etc.) degradiert still zu "diesmal
+  // nicht gespeichert" statt abzustürzen.
+  const persistPlansStore = (next) => {
+    setPlansStore(next);
+    if (!localStorageAvailable) return;
+    try { window.localStorage.setItem(LOCAL_PLANS_STORAGE_KEY, serializeStore(next)); }
+    catch (e) { showToast(t("localPlans.toast.saveFailed")); }
+  };
+
+  const savePlanAsNew = (name) => {
+    if (plansStore.plans.length >= LOCAL_PLANS_MAX) {
+      showToast(t("localPlans.toast.limitReached", { max: LOCAL_PLANS_MAX }));
+      return;
+    }
+    const isFirstEver = plansStore.plans.length === 0;
+    const plan = makePlan(name && name.trim() ? name.trim() : t("localPlans.defaultName"), currentSharePayload());
+    persistPlansStore(setActivePlanId(addPlan(plansStore, plan), plan.id));
+    if (isFirstEver) showToast(t("localPlans.toast.firstSaveNotice"));
+  };
+
+  const switchToPlan = (id) => {
+    const p = findPlan(plansStore, id);
+    if (!p) return;
+    const res = validateSharePayload(JSON.stringify(p.payload), t("states"));
+    if (!res) { showToast(t("localPlans.toast.loadFailed")); return; }
+    applySharedState(res.state);
+    persistPlansStore(setActivePlanId(plansStore, id));
+    showToast(res.warning ? t("localPlans.toast.loadedPartially") : t("localPlans.toast.loadedFully"));
+    setPlansDialogOpen(false);
+  };
+
+  const renamePlanAction = (id, name) => {
+    if (name.trim()) persistPlansStore(renamePlan(plansStore, id, name.trim()));
+  };
+
+  const duplicatePlanAction = (id) => {
+    if (plansStore.plans.length >= LOCAL_PLANS_MAX) {
+      showToast(t("localPlans.toast.limitReached", { max: LOCAL_PLANS_MAX }));
+      return;
+    }
+    const src = findPlan(plansStore, id);
+    if (!src) return;
+    const plan = makePlan(`${src.name}${t("localPlans.copySuffix")}`, src.payload);
+    persistPlansStore(addPlan(plansStore, plan)); // schaltet bewusst NICHT auf den neuen Plan um
+  };
+
+  const removePlanAction = (id) => {
+    persistPlansStore(removePlan(plansStore, id));
+    showToast(t("localPlans.toast.deleted"));
+  };
+
   const handleShare = async () => {
     // Vorab erzeugten (i. d. R. komprimierten) Link nutzen, damit vor
     // navigator.share/clipboard KEIN await steht – sonst verliert u. a. Safari
@@ -627,10 +799,17 @@ function Urlaubsplaner({ onPlanReady }) {
 
   // Den (komprimierten) Teilen-Link vorab im Hintergrund erzeugen, sobald sich
   // relevante Eingaben ändern. So liegt er beim Klick synchron bereit.
+  // Gleichzeitig: Autosave des aktiven lokalen Plans (dieselben Eingaben lösen
+  // beides aus – bewusst EIN Effekt statt zwei, damit die Dependency-Listen
+  // nicht auseinanderlaufen können).
   useEffect(() => {
     // Solange ein #p=-Link noch dekomprimiert wird, stehen die Eingaben noch
-    // auf Standardwerten – noch keinen (falschen) Vorab-Link dafür bauen.
+    // auf Standardwerten – noch keinen (falschen) Vorab-Link dafür bauen, auch
+    // noch nicht in einen ggf. aktiven Plan zurückschreiben.
     if (view === "loading") return;
+    if (plansStore.activePlanId) {
+      persistPlansStore(updatePlanPayload(plansStore, plansStore.activePlanId, currentSharePayload()));
+    }
     let cancelled = false;
     (async () => {
       try {
@@ -642,7 +821,7 @@ function Urlaubsplaner({ onPlanReady }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year, st, vac, ot, xmasRule, uiMode, simpleGoal, simpleStarted,
       schoolHolidayPreference, autoVac, autoOt, spendFirst, autoFrom,
-      workingWeekdays, blocks, yearOverrides, view]);
+      workingWeekdays, blocks, yearOverrides, view, plansStore.activePlanId]);
 
   // Beim Start: geteilte Planung anwenden (bei #p= asynchron dekomprimieren),
   // Hinweis zeigen und das Fragment aus der Adresszeile entfernen (sauberes
@@ -659,6 +838,12 @@ function Urlaubsplaner({ onPlanReady }) {
         : t("share.toast.loadedFully")
     );
     if (!info || !info.had) {
+      // Kein Share-Link: nur bei Anomalien einen Hinweis zeigen (kaputter
+      // Store, oder ein wiederhergestellter Plan mit teilweise ungültigem
+      // Inhalt). Der normale, stille Auto-Restore-Fall zeigt bewusst KEINEN
+      // Toast – soll sich anfühlen, als hätte der Browser den Tab gemerkt.
+      if (localStoreRef.current.corrupted) showToast(t("localPlans.toast.storeCorrupted"));
+      else if (restoredLocal && restoredLocal.warning) showToast(t("localPlans.toast.loadedPartially"));
       return () => { if (toastTimer.current) clearTimeout(toastTimer.current); };
     }
     if (info.frag.type === "plan") {
@@ -689,14 +874,22 @@ function Urlaubsplaner({ onPlanReady }) {
 
   // Export eines freien Zeitraums als Kalendereintrag (ganztägig, Ende exklusiv)
   const ymdOf = (day) => `${year}${String(day.m + 1).padStart(2, "0")}${String(day.d).padStart(2, "0")}`;
-  const ymdAfter = (day) => {
-    const dt = new Date(Date.UTC(year, day.m, day.d) + DAY);
+  const ymdAfter = (day, yr = year) => {
+    const dt = new Date(Date.UTC(yr, day.m, day.d) + DAY);
     return `${dt.getUTCFullYear()}${String(dt.getUTCMonth() + 1).padStart(2, "0")}${String(dt.getUTCDate()).padStart(2, "0")}`;
   };
+  // Beim letzten Zeitraum inkl. Jahreswechsel-Erweiterung reicht das Ende bis
+  // in den sicher-kostenlosen Anhang des Folgejahres (yearTransition.certainEndDate) –
+  // die nur hypothetische Verlängerung mit Urlaubstagen aus dem Folgejahr wird
+  // hier bewusst NICHT mit exportiert, da sie unverbindlich bleibt.
   const exportInfo = (p) => {
     const dtStart = ymdOf(days[p.s]);
-    const dtEnd = ymdAfter(days[p.e]); // exklusiv, iCalendar-Standard
-    const desc = t("exportCal.icsDescription", { len: p.len, vac: fmtNum(p.vac), ot: fmtNum(p.ot), otRaw: p.ot });
+    const isTransition = !!yearTransition && p === lastPeriod;
+    const dtEnd = isTransition
+      ? ymdAfter(yearTransition.certainEndDate, year + 1)
+      : ymdAfter(days[p.e]); // exklusiv, iCalendar-Standard
+    const len = isTransition ? p.len + yearTransition.freeExtensionDays : p.len;
+    const desc = t("exportCal.icsDescription", { len, vac: fmtNum(p.vac), ot: fmtNum(p.ot), otRaw: p.ot });
     return { dtStart, dtEnd, desc };
   };
   const googleUrl = (p) => {
@@ -704,13 +897,12 @@ function Urlaubsplaner({ onPlanReady }) {
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t("exportCal.eventTitle"))}` +
       `&dates=${dtStart}/${dtEnd}&details=${encodeURIComponent(desc)}`;
   };
-  const downloadIcs = async (p) => {
+  // Ein VEVENT-Block für einen Zeitraum. stamp wird übergeben (statt selbst
+  // berechnet), damit ein Sammel-Export für alle Zeiträume denselben
+  // DTSTAMP verwenden kann statt pro Zeitraum neu new Date() aufzurufen.
+  const buildVeventLines = (p, stamp) => {
     const { dtStart, dtEnd, desc } = exportInfo(p);
-    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-    const ics = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//Urlaubsplaner//DE",
+    return [
       "BEGIN:VEVENT",
       `UID:urlaubsplaner-${year}-${p.s}-${p.e}@local`,
       `DTSTAMP:${stamp}`,
@@ -719,17 +911,18 @@ function Urlaubsplaner({ onPlanReady }) {
       `SUMMARY:${t("exportCal.eventTitle")}`,
       `DESCRIPTION:${desc.replace(/([,;])/g, "\\$1")}`,
       "END:VEVENT",
-      "END:VCALENDAR",
-    ].join("\r\n");
-    const fileName = `urlaub-${dtStart}.ics`;
-    // iPhone/iPad: natives Teilen-Menü öffnen -> von dort direkt in den iOS-Kalender
+    ];
+  };
+  // Teilt eine fertige .ics per nativem Teilen-Menü (iPhone/iPad -> direkt in
+  // den iOS-Kalender) oder lädt sie andernfalls als Datei herunter.
+  const shareOrDownloadIcs = async (ics, fileName, shareTitle) => {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     if (isIOS && typeof File !== "undefined" && navigator.canShare) {
       try {
         const file = new File([ics], fileName, { type: "text/calendar" });
         if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: t("exportCal.eventTitle") });
+          await navigator.share({ files: [file], title: shareTitle });
           return;
         }
       } catch (err) {
@@ -747,6 +940,140 @@ function Urlaubsplaner({ onPlanReady }) {
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
+  const downloadIcs = async (p) => {
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Urlaubsplaner//DE",
+      ...buildVeventLines(p, stamp),
+      "END:VCALENDAR",
+    ].join("\r\n");
+    const { dtStart } = exportInfo(p);
+    await shareOrDownloadIcs(ics, `urlaub-${dtStart}.ics`, t("exportCal.eventTitle"));
+  };
+  // Alle Zeiträume des aktuellen Plans gebündelt als eine .ics-Datei (mehrere
+  // VEVENT-Blöcke). Google unterstützt keinen Sammel-Import per URL (die
+  // Schnell-Hinzufügen-URL nimmt nur ein Ereignis entgegen) – dafür bleibt
+  // die bestehende Pro-Zeitraum-Google-Schaltfläche zuständig.
+  const downloadAllIcs = async () => {
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Urlaubsplaner//DE",
+      ...result.periods.flatMap((p) => buildVeventLines(p, stamp)),
+      "END:VCALENDAR",
+    ].join("\r\n");
+    await shareOrDownloadIcs(ics, `urlaubsplan-${year}.ics`, t("exportCal.allEventsTitle", { year }));
+  };
+
+  /* --- Gemeinsam frei (Kollegen-/Partner-Überschneidungs-Check) ---
+     Rein clientseitig: Share-Links anderer Personen werden unabhängig vom
+     eigenen Plan dekodiert, deren Feiertage/Plan komplett neu berechnet
+     (Share-Links speichern nur Eingaben, siehe js/share-link.js) und mit dem
+     eigenen Ergebnis auf Überschneidung geprüft. Bewusst NICHT Teil des
+     Share-Link-/lokalen Plan-Payloads – nur für die aktuelle Sitzung. */
+  const [sharedPeople, setSharedPeople] = useState([]); // [{ id, label, days, result }]
+  const [sharedLinkInput, setSharedLinkInput] = useState("");
+  const [sharedLinkError, setSharedLinkError] = useState(null);
+  const [sharedLinkLoading, setSharedLinkLoading] = useState(false);
+  const nextPersonIdRef = useRef(1);
+
+  const addSharedPerson = async () => {
+    const raw = sharedLinkInput.trim();
+    if (!raw) return;
+    setSharedLinkError(null);
+    const hashPart = raw.includes("#") ? raw.slice(raw.indexOf("#")) : `#${raw}`;
+    const frag = readShareFragment(hashPart);
+    if (!frag) { setSharedLinkError(t("sharedFree.linkInvalid")); return; }
+    setSharedLinkLoading(true);
+    try {
+      let res;
+      if (frag.type === "plan") {
+        res = decodeShare(frag.raw, t("states"));
+      } else if (frag.raw.length <= SHARE_MAX_DECODED) {
+        const json = await inflateFromB64url(frag.raw);
+        res = validateSharePayload(json, t("states"));
+      } else {
+        res = null;
+      }
+      if (!res || !res.state) { setSharedLinkError(t("sharedFree.linkInvalid")); return; }
+      const s = res.state;
+      if (s.year !== year) {
+        setSharedLinkError(t("sharedFree.differentYearWarning", { year: s.year, ownYear: year }));
+        return;
+      }
+      const holidaysRes = await loadPublicHolidays(s.year, s.st, s.country);
+      const personDays = buildDays(s.year, s.st, s.xmasRule, holidaysRes.holidays, t, s.workingWeekdays, s.country);
+      const personOverrides = { ...(s.overridesMd || {}) };
+      const personCfg = {
+        vac: s.vac, ot: s.ot,
+        autoVac: s.autoVac === "" ? minimalBridgeBudget(personDays, s.autoFrom) : num(s.autoVac),
+        autoOt: num(s.autoOt),
+        spendFirst: s.spendFirst,
+        autoFromMonth: s.autoFrom,
+        schoolHolidayPreference: "neutral",
+        vacationDays: null,
+        overrides: personOverrides,
+        blocks: (s.blocks || [])
+          .filter((b) => num(b.len) >= 1)
+          .map((b) => ({
+            len: num(b.len),
+            month: b.month === "" ? null : parseInt(b.month, 10),
+            ot: b.ot === "" ? null : num(b.ot),
+          })),
+      };
+      const personResult = plan(personDays, personCfg);
+      const index = sharedPeople.length + 2; // "Du" ist implizit Person 1
+      const person = { id: nextPersonIdRef.current++, label: t("sharedFree.personLabel", { index }), days: personDays, result: personResult };
+      setSharedPeople((prev) => [...prev, person]);
+      setSharedLinkInput("");
+    } catch (e) {
+      setSharedLinkError(t("sharedFree.linkInvalid"));
+    } finally {
+      setSharedLinkLoading(false);
+    }
+  };
+  const removeSharedPerson = (id) => setSharedPeople((prev) => prev.filter((p) => p.id !== id));
+
+  const isDayFree = (day, sel) => day.cost === 0 || sel === "vac" || sel === "ot";
+  const sharedFreePeriods = useMemo(() => {
+    if (sharedPeople.length === 0) return [];
+    const runs = [];
+    let runStart = null;
+    for (let i = 0; i < days.length; i++) {
+      const allFree = isDayFree(days[i], result.sel[i]) &&
+        sharedPeople.every((p) => isDayFree(p.days[i], p.result.sel[i]));
+      if (allFree) {
+        if (runStart === null) runStart = i;
+      } else if (runStart !== null) {
+        runs.push({ s: runStart, e: i - 1 });
+        runStart = null;
+      }
+    }
+    if (runStart !== null) runs.push({ s: runStart, e: days.length - 1 });
+    const sumCost = (selArr, daysArr, s, e) => {
+      let vacSum = 0, otSum = 0;
+      for (let i = s; i <= e; i++) {
+        if (selArr[i] === "vac") vacSum += daysArr[i].cost;
+        else if (selArr[i] === "ot") otSum += daysArr[i].cost;
+      }
+      return { vac: vacSum, ot: otSum };
+    };
+    // Wie js/planning.js:287 ("if (hasSel || orig.has('block'))"): ein reiner
+    // Wochenend-/Feiertags-Lauf ohne jeden Urlaubs-/Überstunden-Einsatz zählt
+    // NICHT als eigener Zeitraum – sonst würde jedes gewöhnliche Wochenende
+    // (an dem niemand etwas eingesetzt hat) als "gemeinsam frei" auftauchen.
+    return runs
+      .map((run) => ({
+        ...run,
+        len: run.e - run.s + 1,
+        mine: sumCost(result.sel, days, run.s, run.e),
+        others: sharedPeople.map((p) => ({ label: p.label, ...sumCost(p.result.sel, p.days, run.s, run.e) })),
+      }))
+      .filter((run) => run.mine.vac > 0 || run.mine.ot > 0 || run.others.some((o) => o.vac > 0 || o.ot > 0));
+  }, [days, result.sel, sharedPeople]);
 
   const usedVac = num(vac) - result.budget.vac;
   const usedOt = num(ot) - result.budget.ot;
@@ -1268,6 +1595,23 @@ function Urlaubsplaner({ onPlanReady }) {
             </svg>
             {t("share.button")}
           </button>
+          {localStorageAvailable && (
+            <button
+              onClick={() => {
+                if (plansStore.plans.length === 0) savePlanAsNew();
+                else setPlansDialogOpen(true);
+              }}
+              className="self-start inline-flex items-center gap-1.5 rounded-md border border-slate-600 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label={plansStore.plans.length === 0 ? t("localPlans.header.saveAriaLabel") : t("localPlans.header.manageAriaLabel")}
+              title={plansStore.plans.length === 0 ? t("localPlans.header.saveButton") : t("localPlans.header.manageButton")}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
+                <path d="M17 21v-8H7v8" /><path d="M7 3v5h8" />
+              </svg>
+              {plansStore.plans.length === 0 ? t("localPlans.header.saveButton") : t("localPlans.header.manageButton")}
+            </button>
+          )}
           <button onClick={() => setDark(!dark)}
             className="self-start rounded-md border border-slate-600 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-800"
             title={t("theme.toggleTitle")}>
@@ -1791,12 +2135,26 @@ function Urlaubsplaner({ onPlanReady }) {
 
           {/* Freie Perioden */}
           <section className={`${cardCls} p-4`}>
-            <h2 className="text-sm font-bold mb-2">{t("results.periodsHeading")}</h2>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <h2 className="text-sm font-bold">{t("results.periodsHeading")}</h2>
+              {result.periods.length > 0 && (
+                <button onClick={downloadAllIcs}
+                  title={t("results.exportAllTitle")}
+                  className={`rounded-md border px-2 py-0.5 text-[11px] font-semibold ${
+                    dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                  }`}>
+                  {t("results.exportAllButton")}
+                </button>
+              )}
+            </div>
             {result.periods.length === 0 ? (
               <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("results.periodsEmptyHint")}</p>
             ) : (
               <ul className={`divide-y ${dark ? "divide-slate-800" : "divide-slate-100"}`}>
-                {result.periods.map((p, i) => (
+                {result.periods.map((p, i) => {
+                  const isTransitionPeriod = i === result.periods.length - 1 && !!yearTransition;
+                  const certainLen = isTransitionPeriod ? p.len + yearTransition.freeExtensionDays : p.len;
+                  return (
                   <li key={i} role="button" tabIndex={0}
                     onClick={() => scrollToPeriod(p)}
                     onKeyDown={(e) => onRowKeyDown(e, p)}
@@ -1805,7 +2163,9 @@ function Urlaubsplaner({ onPlanReady }) {
                       dark ? "active:bg-slate-800/60" : "active:bg-slate-100"
                     }`}>
                     <span className="flex flex-wrap items-center gap-2 font-medium">
-                      {fmtDate(days[p.s])} – {fmtDate(days[p.e])}
+                      {fmtDate(days[p.s])} – {isTransitionPeriod
+                        ? `${fmtDate(yearTransition.certainEndDate)}${year + 1}`
+                        : fmtDate(days[p.e])}
                       {p.origins.includes("block") && (
                         <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700">{t("results.badgeBlock")}</span>
                       )}
@@ -1817,9 +2177,16 @@ function Urlaubsplaner({ onPlanReady }) {
                       )}
                     </span>
                     <span className="flex items-center gap-3">
-                      <span className={`tabular-nums ${dark ? "text-slate-400" : "text-slate-500"}`}>
-                        {t("results.periodSummary", { len: p.len, vac: fmtNum(p.vac), ot: fmtNum(p.ot), otRaw: p.ot })}
-                      </span>
+                      {isTransitionPeriod ? (
+                        <span className={`text-right tabular-nums ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                          <span className="block">{t("yearTransition.certainLabel", { len: certainLen })}</span>
+                          <span className="block text-xs">{t("yearTransition.neededLabel", { vac: fmtNum(p.vac), vacRaw: p.vac, year })}</span>
+                        </span>
+                      ) : (
+                        <span className={`tabular-nums ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                          {t("results.periodSummary", { len: p.len, vac: fmtNum(p.vac), ot: fmtNum(p.ot), otRaw: p.ot })}
+                        </span>
+                      )}
                       <span className="flex items-center gap-1.5">
                         <button onClick={(e) => { e.stopPropagation(); downloadIcs(p); }}
                           title={t("results.icsTitle")}
@@ -1840,6 +2207,79 @@ function Urlaubsplaner({ onPlanReady }) {
                       <span aria-hidden="true" className={`hidden sm:inline-block ${dark ? "text-slate-600" : "text-slate-300"}`}>›</span>
                     </span>
                     {reasonLines(p)}
+                    {isTransitionPeriod && yearTransition.neededVac > 0 && (
+                      <div className={`basis-full mt-2 rounded-lg border border-dashed p-3 ${
+                        dark ? "border-amber-600/70 bg-amber-950/20" : "border-amber-400 bg-amber-50"
+                      }`}>
+                        <p className={`text-[11px] font-bold uppercase tracking-wide ${dark ? "text-amber-400" : "text-amber-700"}`}>
+                          {t("yearTransition.hypotheticalBadge", { year: year + 1 })}
+                        </p>
+                        <p className={`mt-1 text-xs ${dark ? "text-amber-200" : "text-amber-900"}`}>
+                          {t("yearTransition.hypotheticalText", {
+                            extra: fmtNum(yearTransition.neededVac),
+                            extraRaw: yearTransition.neededVac,
+                            total: yearTransition.totalLen,
+                            end: `${fmtDate(yearTransition.endDate)}${year + 1}`,
+                            year: year + 1,
+                          })}
+                        </p>
+                      </div>
+                    )}
+                  </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+
+          {/* Gemeinsam frei (Kollegen-/Partner-Überschneidungs-Check) */}
+          <section className={`${cardCls} p-4 space-y-3`}>
+            <h2 className="text-sm font-bold">{t("sharedFree.heading")}</h2>
+            <div className="flex flex-wrap gap-2">
+              <input className={`${inputCls} flex-1 min-w-[12rem]`} type="text"
+                placeholder={t("sharedFree.linkPlaceholder")} value={sharedLinkInput}
+                onChange={(e) => setSharedLinkInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") addSharedPerson(); }} />
+              <button onClick={addSharedPerson} disabled={sharedLinkLoading}
+                className="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
+                {t("sharedFree.addButton")}
+              </button>
+            </div>
+            {sharedLinkError && (
+              <p className="text-xs text-rose-600">{sharedLinkError}</p>
+            )}
+            {sharedPeople.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {sharedPeople.map((p) => (
+                  <span key={p.id} className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs ${dark ? "border-slate-600 text-slate-300" : "border-slate-300 text-slate-600"}`}>
+                    {p.label}
+                    <button onClick={() => removeSharedPerson(p.id)} className="text-slate-400 hover:text-rose-500">
+                      {t("sharedFree.removeButton")}
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            {sharedPeople.length === 0 ? (
+              <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("sharedFree.emptyNoPeople")}</p>
+            ) : sharedFreePeriods.length === 0 ? (
+              <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("sharedFree.emptyNoOverlap")}</p>
+            ) : (
+              <ul className={`divide-y ${dark ? "divide-slate-800" : "divide-slate-100"}`}>
+                {sharedFreePeriods.map((p, i) => (
+                  <li key={i} className="py-2 text-sm space-y-1">
+                    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+                      <span className="font-medium">{fmtDate(days[p.s])} – {fmtDate(days[p.e])}</span>
+                      <span className={`tabular-nums ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                        {t("sharedFree.periodHeading", { len: p.len })}
+                      </span>
+                    </div>
+                    <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                      {t("sharedFree.myCost", { vac: fmtNum(p.mine.vac), vacRaw: p.mine.vac, ot: fmtNum(p.mine.ot), otRaw: p.mine.ot })}
+                      {p.others.map((o, oi) => (
+                        <span key={oi}> · {t("sharedFree.personCost", { label: o.label, vac: fmtNum(o.vac), vacRaw: o.vac, ot: fmtNum(o.ot), otRaw: o.ot })}</span>
+                      ))}
+                    </p>
                   </li>
                 ))}
               </ul>
@@ -1987,6 +2427,87 @@ function Urlaubsplaner({ onPlanReady }) {
           </div>
         </div>
       )}
+
+      {/* Dialog: lokal gespeicherte Pläne verwalten */}
+      {plansDialogOpen && (
+        <div role="dialog" aria-modal="true" aria-label={t("localPlans.modal.title")}
+          className={`fixed inset-0 z-[60] flex items-center justify-center p-4 ${dark ? "bg-black/60" : "bg-slate-900/40"}`}
+          onClick={() => setPlansDialogOpen(false)}>
+          <div className={`w-full max-w-md rounded-xl p-4 shadow-xl space-y-3 max-h-[80vh] overflow-y-auto ${dark ? "bg-slate-900 border border-slate-700" : "bg-white"}`}
+            onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm font-bold">{t("localPlans.modal.title")}</p>
+            <p className={`text-[11px] leading-snug ${dark ? "text-slate-400" : "text-slate-500"}`}>
+              {t("localPlans.modal.privacyNote")}
+            </p>
+            <div className="flex gap-2">
+              <input className={inputCls} placeholder={t("localPlans.modal.newPlanNamePlaceholder")}
+                value={newPlanName} onChange={(e) => setNewPlanName(e.target.value)} />
+              <button onClick={() => { savePlanAsNew(newPlanName); setNewPlanName(""); }}
+                className="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700">
+                {t("localPlans.modal.newPlanButton")}
+              </button>
+            </div>
+            {plansStore.plans.length === 0 ? (
+              <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("localPlans.modal.emptyHint")}</p>
+            ) : (
+              [...plansStore.plans].sort((a, b) => b.updatedAt - a.updatedAt).map((p) => (
+                <div key={p.id} className={`rounded-lg border p-2.5 space-y-2 ${dark ? "border-slate-700" : "border-slate-200"}`}>
+                  {renamingPlanId === p.id ? (
+                    <div className="flex gap-2">
+                      <input className={inputCls} value={renameDraft} onChange={(e) => setRenameDraft(e.target.value)} />
+                      <button onClick={() => { renamePlanAction(p.id, renameDraft); setRenamingPlanId(null); }}
+                        className="text-xs font-semibold text-emerald-600">{t("localPlans.modal.renameSaveButton")}</button>
+                      <button onClick={() => setRenamingPlanId(null)}
+                        className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("localPlans.modal.renameCancelButton")}</button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold">
+                          {p.name}
+                          {p.id === plansStore.activePlanId && (
+                            <span className="ml-2 rounded bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-500">
+                              {t("localPlans.modal.activeBadge")}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                      <p className={`text-[11px] ${dark ? "text-slate-500" : "text-slate-400"}`}>
+                        {t("localPlans.modal.updatedAtLabel", {
+                          date: new Date(p.updatedAt).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "short" }),
+                        })}
+                      </p>
+                      <div className="flex flex-wrap gap-3 text-xs">
+                        {p.id !== plansStore.activePlanId && (
+                          <button onClick={() => switchToPlan(p.id)} className="font-semibold text-emerald-600">
+                            {t("localPlans.modal.openButton")}
+                          </button>
+                        )}
+                        <button onClick={() => { setRenamingPlanId(p.id); setRenameDraft(p.name); }}
+                          className={dark ? "text-slate-400 hover:text-slate-200" : "text-slate-500 hover:text-slate-800"}>
+                          {t("localPlans.modal.renameButton")}
+                        </button>
+                        <button onClick={() => duplicatePlanAction(p.id)}
+                          className={dark ? "text-slate-400 hover:text-slate-200" : "text-slate-500 hover:text-slate-800"}>
+                          {t("localPlans.modal.duplicateButton")}
+                        </button>
+                        <button onClick={() => removePlanAction(p.id)}
+                          className={dark ? "text-slate-400 hover:text-rose-500" : "text-slate-500 hover:text-rose-600"}>
+                          {t("localPlans.modal.deleteButton")}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))
+            )}
+            <button onClick={() => setPlansDialogOpen(false)}
+              className={`w-full rounded-md px-3 py-2 text-sm ${dark ? "text-slate-400 hover:bg-slate-800" : "text-slate-500 hover:bg-slate-100"}`}>
+              {t("localPlans.modal.closeButton")}
+            </button>
+          </div>
+        </div>
+      )}
       </>
       )}
 
@@ -2014,12 +2535,14 @@ function App() {
     : path === "/datenschutz" ? <DatenschutzPage />
     : path === "/ueber-freilotse" ? <AboutPage />
     : path === "/neuigkeiten" ? <ChangelogPage />
+    : path === "/anleitung" ? <GuidePage />
+    : path === "/raetsel" ? <PuzzlePage />
     : <Urlaubsplaner onPlanReady={() => setPlanReady(true)} />;
 
   return (
     <>
       {page}
-      <KofiFloatingButton planReady={planReady} path={path} />
+      <SupportFloatingButton planReady={planReady} path={path} />
     </>
   );
 }

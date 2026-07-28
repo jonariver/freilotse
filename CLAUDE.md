@@ -51,22 +51,32 @@ innerhalb von `app.jsx` unverändert (keine Umbenennungen).
 | `js/calendar.js` | `window.FREILOTSE.calendar` | `DAY`, `easterUTC()`, `holidayMap()`, `buildDays()`, `vacationDayMap()`. Reine Kalenderlogik ohne Netzwerkzugriff. `holidayMap`/`buildDays`/`vacationDayMap` erhalten die Übersetzungsfunktion `t` als **Parameter** (z. B. `buildDays(year, st, xmasRule, extHolidays, t, workingWeekdays)`) statt selbst auf `window.I18N` zuzugreifen. `workingWeekdays` ist optional (Fallback Montag–Freitag) – siehe Abschnitt „Regelmäßige Arbeitstage". |
 | `js/data-sources.js` | `window.FREILOTSE.dataSources` | Anbindung externer Quellen: `loadPublicHolidays(year, stateCode)` (OpenHolidays-API-Endpunkt `PublicHolidays`; liefert `{ status: "api"\|"lokal", holidays }` – bei `"lokal"` greift der Aufrufer auf die integrierte Berechnung `holidayMap()` zurück; nur landesweite bzw. exakt zum Bundesland passende Einträge, kommunale Sonderfälle wie das Augsburger Friedensfest mit Subdivision `DE-BY-AU` werden herausgefiltert), `loadSchoolHolidays()`, Normalisierer `normalizeOpenHolidaysPeriod`/`normalizeSchulferienApiPeriod`. Kein React, keine Abhängigkeit von `window.I18N`. |
 | `js/share-link.js` | `window.FREILOTSE.shareLink` | Gesamte Share-Link-Logik (siehe Abschnitt „Share-Link-Funktion" unten). `validateSharePayload`/`decodeShare` erhalten bekannte Bundesland-Codes als Parameter (`knownStateCodes`) statt direkt auf `STATES` zuzugreifen. |
+| `js/local-plans.js` | `window.FREILOTSE.localPlans` | Reine Speicherhülle für mehrere benannte, lokal gespeicherte Pläne (siehe Abschnitt „Lokales Speichern mehrerer Pläne" unten). `STORAGE_KEY`, `MAX_PLANS`, `makeId()`, `makePlan()`, `findPlan()`, `parseStore()`, `serializeStore()`, `addPlan()`, `updatePlanPayload()`, `renamePlan()`, `removePlan()`, `setActivePlanId()`. Kein `localStorage`-Zugriff im Modul selbst (bleibt in `app.jsx`). |
+| `js/puzzle.js` | `window.FREILOTSE.puzzle` | Deterministische Erzeugung des täglichen Brückentage-Rätsels (siehe Abschnitt „Brückentage-Rätsel des Tages" unten). `generateDailyPuzzle()`, `longestFreeRun()`, `buildEmojiWindow()`, `puzzleNumber()`, `isFreeDay()` sowie die nach Veröffentlichung eingefrorenen Konstanten `STATE_CODES`, `LAUNCH_DATE_KEY`, `MAX_ATTEMPTS`, `QUALITY_MARGIN`, `EMOJI_WINDOW_SIZE`. **Einzige Ausnahme** von der sonst abhängigkeitsfreien Modul-Reihenfolge: setzt `window.FREILOTSE.calendar` und `window.FREILOTSE.planning` voraus. |
+| `js/puzzle-stats.js` | `window.FREILOTSE.puzzleStats` | Reine Speicherhülle für die Rätsel-Statistik (Streak, Verlauf) – Muster identisch zu `js/local-plans.js`. `STORAGE_KEY`, `MAX_HISTORY`, `defaultStats()`, `parseStats()`, `serializeStats()`, `yesterdayKey()`, `hasPlayedToday()`, `getTodayResult()`, `recordResult()`. |
 | `jsx/common-components.jsx` | `window.FREILOTSE.ui` | `CollapsibleCard`, `InfoHint`. |
-| `jsx/kofi-components.jsx` | `window.FREILOTSE.ui` | `internalNavigate`, `SiteLink`, `CoffeeIcon`, `KofiFooterLink`, `KofiFloatingButton`, `SiteFooter` (Site-Chrome + Ko-fi, eng gekoppelt). |
-| `jsx/landing-page.jsx` | `window.FREILOTSE.ui` | `ExplainerVideoSection`, `LandingPage`. Nutzt `SiteFooter` aus `kofi-components.jsx`. |
-| `jsx/legal-pages.jsx` | `window.FREILOTSE.ui` | `LegalLayout`, `LegalSection`, `ExternalLegalLink`, `ProviderDetailsImage`, `ImpressumPage`, `DatenschutzPage`. Nutzt `SiteLink`/`SiteFooter` aus `kofi-components.jsx`. |
-| `jsx/about-page.jsx` | `window.FREILOTSE.ui` | `AboutPage` (Seite „Über FREILOTSE" unter `/ueber-freilotse`). Nutzt `SiteLink`/`SiteFooter`/`KOFI_URL` aus `kofi-components.jsx`. Anders als `LegalLayout` bewusst **ohne** „noindex" (soll indexierbar sein) und mit eigenem, lokalem Dark/Light-State (kein Zugriff auf den Dark-State von `Urlaubsplaner`, da eigenständig über `App()` geroutet). |
-| `jsx/changelog-page.jsx` | `window.FREILOTSE.ui` | `ChangelogPage` (Seite „Neuigkeiten" unter `/neuigkeiten`). Nutzt `SiteLink`/`SiteFooter` aus `kofi-components.jsx`. Analog zu `about-page.jsx` bewusst **ohne** „noindex" (soll indexierbar sein) und mit eigenem, lokalem Dark/Light-State. |
+| `jsx/support-components.jsx` | `window.FREILOTSE.ui` | `internalNavigate`, `SiteLink`, `HeartIcon`, `SupportFooterLink`, `SupportFloatingButton`, `SiteFooter` (Site-Chrome + PayPal-Unterstützung, eng gekoppelt). |
+| `jsx/landing-page.jsx` | `window.FREILOTSE.ui` | `ExplainerVideoSection`, `LandingPage`. Nutzt `SiteFooter` aus `support-components.jsx`. |
+| `jsx/legal-pages.jsx` | `window.FREILOTSE.ui` | `LegalLayout`, `LegalSection`, `ExternalLegalLink`, `ProviderDetailsImage`, `ImpressumPage`, `DatenschutzPage`. Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx`. |
+| `jsx/about-page.jsx` | `window.FREILOTSE.ui` | `AboutPage` (Seite „Über FREILOTSE" unter `/ueber-freilotse`). Nutzt `SiteLink`/`SiteFooter`/`PAYPAL_URL` aus `support-components.jsx`. Anders als `LegalLayout` bewusst **ohne** „noindex" (soll indexierbar sein) und mit eigenem, lokalem Dark/Light-State (kein Zugriff auf den Dark-State von `Urlaubsplaner`, da eigenständig über `App()` geroutet). |
+| `jsx/changelog-page.jsx` | `window.FREILOTSE.ui` | `ChangelogPage` (Seite „Neuigkeiten" unter `/neuigkeiten`). Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx`. Analog zu `about-page.jsx` bewusst **ohne** „noindex" (soll indexierbar sein) und mit eigenem, lokalem Dark/Light-State. |
+| `jsx/guide-page.jsx` | `window.FREILOTSE.ui` | `GuidePage` (Seite „Anleitung" unter `/anleitung`). Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx`. Analog zu `about-page.jsx`/`changelog-page.jsx` bewusst **ohne** „noindex" und mit eigenem, lokalem Dark/Light-State. Inhalt liegt vollständig in `locales/de.js` unter `guide.sections` (Array aus `{ heading, body[] }`), reines Datenobjekt ohne eigene Rendering-Logik in der Seite selbst. |
+| `jsx/puzzle-page.jsx` | `window.FREILOTSE.ui` | `PuzzlePage` (Seite „Brückentage-Rätsel des Tages" unter `/raetsel`, siehe eigener Abschnitt unten). Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx` sowie `js/puzzle.js`/`js/puzzle-stats.js`. Analog zu `about-page.jsx` bewusst **ohne** „noindex" und mit eigenem, lokalem Dark/Light-State. |
 | `app.jsx` | – (Wurzel) | `Urlaubsplaner` (zentrale Komponente, bewusst nicht weiter aufgeteilt – zu große/kritische Prop-Kette), `App` (Routing), Rendering-Helfer (`fmtNum`, `dayClass`, `dayTitle` u. Ä.), Mount (`ReactDOM.createRoot(...).render(...)`). |
 
 ### Erforderliche Ladereihenfolge (siehe `index.html`)
 1. `locales/de.js`
-2. `js/planning.js`, `js/calendar.js`, `js/data-sources.js`, `js/share-link.js`
-   (Reihenfolge untereinander unkritisch, keine Abhängigkeiten untereinander)
-3. `jsx/common-components.jsx`, dann `jsx/kofi-components.jsx` (wird von den
+2. `js/planning.js`, `js/calendar.js`, `js/data-sources.js`, `js/share-link.js`,
+   `js/local-plans.js`, `js/puzzle.js`, `js/puzzle-stats.js` (Reihenfolge
+   untereinander größtenteils unkritisch – **Ausnahme:** `js/puzzle.js` setzt
+   `js/calendar.js` und `js/planning.js` voraus und muss deshalb nach beiden
+   stehen)
+3. `jsx/common-components.jsx`, dann `jsx/support-components.jsx` (wird von den
    folgenden genutzt), dann `jsx/landing-page.jsx`, `jsx/legal-pages.jsx`,
-   `jsx/about-page.jsx` und `jsx/changelog-page.jsx` (Reihenfolge dieser vier
-   untereinander unkritisch)
+   `jsx/about-page.jsx`, `jsx/changelog-page.jsx`, `jsx/guide-page.jsx` und
+   `jsx/puzzle-page.jsx` (Reihenfolge dieser sechs untereinander unkritisch;
+   `jsx/puzzle-page.jsx` benötigt zusätzlich `js/puzzle.js`/`js/puzzle-stats.js`,
+   die bereits in Schritt 2 geladen wurden)
 4. `app.jsx` (mountet die Anwendung, muss zuletzt laden)
 
 Bei Änderungen an einer dieser Dateien die Cache-Busting-Version in
@@ -484,3 +494,157 @@ Anforderungen an einen neuen Eintrag:
 Diese Regel gilt unabhängig davon, ob der Nutzer die Neuigkeiten-Seite in der
 jeweiligen Anfrage erwähnt – sie ist Teil des normalen Abschlusses einer
 sichtbaren Änderung, genau wie das Hochzählen der Cache-Busting-Version.
+
+## Lokales Speichern mehrerer Pläne
+
+### Zweck
+Speichert die aktuelle Planung direkt im Browser (`localStorage`), ohne
+Konto und ohne Server – mehrere benannte Pläne parallel möglich (z. B.
+„Urlaub 2027", „Sommerferien Familie"). Header-Button „Plan speichern"/
+„Meine Pläne" (je nachdem, ob bereits Pläne existieren) öffnet einen
+Verwaltungsdialog zum Öffnen/Umbenennen/Duplizieren/Löschen.
+
+### Speicherformat
+`js/local-plans.js`, `STORAGE_KEY = "freilotse.localPlans.v1"`:
+`{ plans: [{ id, name, createdAt, updatedAt, payload }], activePlanId }`.
+`payload` ist exakt die `{version, state}`-Hülle aus `buildSharePayload()`/
+`validateSharePayload()` (`js/share-link.js`) – ein gespeicherter Plan ist
+technisch identisch zu einem Share-Link-Payload, nur ohne Base64/
+Kompression. `local-plans.js` prüft nur die Speicher-**Hülle** (ist der
+Eintrag plan-förmig); die inhaltliche Validierung (Enums,
+Bundesland-Gültigkeit) übernimmt weiterhin `validateSharePayload()` beim
+tatsächlichen Laden.
+
+### Restore-on-Load und Autosave
+`localStoreRef` (`app.jsx`) liest **synchron vor jedem `useState`**, analog
+zu `sharedRef` für Share-Links. Ein Share-Link in der URL hat **immer
+Vorrang** – die lokale Wiederherstellung greift nur, wenn kein Fragment
+vorliegt. Bei vorhandenem aktivem Plan wird beim Laden direkt in die
+Planer-Ansicht gesprungen (kein Picker, keine Landing Page).
+
+Autosave beginnt erst ab dem ersten expliziten Speichern (kein stilles
+Persistieren vorher), danach automatisch bei jeder relevanten
+Eingabe-Änderung in denselben aktiven Plan – Teil des bestehenden
+Prebuild-`useEffect`, der auch den vorab erzeugten Share-Link baut (bewusst
+**ein** Effekt, damit die Dependency-Listen nicht auseinanderlaufen können).
+
+### Verfügbarkeit
+Ist `localStorage` nicht verfügbar (z. B. Safaris privates Fenster), blendet
+sich das Feature komplett aus (kein Button); alle Schreibzugriffe sind mit
+try/catch abgesichert (z. B. Speicherplatz voll) – nie ein Absturz, gleiche
+Devise wie bei den übrigen optionalen/externen Datenquellen. Löschen eines
+Plans erfolgt **ohne** Bestätigungsdialog, konsistent mit dem Rest der App
+(z. B. „Entfernen" bei Wunschblöcken – der Button-Text macht die Konsequenz
+direkt klar statt eines separaten Bestätigungsschritts).
+
+## Kollegen-/Partner-Überschneidungs-Check („Gemeinsam frei")
+
+### Zweck
+Findet gemeinsame freie Tage mit einer anderen Person: deren Share-Link
+einfügen, FREILOTSE zeigt überlappende freie Zeiträume. Rein clientseitig,
+der eingefügte Link wird nirgends gespeichert, nur für die aktuelle Sitzung
+ausgewertet.
+
+### Technik
+`decodeShare()`/`validateSharePayload()` (`js/share-link.js`) sind rein
+(kein Zugriff auf Session-/Fenster-Zustand) und daher sicher für das
+Dekodieren eines fremden Links unabhängig vom eigenen Plan. Da ein
+Share-Link nur Eingaben enthält, wird für die fremde Person komplett neu
+gerechnet: `loadPublicHolidays()` für deren Land/Bundesland/Jahr,
+`buildDays()`, dann `plan()` mit der dekodierten Konfiguration dieser
+Person – exakt dieselbe Berechnung wie für den eigenen Plan, nur mit
+anderen Eingaben.
+
+Überschneidung: pro Tag `istFrei = day.cost === 0 || sel[i] === "vac" || sel[i] === "ot"`,
+angewendet auf den eigenen Plan UND jede hinzugefügte Person gleichzeitig.
+Zusammenhängende Läufe zählen (wie bei `plan()`s eigenen Perioden) nur,
+wenn mindestens eine Seite tatsächlich Urlaub/Überstunden eingesetzt hat –
+sonst würde jedes gewöhnliche gemeinsame Wochenende als eigener „Zeitraum"
+auftauchen.
+
+### Fehlerfälle
+Ungültiger/kaputter Link → Inline-Fehlertext (analog zum Ton bestehender
+Share-Link-Toasts). Abweichendes Jahr → Hinweistext statt stiller
+Fehlberechnung, die Person wird nicht in die Überschneidung einbezogen.
+
+## Jahreswechsel-Erweiterung (Profi-Modus)
+
+### Zweck
+Reicht der letzte Zeitraum des Jahres bis zum 31.12., werden kostenlose
+Tage direkt danach im Folgejahr (Feiertage, Wochenenden) automatisch als
+„sicher frei" an diesen Zeitraum angehängt. Eine kostenpflichtige
+Verlängerung mit Urlaubstagen aus dem Folgejahr erscheint separat als
+unverbindlicher, visuell abgesetzter Hinweis („Möglichkeit mit
+Urlaubstagen aus {Folgejahr}") – niemals automatisch eingeplant, da das
+Folgejahr-Kontingent unbekannt ist.
+
+### Technik
+`js/planning.js` bleibt unverändert. `plan()` wird ein zweites Mal
+aufgerufen (gleiches Wiederverwendungs-Prinzip wie bei „Gemeinsam frei"),
+aber mit `buildDays(year + 1, ...)` **gefiltert auf den relevanten
+Zeitraum** übergeben. Der garantiert kostenlose Anteil wird davon
+**unabhängig** ermittelt: ein einfacher Scan ab Neujahr, bei dem nur der
+lückenlose kostenlose Präfix als sicher zählt – ein kostenloser Tag
+**hinter** einer noch nicht genommenen Urlaubslücke gilt nicht als sicher.
+Das macht die Berechnung robust auch für den Fall, dass der zweite
+`plan()`-Aufruf für den Bereich gar keinen eigenen Zeitraum zurückgibt
+(z. B. weil sich eine Brücke dort nicht lohnt).
+
+### Bewusste Einschränkungen
+Nur Urlaubstage (keine Überstunden) in der hypothetischen Verlängerung; nur
+relevant, wenn bereits ein realer Zeitraum bis zum 31.12. reicht (ein für
+sich genommen freier 31.12. ohne angrenzenden Zeitraum löst die Erweiterung
+nicht aus); Kopf-Kennzahlen (freie Tage gesamt, Restbudget) bleiben
+unverändert – die Erweiterung fließt ausschließlich in die Darstellung des
+letzten Listeneintrags ein. Export (ICS/Google) dieses Zeitraums schließt
+den sicheren Anhang mit ein, nicht die hypothetische Verlängerung.
+
+## Brückentage-Rätsel des Tages (`/raetsel`)
+
+### Zweck
+Tägliches, Wordle-artiges Minispiel: ein neuer, deterministisch gewählter
+Kalenderausschnitt pro Tag, Nutzer setzen ihr Urlaubstage-Budget manuell per
+Klick, das Ergebnis wird mit der objektiv besten Lösung verglichen und lässt
+sich als spoiler-freies Emoji-Grid teilen (Kalenderstreifen: 🟩 frei, 🟨
+selbst gesetzter Urlaubstag, ⬜ Arbeitstag).
+
+### Erzeugung
+`js/puzzle.js` (`window.FREILOTSE.puzzle`) seedet deterministisch aus dem
+Datumsstring (`fnv1aHash` + `mulberry32`, kein externer RNG nötig) – dasselbe
+Datum liefert weltweit exakt dasselbe Rätsel, ohne Backend. Feiertage werden
+ausschließlich über die bestehende **offline** Berechnung bezogen
+(`buildDays(year, st, xmasRule, null, t, ...)`, nutzt intern `holidayMap()`)
+– das Rätsel hat **nie** eine Netzwerkabhängigkeit, im Unterschied zum
+Hauptplaner. Aus 64 fest gezogenen Kandidaten (Bundesland/Monat/Budget,
+**alle auf einmal** aus dem RNG-Strom gezogen, nicht "einer nach dem
+anderen bei Bedarf" – das macht die Auswahl nachweislich terminierend) wird
+der erste gewählt, dessen Musterlösung spürbar mehr freie Tage als
+eingesetztes Budget ergibt (`QUALITY_MARGIN`).
+
+**Wichtig:** `STATE_CODES`-Reihenfolge, `MAX_ATTEMPTS`, `QUALITY_MARGIN`,
+`LAUNCH_DATE_KEY` und die Zug-Reihenfolge in `generateCandidates()` sind
+nach Veröffentlichung **eingefroren** – jede spätere Änderung würde
+rückwirkend ändern, welches Rätsel an welchem Kalendertag lag (gleiche
+Vorsicht wie bei einer echten Wordle-Antwortliste).
+
+### Musterlösung
+`plan()` wird ein zweites Mal aufgerufen, aber beschränkt auf **nur** den
+gezeigten Monat: `buildDays()` liefert immer ein volles Jahr, wird aber auf
+den Zielmonat gefiltert (`fullYearDays.filter(d => d.m === month)`), bevor
+dieses gefilterte Array an `plan()` übergeben wird – sonst könnte die
+Automatik über mehrere Monate verteilen, was mit dem angezeigten Spielbrett
+nicht mehr vergleichbar wäre. `longestFreeRun()` bewertet Musterlösung UND
+Spieler-Ergebnis mit derselben Funktion.
+
+### Ein Versuch pro Tag, Übungsmodus
+`js/puzzle-stats.js` (`window.FREILOTSE.puzzleStats`, `STORAGE_KEY =
+"freilotse.puzzleStats.v1"`, Muster identisch zu `js/local-plans.js`)
+speichert Streak/Spielverlauf inklusive fertigem Emoji-Grid pro Tag (nicht
+nur die Zahlen – so lässt sich auch nach einem Reload am selben Tag noch
+ein teilbares Ergebnis anzeigen, ohne die exakte Klick-Auswahl des Spielers
+persistieren zu müssen). Nach dem gewerteten Erstversuch kann beliebig oft
+geübt werden („Erneut versuchen") – Übungsversuche zählen **nicht** für
+Streak/Statistik und überschreiben das gewertete Ergebnis nicht;
+„Ergebnis teilen" bezieht sich immer auf den gewerteten Erstversuch, nie
+auf einen Übungsversuch (hält geteilte Ergebnisse zwischen Spielern fair
+vergleichbar).

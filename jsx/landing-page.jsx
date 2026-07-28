@@ -4,7 +4,7 @@
 /* Komponente Urlaubsplaner (dark, cardCls, Einstiegs-Handler). Keine   */
 /* eigene Planungslogik, kein eigener State für Eingaben. Wird über     */
 /* Babel-Standalone im Browser verarbeitet (kein Bundler, kein          */
-/* Modulsystem, siehe CLAUDE.md). Muss NACH jsx/kofi-components.jsx     */
+/* Modulsystem, siehe CLAUDE.md). Muss NACH jsx/support-components.jsx  */
 /* geladen werden (nutzt SiteFooter). In einer IIFE gekapselt;          */
 /* öffentliche Oberfläche: window.FREILOTSE.ui.                        */
 /* ------------------------------------------------------------------ */
@@ -17,7 +17,7 @@
   // Klick-Vorschau für das Erklärvideo der Landing Page: zeigt zunächst nur ein
   // YouTube-Vorschaubild mit Play-Button; der iframe (youtube-nocookie.com) wird
   // erst nach Klick eingebunden, damit vorher keine YouTube-Ressourcen laden.
-  // Smartphone (< 640px, derselbe Mobile-Breakpoint wie in KofiFloatingButton)
+  // Smartphone (< 640px, derselbe Mobile-Breakpoint wie in SupportFloatingButton)
   // erhält das Hochkantvideo, Tablet/Desktop das Querformatvideo – reaktiv über
   // matchMedia, damit z. B. eine Fenstergrößenänderung/-drehung korrekt umschaltet.
   function ExplainerVideoSection({ dark, cardCls }) {
@@ -176,7 +176,7 @@
           {/* Erklärvideo: Smartphone erhält ein Hochkantvideo (9:16), Tablet/Desktop
               ein Querformatvideo (16:9) – Auswahl rein per matchMedia anhand des
               im Projekt bereits verwendeten Mobile-Breakpoints (< 640px, siehe
-              KofiFloatingButton). Es wird nie mehr als ein iframe gleichzeitig
+              SupportFloatingButton). Es wird nie mehr als ein iframe gleichzeitig
               eingebunden; vor dem Klick nur ein statisches Vorschaubild. */}
           <ExplainerVideoSection dark={dark} cardCls={cardCls} />
 

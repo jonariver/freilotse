@@ -5,7 +5,7 @@
 /* benötigen, die locales/de.js als reine Datendatei nicht abbilden     */
 /* kann – siehe CLAUDE.md, Abschnitt „Internationalisierung und         */
 /* UI-Texte". Wird über Babel-Standalone im Browser verarbeitet (kein   */
-/* Bundler, kein Modulsystem). Muss NACH jsx/kofi-components.jsx        */
+/* Bundler, kein Modulsystem). Muss NACH jsx/support-components.jsx     */
 /* geladen werden (nutzt SiteLink/SiteFooter). In einer IIFE gekapselt; */
 /* öffentliche Oberfläche: window.FREILOTSE.ui.                        */
 /* ------------------------------------------------------------------ */
@@ -141,8 +141,8 @@
           <p>Die Daten werden gelöscht, sobald sie für die Bearbeitung nicht mehr erforderlich sind und keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
         </LegalSection>
 
-        <LegalSection title="8. Externer Link zu Ko-fi">
-          <p>Auf dieser Website befindet sich ein normaler externer Link zu meinem Profil bei Ko-fi. Beim bloßen Besuch von FREILOTSE werden dadurch keine Daten an Ko-fi übertragen. Erst wenn du den Link anklickst, verlässt du diese Website und dein Browser stellt eine Verbindung zu Ko-fi her. Dabei können personenbezogene Daten, insbesondere deine IP-Adresse und technische Verbindungsdaten, durch Ko-fi verarbeitet werden. Für die weitere Datenverarbeitung auf der Ko-fi-Website ist Ko-fi verantwortlich. Weitere Informationen findest du in der <ExternalLegalLink href="https://ko-fi.com/home/privacy">Datenschutzerklärung von Ko-fi</ExternalLegalLink>.</p>
+        <LegalSection title="8. Externer Link zu PayPal">
+          <p>Auf dieser Website befindet sich ein normaler externer Link zu meinem PayPal.me-Profil. Beim bloßen Besuch von FREILOTSE werden dadurch keine Daten an PayPal übertragen. Erst wenn du den Link anklickst, verlässt du diese Website und dein Browser stellt eine Verbindung zu PayPal her. Dabei können personenbezogene Daten, insbesondere deine IP-Adresse und technische Verbindungsdaten, durch PayPal verarbeitet werden. Für die weitere Datenverarbeitung auf der PayPal-Website ist PayPal verantwortlich. Weitere Informationen findest du in der <ExternalLegalLink href="https://www.paypal.com/de/webapps/mpp/ua/privacy-full">Datenschutzerklärung von PayPal</ExternalLegalLink>.</p>
         </LegalSection>
 
         <LegalSection title="9. Eingebettete YouTube-Videos">

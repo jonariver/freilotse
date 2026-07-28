@@ -1,14 +1,14 @@
 /* ------------------------------------------------------------------ */
-/* jsx/changelog-page.jsx – Seite „Neuigkeiten" (/neuigkeiten).         */
+/* jsx/guide-page.jsx – Seite „Anleitung" (/anleitung).                 */
 /* Anders als Impressum/Datenschutz bewusst OHNE „noindex" (soll        */
 /* indexierbar sein) und mit eigenem, lokalem Dark/Light-Umschalter     */
 /* (die Seite hängt nicht am Dark-State von Urlaubsplaner, da sie       */
-/* eigenständig über App() geroutet wird) – analog zu jsx/about-page.jsx.*/
-/* Wird über Babel-Standalone im Browser verarbeitet (kein Bundler,     */
-/* kein Modulsystem, siehe CLAUDE.md). Muss NACH                        */
-/* jsx/support-components.jsx geladen werden (nutzt SiteLink/           */
-/* SiteFooter). In einer IIFE gekapselt;                                */
-/* öffentliche Oberfläche: window.FREILOTSE.ui.                        */
+/* eigenständig über App() geroutet wird) – analog zu jsx/about-page.jsx*/
+/* und jsx/changelog-page.jsx. Wird über Babel-Standalone im Browser    */
+/* verarbeitet (kein Bundler, kein Modulsystem, siehe CLAUDE.md). Muss  */
+/* NACH jsx/support-components.jsx geladen werden (nutzt SiteLink/      */
+/* SiteFooter). In einer IIFE gekapselt; öffentliche Oberfläche:        */
+/* window.FREILOTSE.ui.                                                 */
 /* ------------------------------------------------------------------ */
 (function () {
   "use strict";
@@ -16,7 +16,7 @@
   const t = window.I18N.t;
   const { SiteLink, SiteFooter } = window.FREILOTSE.ui;
 
-  function ChangelogPage() {
+  function GuidePage() {
     const [dark, setDark] = useState(true);
 
     // document.title + Meta-Description setzen und beim Verlassen wieder
@@ -24,7 +24,7 @@
     // anzufassen, damit die Seite indexierbar bleibt).
     useEffect(() => {
       const previousTitle = document.title;
-      document.title = t("changelog.documentTitle");
+      document.title = t("guide.documentTitle");
 
       let meta = document.querySelector('meta[name="description"]');
       const created = !meta;
@@ -34,7 +34,7 @@
         meta.setAttribute("name", "description");
         document.head.appendChild(meta);
       }
-      meta.setAttribute("content", t("changelog.metaDescription"));
+      meta.setAttribute("content", t("guide.metaDescription"));
 
       return () => {
         document.title = previousTitle;
@@ -58,7 +58,7 @@
             </SiteLink>
             <div className="flex items-center gap-4">
               <SiteLink to="/" className={`text-sm ${dark ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-900"}`}>
-                {t("changelog.backToPlanner")}
+                {t("guide.backToPlanner")}
               </SiteLink>
               <button onClick={() => setDark(!dark)}
                 title={t("theme.toggleTitle")}
@@ -74,30 +74,22 @@
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
           <article className={`${cardCls} space-y-8 p-5 sm:p-8`}>
             <div>
-              <h1 className="mb-2 text-3xl font-bold tracking-tight">{t("changelog.pageTitle")}</h1>
-              <p className={`text-sm leading-7 ${softTextCls}`}>{t("changelog.intro")}</p>
+              <h1 className="mb-2 text-3xl font-bold tracking-tight">{t("guide.pageTitle")}</h1>
+              <p className={`text-sm leading-7 ${softTextCls}`}>{t("guide.intro")}</p>
             </div>
 
-            <ol className="space-y-6 border-l-2 border-emerald-600/30 pl-6">
-              {t("changelog.entries").map((entry) => (
-                <li key={entry.date} className="relative">
-                  <span aria-hidden="true"
-                    className="absolute -left-[1.65rem] top-1.5 h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${dark ? "text-emerald-400" : "text-emerald-600"}`}>
-                    {entry.date}
-                  </p>
-                  <h2 className="mt-1 text-base font-bold">{entry.title}</h2>
-                  <ul className="mt-2 space-y-1.5 text-sm">
-                    {entry.items.map((item) => (
-                      <li key={item} className="flex items-start gap-2">
-                        <span aria-hidden="true" className="text-emerald-500">•</span>
-                        <span className={softTextCls}>{item}</span>
-                      </li>
+            <div className="space-y-6">
+              {t("guide.sections").map((section) => (
+                <section key={section.heading}>
+                  <h2 className="mb-2 text-lg font-bold">{section.heading}</h2>
+                  <div className="space-y-2">
+                    {section.body.map((paragraph) => (
+                      <p key={paragraph} className={`text-sm leading-7 ${softTextCls}`}>{paragraph}</p>
                     ))}
-                  </ul>
-                </li>
+                  </div>
+                </section>
               ))}
-            </ol>
+            </div>
           </article>
         </main>
 
@@ -108,5 +100,5 @@
 
   window.FREILOTSE = window.FREILOTSE || {};
   window.FREILOTSE.ui = window.FREILOTSE.ui || {};
-  Object.assign(window.FREILOTSE.ui, { ChangelogPage });
+  Object.assign(window.FREILOTSE.ui, { GuidePage });
 })();

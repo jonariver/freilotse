@@ -5,15 +5,15 @@
 /* (die Seite hängt nicht am Dark-State von Urlaubsplaner, da sie       */
 /* eigenständig über App() geroutet wird). Wird über Babel-Standalone   */
 /* im Browser verarbeitet (kein Bundler, kein Modulsystem, siehe        */
-/* CLAUDE.md). Muss NACH jsx/kofi-components.jsx geladen werden (nutzt  */
-/* SiteLink/SiteFooter/CoffeeIcon/KOFI_URL). In einer IIFE gekapselt;   */
+/* CLAUDE.md). Muss NACH jsx/support-components.jsx geladen werden      */
+/* (nutzt SiteLink/SiteFooter/PAYPAL_URL). In einer IIFE gekapselt;     */
 /* öffentliche Oberfläche: window.FREILOTSE.ui.                        */
 /* ------------------------------------------------------------------ */
 (function () {
   "use strict";
   const { useState, useEffect } = React;
   const t = window.I18N.t;
-  const { SiteLink, SiteFooter, KOFI_URL } = window.FREILOTSE.ui;
+  const { SiteLink, SiteFooter, PAYPAL_URL } = window.FREILOTSE.ui;
 
   const LINKEDIN_URL = "https://www.linkedin.com/in/jonathan-rivera-a701a817b";
 
@@ -111,7 +111,7 @@
                   <p className={`text-sm leading-7 ${softTextCls}`}>{t("about.body2")}</p>
                   {/* Dezenter Text-Button im bestehenden Emerald-Akzent (analog zum
                       Theme-Umschalter oben) statt einer dominanten CTA-Pille wie beim
-                      Ko-fi-Button weiter unten. */}
+                      PayPal-Button weiter unten. */}
                   <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
                     aria-label={t("about.linkedin.ariaLabel")}
                     className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
@@ -139,7 +139,7 @@
             <section className={`space-y-4 rounded-lg p-5 ${dark ? "bg-slate-950/50 border border-slate-800" : "bg-slate-50 border border-slate-200"}`}>
               <h2 className="text-lg font-bold">{t("about.support.heading")}</h2>
               <p className={`text-sm leading-7 ${softTextCls}`}>{t("about.support.text")}</p>
-              <a href={KOFI_URL} target="_blank" rel="noopener noreferrer" aria-label={t("about.support.buttonAriaLabel")}
+              <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" aria-label={t("about.support.buttonAriaLabel")}
                 className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 {t("about.support.button")}
               </a>

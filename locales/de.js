@@ -283,15 +283,154 @@
       },
       support: {
         heading: "Freiwillig unterstützen",
-        text: "Ich entwickle und betreibe FREILOTSE selbst. Die Weiterentwicklung sowie Domain und Betrieb kosten Zeit und Geld. Wenn dir FREILOTSE bei deiner Planung geholfen hat, kannst du das Projekt freiwillig mit einem Kaffee unterstützen. Das ist selbstverständlich kein Muss – FREILOTSE bleibt auch ohne Unterstützung vollständig nutzbar.",
-        button: "☕ FREILOTSE freiwillig unterstützen",
-        buttonAriaLabel: "FREILOTSE freiwillig über Ko-fi unterstützen (öffnet in neuem Tab)",
+        text: "Ich entwickle und betreibe FREILOTSE selbst. Die Weiterentwicklung sowie Domain und Betrieb kosten Zeit und Geld. Wenn dir FREILOTSE bei deiner Planung geholfen hat, kannst du das Projekt freiwillig über PayPal unterstützen. Das ist selbstverständlich kein Muss – FREILOTSE bleibt auch ohne Unterstützung vollständig nutzbar.",
+        button: "💚 FREILOTSE freiwillig unterstützen",
+        buttonAriaLabel: "FREILOTSE freiwillig über PayPal unterstützen (öffnet in neuem Tab)",
       },
       // prefix/suffix umschließen den eingebetteten mailto-Link (siehe jsx/about-page.jsx) -
       // Grund identisch zu jsx/legal-pages.jsx: locales/de.js kann kein JSX abbilden.
       contact: {
         prefix: "Du hast Feedback oder eine Idee für FREILOTSE? Schreib mir gerne an ",
         suffix: ".",
+      },
+    },
+
+    /* ---- PayPal-Unterstützung (Footer-Link + schwebender Button,
+       jsx/support-components.jsx) ---- */
+    support: {
+      footerLinkText: "FREILOTSE unterstützen",
+      floatingAriaLabel: "FREILOTSE über PayPal unterstützen",
+      floatingLabelText: "Supporte FREILOTSE über PayPal",
+      floatingHintText: "Hat dir FREILOTSE geholfen? Unterstütze das Projekt 💚",
+    },
+
+    /* ---- Seite „Anleitung" (/anleitung) ---- */
+    guide: {
+      documentTitle: "Anleitung – FREILOTSE",
+      metaDescription: "So funktioniert FREILOTSE: Einfach-Modus, Profi-Modus und alle Funktionen im Überblick.",
+      footerLink: "Anleitung",
+      backToPlanner: "Zum Urlaubsplaner",
+      pageTitle: "Anleitung",
+      intro: "Ein Überblick über die wichtigsten Funktionen von FREILOTSE – vom schnellen Einstieg bis zu den Profi-Funktionen.",
+      sections: [
+        {
+          heading: "Einfach- und Profi-Modus",
+          body: [
+            "Im Einfach-Modus führt dich FREILOTSE mit wenigen kurzen Fragen zu einem fertigen Vorschlag.",
+            "Der Profi-Modus zeigt alle Einstellungen gleichzeitig und erlaubt zusätzlich, Tage direkt im Kalender manuell anzupassen. Du kannst jederzeit zwischen beiden Modi wechseln, ohne dass dabei etwas verloren geht.",
+          ],
+        },
+        {
+          heading: "Automatische Planung",
+          body: [
+            "FREILOTSE setzt Urlaubstage und Überstundenabbau dort ein, wo sie die meisten zusätzlichen freien Tage ergeben, z. B. an Brückentagen rund um Feiertage.",
+            "Über „Budget der Automatik\" legst du fest, wie viele Tage dafür verwendet werden, über „Ab Monat\", ab wann im Jahr die Automatik beginnt.",
+          ],
+        },
+        {
+          heading: "Manuell planen (Profi-Modus)",
+          body: [
+            "Ein Klick im Kalender setzt je nach Auswahl einen Urlaubstag oder Überstundenabbau. Ein Klick auf einen bereits geplanten Tag öffnet die Möglichkeit, ihn zu entfernen oder zu tauschen.",
+          ],
+        },
+        {
+          heading: "Wunschblöcke",
+          body: [
+            "Lege feste Zeiträume fest, z. B. „9 Tage am Stück im Juli\" – FREILOTSE plant diese bevorzugt vor der übrigen Automatik ein.",
+          ],
+        },
+        {
+          heading: "Regelmäßige Arbeitstage",
+          body: [
+            "Arbeitest du nicht Montag bis Freitag, etwa bei Teilzeit, stellst du das unter „Arbeitsregelung\" ein. Die gesamte Planung berücksichtigt danach ausschließlich deine tatsächlichen Arbeitstage.",
+          ],
+        },
+        {
+          heading: "Planung teilen",
+          body: [
+            "Der Button „Planung teilen\" erzeugt einen Link, der ausschließlich deine Eingaben enthält – keine Feiertage, Schulferien oder sonstige persönliche Daten. Jeder mit diesem Link kann die Planung öffnen.",
+          ],
+        },
+        {
+          heading: "Meine Pläne",
+          body: [
+            "Speichert deine Planung direkt auf diesem Gerät – ohne Konto, ohne Server. Mehrere benannte Pläne sind möglich, z. B. für unterschiedliche Jahre oder Anlässe.",
+          ],
+        },
+        {
+          heading: "Gemeinsam frei",
+          body: [
+            "Füge den Share-Link einer anderen Person hinzu, um gemeinsame freie Tage zu finden – praktisch für Paare, Familie oder Kolleg:innen. Auch das bleibt vollständig auf deinem Gerät, der Link wird nirgends gespeichert.",
+          ],
+        },
+        {
+          heading: "Jahreswechsel-Erweiterung (Profi-Modus)",
+          body: [
+            "Reicht dein letzter freier Zeitraum bis Silvester, zeigt FREILOTSE automatisch die kostenlosen Tage direkt danach im neuen Jahr an (Feiertage, Wochenenden).",
+            "Zusätzlich siehst du unverbindlich, wie viele weitere Urlaubstage aus dem neuen Jahr eine noch längere Pause ermöglichen würden – das wird nirgends automatisch eingeplant oder von einem Kontingent abgezogen.",
+          ],
+        },
+        {
+          heading: "Kalender exportieren",
+          body: [
+            "Jeder freie Zeitraum lässt sich einzeln als .ics-Datei herunterladen oder direkt in Google Kalender öffnen. „Gesamten Plan exportieren\" bündelt alle Zeiträume in einer einzigen Datei.",
+          ],
+        },
+      ],
+    },
+
+    /* ---- Seite „Brückentage-Rätsel des Tages" (/raetsel) ---- */
+    puzzle: {
+      documentTitle: "Brückentage-Rätsel des Tages – FREILOTSE",
+      metaDescription: "Ein tägliches Rätsel: Setze deine Urlaubstage richtig und finde den längsten freien Zeitraum.",
+      footerLink: "Rätsel",
+      backToPlanner: "Zum Urlaubsplaner",
+      pageTitle: "Brückentage-Rätsel des Tages",
+      intro: {
+        puzzleNumberLabel: (p) => `Rätsel #${p.number}`,
+        stateAndMonth: (p) => `Heute: ${p.state}, ${p.month} ${p.year}`,
+        rulesHint: (p) => `Setze bis zu ${p.budget} Urlaubstage und finde den längsten zusammenhängenden freien Zeitraum.`,
+        rulesDetail: "Feiertage und Wochenenden sind bereits frei. Klicke auf Arbeitstage, um sie als Urlaub zu setzen – du hast nur einen Versuch pro Tag, danach zeigt FREILOTSE die bestmögliche Lösung im Vergleich zu deinem Ergebnis.",
+      },
+      calendar: {
+        legendFree: "bereits frei",
+        legendSelected: "dein Urlaub",
+        legendWorking: "Arbeitstag",
+        budgetCounter: (p) => `${p.used} von ${p.budget} ausgewählt`,
+      },
+      actions: {
+        evaluateButton: "Auswerten",
+        resetButton: "Zurücksetzen",
+        shareButton: "Ergebnis teilen",
+        retryButton: "Erneut versuchen",
+        ctaButton: "Fange jetzt kostenlos deine individuelle Urlaubsplanung an",
+      },
+      result: {
+        scoreLine: (p) => `${p.score} von ${p.optimal} möglichen Tagen am Stück`,
+        perfectMessage: "Perfekt getroffen – das war die bestmögliche Lösung! 🎯",
+        belowOptimalMessage: (p) => `Mit ${p.diff} ${p.diff === 1 ? "Tag" : "Tagen"} mehr wäre die bestmögliche Lösung noch drin gewesen.`,
+        emojiGridLabel: "Dein Ergebnis",
+        officialBadge: "Gewertet",
+        practiceBadge: "Übungsversuch – nicht gewertet",
+        officialReference: (p) => `Dein gewertetes Ergebnis heute: ${p.score}/${p.optimal}`,
+      },
+      share: {
+        nativeTitle: (p) => `FREILOTSE Brückentage-Rätsel #${p.puzzleNumber}`,
+        nativeText: (p) => `FREILOTSE Brückentage-Rätsel #${p.puzzleNumber}\n${p.score}/${p.optimal} Tage am Stück 🎯\n\n${p.emojiGrid}\n\n${p.url}`,
+      },
+      locked: {
+        title: "Rätsel des Tages – bereits gespielt",
+        description: "Du hast heute schon gespielt. Morgen gibt es ein neues Rätsel.",
+      },
+      countdown: {
+        label: (p) => `Nächstes Rätsel in ${p.time}`,
+      },
+      stats: {
+        title: "Deine Statistik",
+        currentStreak: "Aktuelle Serie",
+        maxStreak: "Beste Serie",
+        gamesPlayed: "Gespielt",
+        unavailableNotice: "Statistik nicht verfügbar (lokaler Speicher blockiert).",
       },
     },
 
@@ -304,6 +443,65 @@
       pageTitle: "Neuigkeiten",
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
+        {
+          date: "28. Juli 2026",
+          title: "Unterstützung jetzt über PayPal",
+          items: [
+            "Der \"FREILOTSE unterstützen\"-Button im Footer sowie der schwebende Hinweis nach einer Planung führen jetzt zu PayPal statt Ko-fi.",
+          ],
+        },
+        {
+          date: "28. Juli 2026",
+          title: "Brückentage-Rätsel des Tages",
+          items: [
+            "Neu im Footer: ein tägliches, Wordle-artiges Rätsel – setze deine Urlaubstage in einem Beispielmonat richtig und finde den längsten zusammenhängenden freien Zeitraum.",
+            "Dein Ergebnis wird mit der objektiv besten Lösung verglichen und lässt sich als kompaktes Emoji-Grid teilen, ohne die Lösung zu verraten.",
+            "Läuft komplett offline und ohne Konto – nur ein Versuch pro Tag, mit Serien-Statistik auf diesem Gerät.",
+            "Nach dem gewerteten Versuch kannst du mit „Erneut versuchen“ beliebig oft weiterüben – deine Serie und Statistik bleiben dabei unverändert.",
+          ],
+        },
+        {
+          date: "28. Juli 2026",
+          title: "Neue Anleitung",
+          items: [
+            "Eine neue Seite „Anleitung“ (verlinkt im Footer) erklärt kompakt alle Funktionen von FREILOTSE – vom Einfach-Modus bis zu Gemeinsam frei und der Jahreswechsel-Erweiterung.",
+          ],
+        },
+        {
+          date: "28. Juli 2026",
+          title: "Freie Zeit über den Jahreswechsel erkennen",
+          items: [
+            "Im Profi-Modus werden kostenlose Feiertage, Wochenenden und regelmäßig freie Tage direkt nach Neujahr an einen Zeitraum bis Silvester angehängt.",
+            "Mögliche Verlängerungen mit Urlaubstagen aus dem Folgejahr erscheinen separat als unverbindlicher Hinweis und verändern weder dein Kontingent noch die Jahreskennzahlen.",
+            "ICS- und Google-Export dieses Zeitraums enthalten jetzt den kostenlosen Anhang aus dem Folgejahr.",
+          ],
+        },
+        {
+          date: "27. Juli 2026",
+          title: "Gemeinsam freie Tage mit anderen finden",
+          items: [
+            "Neuer Bereich \"Gemeinsam frei\": Füge den Share-Link einer anderen Person hinzu und sieh direkt, an welchen Tagen ihr beide frei habt.",
+            "Zeigt zu jedem gemeinsamen Zeitraum, wie viele Urlaubs- bzw. Überstundentage jede Person dafür einsetzt.",
+            "Bleibt komplett clientseitig – der eingefügte Link wird nirgends gespeichert und nur für die aktuelle Sitzung ausgewertet.",
+          ],
+        },
+        {
+          date: "27. Juli 2026",
+          title: "Gesamten Plan auf einmal exportieren",
+          items: [
+            "Ein neuer Button \"Gesamten Plan exportieren\" lädt alle freien Zeiträume gebündelt als eine .ics-Datei herunter, statt jeden Zeitraum einzeln exportieren zu müssen.",
+            "Die Datei lässt sich in Apple Kalender, Outlook und iCal direkt öffnen sowie in Google Kalender über dessen \"Kalender importieren\"-Funktion einbinden.",
+          ],
+        },
+        {
+          date: "27. Juli 2026",
+          title: "Pläne lokal speichern",
+          items: [
+            "Du kannst deine Planung jetzt direkt auf diesem Gerät speichern, damit sie beim nächsten Besuch automatisch wieder da ist.",
+            "Mehrere benannte Pläne sind möglich, z. B. \"Urlaub 2027\" und \"Sommerferien Familie\" – über \"Meine Pläne\" im Kopfbereich verwaltbar (umbenennen, duplizieren, löschen).",
+            "Es wird nichts an einen Server übertragen – die Pläne bleiben ausschließlich auf diesem Gerät.",
+          ],
+        },
         {
           date: "27. Juli 2026",
           title: "Österreich und Schweiz werden unterstützt",
@@ -360,6 +558,45 @@
         linkLabel: "Teilbarer Link",
         copyButton: "Link kopieren",
         closeButton: "Schließen",
+      },
+    },
+
+    /* ---- Lokales Speichern mehrerer benannter Pläne (localStorage,
+       kein Konto, kein Server) ---- */
+    localPlans: {
+      header: {
+        saveButton: "Plan speichern",
+        saveAriaLabel: "Aktuelle Planung als neuen Plan auf diesem Gerät speichern",
+        manageButton: "Meine Pläne",
+        manageAriaLabel: "Gespeicherte Pläne verwalten",
+      },
+      modal: {
+        title: "Meine Pläne",
+        privacyNote: "Deine Pläne werden ausschließlich auf diesem Gerät gespeichert – es wird nichts an einen Server übertragen.",
+        newPlanNamePlaceholder: "Name für neuen Plan",
+        newPlanButton: "Speichern",
+        emptyHint: "Noch keine gespeicherten Pläne.",
+        openButton: "Öffnen",
+        activeBadge: "Aktiv",
+        renameButton: "Umbenennen",
+        renameSaveButton: "Speichern",
+        renameCancelButton: "Abbrechen",
+        duplicateButton: "Duplizieren",
+        deleteButton: "Endgültig löschen",
+        closeButton: "Schließen",
+        updatedAtLabel: (p) => `Zuletzt bearbeitet: ${p.date}`,
+      },
+      defaultName: "Unbenannter Plan",
+      copySuffix: " (Kopie)",
+      toast: {
+        firstSaveNotice: "Plan wurde auf diesem Gerät gespeichert. Es wird nichts an einen Server übertragen.",
+        saveFailed: "Plan konnte nicht gespeichert werden (Speicherplatz voll?).",
+        limitReached: (p) => `Maximal ${p.max} gespeicherte Pläne möglich.`,
+        loadedFully: "Plan wurde geladen.",
+        loadedPartially: "Plan wurde teilweise geladen.",
+        loadFailed: "Plan konnte nicht geladen werden.",
+        deleted: "Plan wurde gelöscht.",
+        storeCorrupted: "Einige gespeicherte Pläne konnten nicht gelesen werden und wurden entfernt.",
       },
     },
 
@@ -558,6 +795,8 @@
       icsTitle: "Als .ics-Datei herunterladen (Apple Kalender, Outlook, iCal)",
       googleButton: "Google",
       googleTitle: "In Google Kalender öffnen (vorausgefüllter Termin)",
+      exportAllButton: "Gesamten Plan exportieren",
+      exportAllTitle: "Alle freien Zeiträume als eine .ics-Datei herunterladen (Apple Kalender, Outlook, iCal; in Google Kalender über \"Kalender importieren\" einbindbar)",
       reason: {
         xmasBoth: "Die Weihnachtsfeiertage sowie Heiligabend und Silvester werden verbunden.",
         xmasEveOnly: "Die Weihnachtsfeiertage und Heiligabend werden verbunden.",
@@ -656,6 +895,38 @@
       eventTitle: "Urlaub",
       icsDescription: (p) =>
         `${p.len} Tage frei – ${p.vac} Urlaubstage${p.otRaw > 0 ? `, ${p.ot} Überstundenabbau` : ""} (Urlaubsplaner)`,
+      allEventsTitle: (p) => `Urlaubsplan ${p.year}`,
+    },
+
+    /* ---- Jahreswechsel-Erweiterung (nur Profi-Modus) ---- */
+    yearTransition: {
+      certainLabel: (p) => `${p.len} Tage sicher frei`,
+      neededLabel: (p) =>
+        `Benötigt ${p.vac} Urlaubstag${p.vacRaw === 1 ? "" : "e"} aus deinem Kontingent ${p.year}`,
+      hypotheticalBadge: (p) => `Möglichkeit mit Urlaubstagen aus ${p.year}`,
+      hypotheticalText: (p) =>
+        `Mit ${p.extra} zusätzlichen Urlaubstag${p.extraRaw === 1 ? "" : "en"} aus ${p.year} wären ${p.total} Tage bis ${p.end} möglich.`,
+    },
+
+    /* ---- Kollegen-/Partner-Überschneidungs-Check ("Gemeinsam frei") ----
+       Rein clientseitig: fremde Share-Links werden nur für die aktuelle
+       Sitzung ausgewertet, nicht gespeichert. ---- */
+    sharedFree: {
+      heading: "Gemeinsam frei",
+      linkPlaceholder: "Share-Link einfügen",
+      addButton: "Hinzufügen",
+      removeButton: "Entfernen",
+      personLabel: (p) => `Person ${p.index}`,
+      linkInvalid: "Dieser Link ist ungültig oder beschädigt.",
+      differentYearWarning: (p) =>
+        `Diese Planung bezieht sich auf ${p.year} – keine Überschneidung mit deinem Jahr ${p.ownYear} möglich.`,
+      emptyNoPeople: "Füge den Share-Link einer anderen Person hinzu, um gemeinsame freie Tage zu finden.",
+      emptyNoOverlap: "Mit den hinzugefügten Personen gibt es aktuell keine gemeinsamen freien Tage.",
+      periodHeading: (p) => `${p.len} Tage gemeinsam frei`,
+      myCost: (p) =>
+        `Du: ${p.vac} Urlaubstag${p.vacRaw === 1 ? "" : "e"}${p.otRaw > 0 ? ` · ${p.ot} Überstunden` : ""}`,
+      personCost: (p) =>
+        `${p.label}: ${p.vac} Urlaubstag${p.vacRaw === 1 ? "" : "e"}${p.otRaw > 0 ? ` · ${p.ot} Überstunden` : ""}`,
     },
   };
 
