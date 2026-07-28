@@ -30,7 +30,7 @@
   }
 
   function AboutPage() {
-    const [dark, setDark] = useState(true);
+    const [dark, setDark] = useState(false);
 
     // document.title + Meta-Description setzen und beim Verlassen wieder
     // herstellen (analog zum Robots-Meta-Muster in LegalLayout, hier aber
@@ -57,27 +57,27 @@
       };
     }, []);
 
-    const softTextCls = dark ? "text-slate-300" : "text-slate-600";
-    const mutedTextCls = dark ? "text-slate-400" : "text-slate-500";
+    const softTextCls = dark ? "text-sonnencreme/80" : "text-espresso/80";
+    const mutedTextCls = dark ? "text-sonnencreme/60" : "text-espresso/60";
     const cardCls = dark
-      ? "bg-slate-900 border border-slate-800 rounded-xl shadow-sm"
-      : "bg-white border border-slate-200 rounded-xl shadow-sm";
+      ? "bg-tiefwasser-hell border border-tiefwasser-hell rounded-2xl shadow-warm-dark"
+      : "bg-kalkstein border border-beckenwasser/20 rounded-2xl shadow-warm";
 
     return (
-      <div className={`min-h-screen flex flex-col ${dark ? "bg-slate-950 text-slate-100" : "bg-slate-100 text-slate-900"}`}>
-        <header className={dark ? "border-b border-slate-800 bg-slate-900" : "border-b border-slate-200 bg-white"}>
+      <div className={`min-h-screen flex flex-col font-body ${dark ? "bg-tiefwasser text-sonnencreme" : "bg-sonnencreme text-espresso"}`}>
+        <header className={dark ? "border-b border-tiefwasser-hell bg-tiefwasser-hell" : "border-b border-beckenwasser/20 bg-kalkstein"}>
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-5">
-            <SiteLink to="/" className={`font-bold tracking-tight ${dark ? "text-white hover:text-emerald-400" : "text-slate-900 hover:text-emerald-600"}`}>
+            <SiteLink to="/" className={`font-bold tracking-tight ${dark ? "text-kalkstein hover:text-beckenwasser-hell" : "text-espresso hover:text-beckenwasser"}`}>
               FREILOTSE
             </SiteLink>
             <div className="flex items-center gap-4">
-              <SiteLink to="/" className={`text-sm ${dark ? "text-slate-300 hover:text-white" : "text-slate-600 hover:text-slate-900"}`}>
+              <SiteLink to="/" className={`text-sm ${dark ? "text-sonnencreme/80 hover:text-kalkstein" : "text-espresso/80 hover:text-espresso"}`}>
                 {t("about.backToPlanner")}
               </SiteLink>
               <button onClick={() => setDark(!dark)}
                 title={t("theme.toggleTitle")}
-                className={`rounded-md border px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                  dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                className={`rounded-xl border px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+                  dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser/5"
                 }`}>
                 {dark ? t("theme.toLight") : t("theme.toDark")}
               </button>
@@ -102,11 +102,11 @@
                   loading="eager"
                   decoding="async"
                   className={`h-28 w-28 shrink-0 rounded-full object-cover shadow-md sm:h-32 sm:w-32 ${
-                    dark ? "border-2 border-slate-700" : "border-2 border-slate-200"
+                    dark ? "border-2 border-tiefwasser-hell" : "border-2 border-beckenwasser/20"
                   }`}
                 />
                 <div className="space-y-3">
-                  <p className={`text-lg font-semibold ${dark ? "text-slate-200" : "text-slate-800"}`}>{t("about.intro")}</p>
+                  <p className={`text-lg font-semibold ${dark ? "text-sonnencreme/90" : "text-espresso"}`}>{t("about.intro")}</p>
                   <p className={`text-sm leading-7 ${softTextCls}`}>{t("about.body1")}</p>
                   <p className={`text-sm leading-7 ${softTextCls}`}>{t("about.body2")}</p>
                   {/* Dezenter Text-Button im bestehenden Emerald-Akzent (analog zum
@@ -114,8 +114,8 @@
                       PayPal-Button weiter unten. */}
                   <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
                     aria-label={t("about.linkedin.ariaLabel")}
-                    className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                      dark ? "border-emerald-800 text-emerald-400 hover:bg-emerald-950/40" : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                    className={`inline-flex items-center gap-1.5 rounded-2xl border px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+                      dark ? "border-lagune/40 text-lagune-hell hover:bg-lagune/10" : "border-lagune/30 text-lagune hover:bg-lagune-hell/40"
                     }`}>
                     <LinkedInIcon />
                     {t("about.linkedin.linkText")}
@@ -129,18 +129,18 @@
               <ul className="space-y-2 text-sm">
                 {t("about.values.items").map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <span aria-hidden="true" className="text-emerald-500">✓</span>
+                    <span aria-hidden="true" className="text-beckenwasser">✓</span>
                     <span className={softTextCls}>{item}</span>
                   </li>
                 ))}
               </ul>
             </section>
 
-            <section className={`space-y-4 rounded-lg p-5 ${dark ? "bg-slate-950/50 border border-slate-800" : "bg-slate-50 border border-slate-200"}`}>
+            <section className={`space-y-4 rounded-2xl p-5 ${dark ? "bg-tiefwasser/50 border border-tiefwasser-hell" : "bg-beckenwasser/5 border border-beckenwasser/20"}`}>
               <h2 className="text-lg font-bold">{t("about.support.heading")}</h2>
               <p className={`text-sm leading-7 ${softTextCls}`}>{t("about.support.text")}</p>
               <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" aria-label={t("about.support.buttonAriaLabel")}
-                className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                className="inline-flex items-center gap-2 rounded-full bg-sonnenkoralle px-5 py-2.5 text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                 {t("about.support.button")}
               </a>
             </section>
@@ -148,7 +148,7 @@
             <p className={`text-xs ${mutedTextCls}`}>
               {t("about.contact.prefix")}
               <a href="mailto:freilotse@outlook.de"
-                className={`underline decoration-emerald-500/40 underline-offset-2 ${dark ? "text-emerald-400 hover:text-emerald-300" : "text-emerald-600 hover:text-emerald-700"}`}>
+                className={`underline decoration-beckenwasser/30 underline-offset-2 ${dark ? "text-beckenwasser-hell hover:text-beckenwasser/80" : "text-beckenwasser hover:text-beckenwasser/80"}`}>
                 freilotse@outlook.de
               </a>
               {t("about.contact.suffix")}
