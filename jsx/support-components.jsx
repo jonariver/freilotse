@@ -40,7 +40,7 @@
   function SupportFooterLink({ dark }) {
     return (
       <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer"
-        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
           dark ? "bg-beckenwasser-hell/20 text-beckenwasser-hell hover:bg-beckenwasser-hell/30" : "bg-beckenwasser-hell/60 text-beckenwasser hover:bg-beckenwasser-hell"
         }`}>
         <HeartIcon />
@@ -100,10 +100,6 @@
     return (
       <>
         <style>{`
-          .support-fab { position: fixed; right: 0; top: 50%; transform: translateY(-50%); }
-          @media (max-width: 639px) {
-            .support-fab { top: auto; transform: none; bottom: max(1.25rem, env(safe-area-inset-bottom)); }
-          }
           .support-fab-label {
             display: inline-block; max-width: 0; margin-left: 0; opacity: 0; overflow: hidden; white-space: nowrap;
             transition: max-width .3s ease, opacity .25s ease, margin-left .3s ease;
@@ -130,9 +126,9 @@
 
   function SiteFooter({ dark = true }) {
     const muted = dark ? "text-sonnencreme/60" : "text-espresso/60";
-    const hover = dark ? "hover:text-kalkstein" : "hover:text-tiefwasser";
+    const hover = dark ? "hover:text-sonnencreme" : "hover:text-tiefwasser";
     return (
-      <footer className={`border-t ${dark ? "border-tiefwasser-hell bg-tiefwasser" : "border-beckenwasser/20 bg-kalkstein"}`}>
+      <footer className={`border-t ${dark ? "border-tiefwasser-hell bg-tiefwasser" : "border-beckenwasser/20 bg-sonnencreme"}`}>
         <div className={`mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-xs sm:flex-row sm:items-center sm:justify-between ${muted}`}>
           <p>© {new Date().getFullYear()} FREILOTSE</p>
           <nav aria-label="Rechtliches und Unterstützung" className="flex flex-wrap items-center gap-x-4 gap-y-2">
