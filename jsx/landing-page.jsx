@@ -58,7 +58,7 @@
       <section className="space-y-4">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <h2 className="text-xl font-bold">{t("landing.video.heading")}</h2>
-          <p className={`text-sm leading-relaxed ${dark ? "text-slate-300" : "text-slate-600"}`}>
+          <p className={`text-sm leading-relaxed ${dark ? "text-sonnencreme/80" : "text-espresso/80"}`}>
             {t("landing.video.description")}
           </p>
         </div>
@@ -75,12 +75,12 @@
             ) : (
               <button type="button" onClick={() => setPlayed(true)}
                 aria-label={t("landing.video.playButtonLabel")}
-                className="group absolute inset-0 h-full w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-inset">
+                className="group absolute inset-0 h-full w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-beckenwasser focus:ring-inset">
                 <img src={video.thumbnail} alt={t("landing.video.thumbnailAlt")}
                   className="h-full w-full object-cover" loading="lazy" />
-                <span className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/30">
-                  <span className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform group-hover:scale-105">
-                    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-6 w-6 sm:h-7 sm:w-7 translate-x-0.5 fill-emerald-600">
+                <span className="absolute inset-0 flex items-center justify-center bg-tiefwasser/20 transition-colors group-hover:bg-tiefwasser/30">
+                  <span className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-kalkstein/90 shadow-lg transition-transform group-hover:scale-105">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-6 w-6 sm:h-7 sm:w-7 translate-x-0.5 fill-sonnenkoralle">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   </span>
@@ -94,30 +94,31 @@
   }
 
   function LandingPage({ dark, setDark, cardCls, onStartSimple, onStartPro }) {
-    const softTextCls = dark ? "text-slate-300" : "text-slate-600";
-    const mutedTextCls = dark ? "text-slate-400" : "text-slate-500";
-    const badgeCls = dark ? "bg-emerald-900/50 text-emerald-300" : "bg-emerald-100 text-emerald-700";
+    const softTextCls = dark ? "text-sonnencreme/80" : "text-espresso/80";
+    const mutedTextCls = dark ? "text-sonnencreme/60" : "text-espresso/60";
+    const badgeCls = dark ? "bg-beckenwasser/30 text-beckenwasser" : "bg-beckenwasser/10 text-beckenwasser";
 
     return (
       <>
-        <header className="bg-slate-900 text-white">
+        <header className="bg-tiefwasser text-sonnencreme">
           <div className="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between gap-4">
             <img src="./assets/logo/freilotse-logo-horizontal-dark-bg.svg" alt="FREILOTSE Urlaubsplaner"
               className="w-[165px] md:w-[200px] h-auto" />
             <button onClick={() => setDark(!dark)}
-              className="rounded-md border border-slate-600 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="rounded-xl border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser focus:outline-none focus:ring-2 focus:ring-beckenwasser"
               title={t("theme.toggleTitle")}>
               {dark ? t("theme.toLight") : t("theme.toDark")}
             </button>
           </div>
         </header>
+        <div aria-hidden="true" className={`wave-divider ${dark ? "wave-divider-dark" : ""}`}></div>
 
         <main className="max-w-6xl mx-auto px-4 py-10 space-y-14">
           {/* Hero */}
           <section className="text-center max-w-2xl mx-auto space-y-4" style={{ animation: "upFade .35s ease" }}>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight [text-wrap:balance]">{t("landing.hero.heading")}</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold font-display tracking-tight [text-wrap:balance]">{t("landing.hero.heading")}</h2>
             <p className={`text-sm sm:text-base leading-relaxed ${softTextCls}`}>{t("landing.hero.description")}</p>
-            <p className={`inline-block rounded-full px-4 py-2 text-sm font-semibold ${dark ? "bg-emerald-900/40 text-emerald-300" : "bg-emerald-50 text-emerald-700"}`}>
+            <p className={`inline-block rounded-full px-4 py-2 text-sm font-semibold ${dark ? "bg-beckenwasser/30 text-beckenwasser" : "bg-beckenwasser/10 text-beckenwasser"}`}>
               {t("landing.hero.example")}
             </p>
           </section>
@@ -129,7 +130,7 @@
             </h2>
             <div className="grid gap-4 md:grid-cols-2 items-stretch">
               {/* Einfach-Karte: visuell stärker hervorgehoben (primärer Einstieg) */}
-              <div className={`${cardCls} p-6 flex flex-col gap-4 border-2 ${dark ? "border-emerald-600" : "border-emerald-500"}`}>
+              <div className={`${cardCls} p-6 flex flex-col gap-4 border-2 ${dark ? "border-beckenwasser" : "border-beckenwasser"}`}>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-lg font-bold">{t("landing.modes.simple.title")}</h3>
                   <span className={`text-[10px] font-bold uppercase tracking-wide rounded-full px-2 py-0.5 ${badgeCls}`}>
@@ -140,13 +141,13 @@
                 <ul className="text-sm space-y-1.5 flex-1">
                   {t("landing.modes.simple.benefits").map((b) => (
                     <li key={b} className="flex items-start gap-2">
-                      <span aria-hidden="true" className="text-emerald-500">✓</span>
-                      <span className={dark ? "text-slate-300" : "text-slate-700"}>{b}</span>
+                      <span aria-hidden="true" className="text-beckenwasser">✓</span>
+                      <span className={dark ? "text-sonnencreme/80" : "text-espresso"}>{b}</span>
                     </li>
                   ))}
                 </ul>
                 <button onClick={onStartSimple}
-                  className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  className="w-full rounded-2xl bg-sonnenkoralle px-4 py-3 text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                   {t("landing.modes.simple.button")}
                 </button>
               </div>
@@ -159,13 +160,13 @@
                   {t("landing.modes.pro.benefits").map((b) => (
                     <li key={b} className="flex items-start gap-2">
                       <span aria-hidden="true" className={mutedTextCls}>✓</span>
-                      <span className={dark ? "text-slate-300" : "text-slate-700"}>{b}</span>
+                      <span className={dark ? "text-sonnencreme/80" : "text-espresso"}>{b}</span>
                     </li>
                   ))}
                 </ul>
                 <button onClick={onStartPro}
-                  className={`w-full rounded-lg border px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                    dark ? "border-slate-600 text-slate-200 hover:bg-slate-800" : "border-slate-300 text-slate-700 hover:bg-slate-100"
+                  className={`w-full rounded-2xl border px-4 py-3 text-sm font-bold font-display focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+                    dark ? "border-tiefwasser-hell text-sonnencreme hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso hover:bg-beckenwasser-hell/30"
                   }`}>
                   {t("landing.modes.pro.button")}
                 </button>
@@ -214,10 +215,10 @@
                     <>
                       {/* Desktop: dezente horizontale Verbindungslinie zwischen den Schritten */}
                       <div aria-hidden="true"
-                        className={`hidden sm:block sm:flex-1 sm:mt-3 sm:h-px ${dark ? "bg-slate-700" : "bg-slate-300"}`} />
+                        className={`hidden sm:block sm:flex-1 sm:mt-3 sm:h-px ${dark ? "bg-tiefwasser-hell" : "bg-beckenwasser/30"}`} />
                       {/* Mobil: kurze vertikale Verbindung statt horizontaler Linie (kein Overflow) */}
                       <div aria-hidden="true"
-                        className={`sm:hidden ml-[14px] h-3 w-px ${dark ? "bg-slate-700" : "bg-slate-300"}`} />
+                        className={`sm:hidden ml-[14px] h-3 w-px ${dark ? "bg-tiefwasser-hell" : "bg-beckenwasser/30"}`} />
                     </>
                   )}
                 </React.Fragment>
@@ -230,7 +231,7 @@
               Modus-Auswahl weiter oben konkurriert. Verlinkt auf /ueber-freilotse. */}
           <p className={`text-center text-xs ${mutedTextCls}`}>
             {t("landing.aboutTeaser.text")}{" "}
-            <SiteLink to="/ueber-freilotse" className={`font-semibold hover:underline ${dark ? "text-emerald-400" : "text-emerald-600"}`}>
+            <SiteLink to="/ueber-freilotse" className={`font-semibold hover:underline ${dark ? "text-beckenwasser" : "text-beckenwasser"}`}>
               {t("landing.aboutTeaser.linkText")}
             </SiteLink>
           </p>
@@ -239,7 +240,7 @@
           <section className={`flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs ${mutedTextCls}`}>
             {t("landing.trust.items").map((item) => (
               <span key={item} className="inline-flex items-center gap-1.5">
-                <span aria-hidden="true" className="text-emerald-500">✓</span> {item}
+                <span aria-hidden="true" className="text-beckenwasser">✓</span> {item}
               </span>
             ))}
           </section>
