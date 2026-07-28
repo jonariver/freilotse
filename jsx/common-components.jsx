@@ -17,10 +17,10 @@
       <section className={`${cardCls} overflow-hidden`}>
         <button type="button" onClick={onToggle}
           className="w-full flex items-center justify-between px-4 py-3 text-left">
-          <span className="text-sm font-bold flex items-center gap-2">
+          <span className="text-sm font-bold font-display flex items-center gap-2">
             <span aria-hidden="true">{icon}</span> {title}
           </span>
-          <span className={`text-[10px] transition-transform duration-300 ${open ? "rotate-90" : ""} ${dark ? "text-slate-400" : "text-slate-500"}`}>
+          <span className={`text-[10px] transition-transform duration-300 ${open ? "rotate-90" : ""} ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
             ▶
           </span>
         </button>
@@ -41,12 +41,12 @@
       <span className="inline">
         <button type="button" onClick={() => setShow(!show)} title={t("common.moreInfo")}
           className={`ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full border text-[10px] font-bold align-middle ${
-            dark ? "border-slate-600 text-slate-400 hover:bg-slate-800" : "border-slate-300 text-slate-500 hover:bg-slate-100"
+            dark ? "border-tiefwasser-hell text-sonnencreme/60 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/60 hover:bg-beckenwasser-hell/40"
           }`}>
           i
         </button>
         {show && (
-          <span className={`mt-1 block text-[11px] leading-snug ${dark ? "text-slate-400" : "text-slate-500"}`}>{text}</span>
+          <span className={`mt-1 block text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{text}</span>
         )}
       </span>
     );
