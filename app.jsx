@@ -1102,11 +1102,11 @@ function Urlaubsplaner({ onPlanReady }) {
   const delBlock = (i) => setBlocks(blocks.filter((_, j) => j !== i));
 
   const inputCls = dark
-    ? "w-full rounded-md border border-slate-600 bg-slate-800 px-2.5 py-1.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-    : "w-full rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500";
-  const labelCls = `block text-xs font-semibold uppercase tracking-wide ${dark ? "text-slate-400" : "text-slate-500"} mb-1`;
-  const cardCls = dark ? "bg-slate-900 border border-slate-800 rounded-xl shadow-sm" : "bg-white rounded-xl shadow-sm";
-  const subLabelCls = `text-xs font-semibold uppercase tracking-wide ${dark ? "text-slate-400" : "text-slate-600"}`;
+    ? "w-full rounded-xl border border-tiefwasser-hell bg-tiefwasser-hell px-2.5 py-1.5 text-sm text-sonnencreme focus:outline-none focus:ring-2 focus:ring-beckenwasser"
+    : "w-full rounded-xl border border-beckenwasser/30 bg-kalkstein px-2.5 py-1.5 text-sm text-tiefwasser focus:outline-none focus:ring-2 focus:ring-beckenwasser";
+  const labelCls = `block text-xs font-semibold uppercase tracking-wide ${dark ? "text-sonnencreme/60" : "text-espresso/60"} mb-1`;
+  const cardCls = dark ? "bg-tiefwasser-hell border border-tiefwasser-hell rounded-3xl shadow-warm-dark" : "bg-kalkstein border border-beckenwasser/20 rounded-3xl shadow-warm";
+  const subLabelCls = `text-xs font-semibold uppercase tracking-wide ${dark ? "text-sonnencreme/60" : "text-espresso/80"}`;
 
   // Regelmäßige Arbeitstage – EIN gemeinsamer Zustand (workingWeekdays) und
   // EIN Rendering für Einfach- UND Profi-Modus. Reine UI-/Ableitungslogik;
@@ -1541,7 +1541,7 @@ function Urlaubsplaner({ onPlanReady }) {
   };
 
   return (
-    <div className={`min-h-screen ${dark ? "bg-slate-950 text-slate-100" : "bg-slate-100 text-slate-900"}`} style={{ fontFeatureSettings: '"tnum"' }}>
+    <div className={`min-h-screen font-body ${dark ? "bg-tiefwasser text-sonnencreme" : "bg-sonnencreme text-espresso"}`} style={{ fontFeatureSettings: '"tnum"' }}>
       <style>{`@keyframes upFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }`}</style>
       {view === "loading" ? (
         <div className="min-h-screen flex items-center justify-center px-4">
@@ -1556,20 +1556,20 @@ function Urlaubsplaner({ onPlanReady }) {
       ) : (
       <>
       {/* Kopf */}
-      <header className="bg-slate-900 text-white">
+      <header className="bg-tiefwasser text-sonnencreme">
         <div className="max-w-6xl mx-auto px-4 py-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <button onClick={() => setView("landing")}
-              className="mb-1 inline-flex focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded opacity-90 hover:opacity-100 transition-opacity"
+              className="mb-1 inline-flex focus:outline-none focus:ring-2 focus:ring-beckenwasser rounded opacity-90 hover:opacity-100 transition-opacity"
               aria-label={t("nav.backToStartAriaLabel")}>
               <img src="./assets/logo/freilotse-nav-dark-bg.svg" alt="" className="w-28 sm:w-32 h-auto" />
             </button>
-            <p className="text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-beckenwasser-hell mb-1">
               {t("header.tagline", { state: STATES[st] })}
             </p>
-            <h1 className="text-3xl font-bold tracking-tight">{t("header.title", { year })}</h1>
+            <h1 className="text-3xl font-display font-bold tracking-tight">{t("header.title", { year })}</h1>
           </div>
-          <div className="flex items-center gap-1 rounded-md border border-slate-600 p-1 self-start">
+          <div className="flex items-center gap-1 rounded-md border border-tiefwasser-hell p-1 self-start">
             {[["einfach", t("nav.simpleMode")], ["profi", t("nav.proMode")]].map(([k, l]) => (
               <button key={k}
                 onClick={() => {
@@ -1578,14 +1578,14 @@ function Urlaubsplaner({ onPlanReady }) {
                   if (k === "einfach" && year > currentYear + 2) setYear(currentYear);
                 }}
                 className={`rounded px-3 py-1 text-xs font-semibold transition-colors ${
-                  uiMode === k ? "bg-emerald-600 text-white" : "text-slate-300 hover:bg-slate-800"
+                  uiMode === k ? "bg-beckenwasser text-sonnencreme" : "text-sonnencreme/70 hover:bg-tiefwasser-hell"
                 }`}>
                 {l}
               </button>
             ))}
           </div>
           <button onClick={handleShare}
-            className="self-start inline-flex items-center gap-1.5 rounded-md border border-slate-600 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="self-start inline-flex items-center gap-1.5 rounded-md border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell focus:outline-none focus:ring-2 focus:ring-beckenwasser"
             aria-label={t("share.ariaLabel")}
             title={t("share.title")}>
             <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none"
@@ -1601,7 +1601,7 @@ function Urlaubsplaner({ onPlanReady }) {
                 if (plansStore.plans.length === 0) savePlanAsNew();
                 else setPlansDialogOpen(true);
               }}
-              className="self-start inline-flex items-center gap-1.5 rounded-md border border-slate-600 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="self-start inline-flex items-center gap-1.5 rounded-md border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell focus:outline-none focus:ring-2 focus:ring-beckenwasser"
               aria-label={plansStore.plans.length === 0 ? t("localPlans.header.saveAriaLabel") : t("localPlans.header.manageAriaLabel")}
               title={plansStore.plans.length === 0 ? t("localPlans.header.saveButton") : t("localPlans.header.manageButton")}>
               <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none"
@@ -1613,13 +1613,13 @@ function Urlaubsplaner({ onPlanReady }) {
             </button>
           )}
           <button onClick={() => setDark(!dark)}
-            className="self-start rounded-md border border-slate-600 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-800"
+            className="self-start rounded-md border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell"
             title={t("theme.toggleTitle")}>
             {dark ? t("theme.toLight") : t("theme.toDark")}
           </button>
           <div className="text-right">
-            <p className="text-4xl font-bold tabular-nums text-emerald-400">{totalFree}</p>
-            <p className="text-xs text-slate-300">
+            <p className="text-4xl font-data font-bold tabular-nums text-sonnenkoralle">{totalFree}</p>
+            <p className="text-xs text-sonnencreme/70">
               {t("header.freeDaysSuffix", {
                 total: totalFree, periods: periodCount,
                 usedVac: fmtNum(usedVac), usedVacRaw: usedVac,
@@ -1628,6 +1628,7 @@ function Urlaubsplaner({ onPlanReady }) {
             </p>
           </div>
         </div>
+        <div aria-hidden="true" className={`wave-divider ${dark ? "wave-divider-dark" : ""}`}></div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
@@ -2318,23 +2319,23 @@ function Urlaubsplaner({ onPlanReady }) {
             )}
             <div className={`flex flex-wrap gap-x-4 gap-y-1 text-xs ${dark ? "text-slate-300" : "text-slate-600"}`}>
               {[
-                ["bg-emerald-600", t("legend.vacation")],
-                ["bg-sky-600", t("legend.overtime")],
-                ["bg-rose-600", t("legend.holiday")],
-                ["bg-amber-300", t("legend.xmasFree")],
-                ["bg-amber-100 border border-amber-300", t("legend.xmasHalf")],
-                [dark ? "bg-slate-700" : "bg-slate-200", t("legend.weekend")],
+                ["bg-beckenwasser", t("legend.vacation")],
+                ["bg-lagune", t("legend.overtime")],
+                ["bg-ziegelrot", t("legend.holiday")],
+                ["bg-sonnengelb", t("legend.xmasFree")],
+                ["bg-sonnengelb-hell border border-sonnengelb", t("legend.xmasHalf")],
+                [dark ? "bg-tiefwasser-hell" : "bg-espresso/10", t("legend.weekend")],
                 // Nur relevant (und daher nur sichtbar), wenn von Montag–Freitag
                 // abgewichen wird – überlädt die Legende sonst unnötig.
                 ...(isDefaultWorkweek ? [] : [[
-                  dark ? "bg-slate-800/60 border border-dashed border-slate-700" : "bg-slate-100 border border-dashed border-slate-300",
+                  dark ? "bg-tiefwasser-hell/30 border border-dashed border-tiefwasser-hell" : "bg-espresso/5 border border-dashed border-espresso/20",
                   t("legend.regularlyOff"),
                 ]]),
-                [dark ? "bg-slate-800 ring-2 ring-slate-400" : "bg-white ring-2 ring-slate-500", t("legend.manualSet")],
-                ["bg-orange-400", t("legend.schoolHolidays")],
+                [dark ? "bg-tiefwasser-hell ring-2 ring-sonnencreme/50" : "bg-kalkstein ring-2 ring-tiefwasser/40", t("legend.manualSet")],
+                ["bg-ziegelrot-hell", t("legend.schoolHolidays")],
                 // Swatch als Rahmen statt Füllung, passend zur tatsächlichen
                 // Darstellung im Kalender (dünner Innenrahmen, kein Flächenfüllen).
-                [`bg-transparent border-2 rounded ${dark ? "border-emerald-300" : "border-emerald-600"}`, t("legend.freePeriod")],
+                [`bg-transparent border-2 rounded ${dark ? "border-beckenwasser-hell" : "border-beckenwasser"}`, t("legend.freePeriod")],
               ].map(([c, l]) => (
                 <span key={l} className="inline-flex items-center gap-1.5">
                   <span className={`inline-block w-3 h-3 rounded-sm ${c}`} /> {l}
