@@ -37,12 +37,10 @@
     );
   }
 
-  function SupportFooterLink({ dark }) {
+  function SupportFooterLink() {
     return (
       <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer"
-        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
-          dark ? "bg-beckenwasser-hell/20 text-beckenwasser-hell hover:bg-beckenwasser-hell/30" : "bg-beckenwasser-hell/60 text-beckenwasser hover:bg-beckenwasser-hell"
-        }`}>
+        className="inline-flex items-center gap-1.5 rounded-full bg-sonnenkoralle px-3 py-1.5 text-xs font-semibold text-kalkstein transition-colors hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
         <HeartIcon />
         {t("support.footerLinkText")}
       </a>
@@ -138,7 +136,7 @@
             <SiteLink to="/neuigkeiten" className={hover}>{t("changelog.footerLink")}</SiteLink>
             <SiteLink to="/anleitung" className={hover}>{t("guide.footerLink")}</SiteLink>
             <SiteLink to="/raetsel" className={hover}>{t("puzzle.footerLink")}</SiteLink>
-            <SupportFooterLink dark={dark} />
+            <SupportFooterLink />
           </nav>
         </div>
       </footer>
