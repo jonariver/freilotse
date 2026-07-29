@@ -1150,10 +1150,10 @@ function Urlaubsplaner({ onPlanReady }) {
             aria-pressed={active}
             aria-label={weekdayFullNames[dow]}
             onClick={() => toggleWorkingWeekday(dow)}
-            className={`h-9 min-w-[2.75rem] px-2 rounded-md text-xs font-semibold border focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+            className={`h-9 min-w-[2.75rem] px-2 rounded-xl text-xs font-semibold border focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
               active
-                ? "bg-emerald-600 border-emerald-600 text-white"
-                : dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                ? "bg-beckenwasser border-beckenwasser text-kalkstein"
+                : dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"
             }`}>
             {DOWS[dow]}
           </button>
@@ -1645,12 +1645,12 @@ function Urlaubsplaner({ onPlanReady }) {
                   <p className={labelCls}>{t("simple.step1Question")}</p>
                   <div className="flex items-center gap-3">
                     <button onClick={() => setVac(String(Math.max(0, num(vac) - 1)))}
-                      className={`w-10 h-10 rounded-md border text-lg font-bold ${dark ? "border-slate-600 text-slate-200 hover:bg-slate-800" : "border-slate-300 text-slate-700 hover:bg-slate-100"}`}>
+                      className={`w-10 h-10 rounded-xl border text-lg font-bold ${dark ? "border-tiefwasser-hell text-sonnencreme/90 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso hover:bg-beckenwasser-hell/30"}`}>
                       −
                     </button>
-                    <span className="w-14 text-center text-2xl font-bold tabular-nums">{fmtNum(num(vac))}</span>
+                    <span className="w-14 text-center text-2xl font-bold tabular-nums font-data">{fmtNum(num(vac))}</span>
                     <button onClick={() => setVac(String(num(vac) + 1))}
-                      className={`w-10 h-10 rounded-md border text-lg font-bold ${dark ? "border-slate-600 text-slate-200 hover:bg-slate-800" : "border-slate-300 text-slate-700 hover:bg-slate-100"}`}>
+                      className={`w-10 h-10 rounded-xl border text-lg font-bold ${dark ? "border-tiefwasser-hell text-sonnencreme/90 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso hover:bg-beckenwasser-hell/30"}`}>
                       +
                     </button>
                   </div>
@@ -1693,33 +1693,33 @@ function Urlaubsplaner({ onPlanReady }) {
                   <p className={labelCls}>{t("simple.stepWorkdaysQuestion")}</p>
                   {!showWorkingDaysEditor ? (
                     <div className="flex items-center justify-between gap-2">
-                      <span className={`text-sm ${dark ? "text-slate-300" : "text-slate-700"}`}>
+                      <span className={`text-sm ${dark ? "text-sonnencreme/80" : "text-espresso"}`}>
                         {workingWeekdaysSummary()}
                       </span>
                       <button type="button" onClick={() => setShowWorkingDaysEditor(true)}
-                        className="shrink-0 text-xs font-semibold text-emerald-600 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded">
+                        className="shrink-0 text-xs font-semibold text-beckenwasser hover:underline focus:outline-none focus:ring-2 focus:ring-beckenwasser rounded">
                         {t("workingDays.changeButton")}
                       </button>
                     </div>
                   ) : (
                     <div className="space-y-2">
                       {workingWeekdayButtons()}
-                      <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{workingWeekdaysSummary()}</p>
+                      <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{workingWeekdaysSummary()}</p>
                       <div className="flex items-center justify-between gap-2">
                         {!isDefaultWorkweek ? (
                           <button type="button" onClick={resetWorkingWeekdays}
-                            className="text-xs font-semibold text-emerald-600 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded">
+                            className="text-xs font-semibold text-beckenwasser hover:underline focus:outline-none focus:ring-2 focus:ring-beckenwasser rounded">
                             {t("workingDays.resetButton")}
                           </button>
                         ) : <span />}
                         <button type="button" onClick={() => setShowWorkingDaysEditor(false)}
-                          className={`text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded ${
-                            dark ? "text-slate-400 hover:text-slate-200" : "text-slate-500 hover:text-slate-700"
+                          className={`text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-beckenwasser rounded ${
+                            dark ? "text-sonnencreme/60 hover:text-sonnencreme/90" : "text-espresso/60 hover:text-espresso"
                           }`}>
                           {t("workingDays.closeButton")}
                         </button>
                       </div>
-                      <p className={`text-[11px] leading-snug ${dark ? "text-slate-500" : "text-slate-400"}`}>
+                      <p className={`text-[11px] leading-snug ${dark ? "text-espresso/60" : "text-sonnencreme/60"}`}>
                         {t("workingDays.minOneRequired")}
                       </p>
                     </div>
@@ -1732,14 +1732,14 @@ function Urlaubsplaner({ onPlanReady }) {
                     {[["100", t("simple.step4Options.full")],
                       ["50", t("simple.step4Options.half")],
                       ["0", t("simple.step4Options.none")]].map(([k, l]) => (
-                      <label key={k} className={`flex items-start gap-2 text-sm cursor-pointer ${dark ? "text-slate-300" : "text-slate-700"}`}>
-                        <input type="radio" name="simpleXmas" className="mt-0.5 accent-emerald-600"
+                      <label key={k} className={`flex items-start gap-2 text-sm cursor-pointer ${dark ? "text-sonnencreme/80" : "text-espresso"}`}>
+                        <input type="radio" name="simpleXmas" className="mt-0.5 accent-beckenwasser"
                           checked={xmasRule === k} onChange={() => setXmasRule(k)} />
                         <span>{l}</span>
                       </label>
                     ))}
                   </div>
-                  <p className={`text-[11px] leading-snug ${dark ? "text-slate-500" : "text-slate-400"}`}>
+                  <p className={`text-[11px] leading-snug ${dark ? "text-espresso/60" : "text-sonnencreme/60"}`}>
                     {t("simple.step4Hint")}
                   </p>
                 </div>
@@ -1752,8 +1752,8 @@ function Urlaubsplaner({ onPlanReady }) {
                         title={schoolPrefOptionsDisabled ? t("schoolHolidays.optionsDisabledTitle") : undefined}
                         className={`flex items-center gap-2 text-sm ${
                           schoolPrefOptionsDisabled ? "cursor-not-allowed" : "cursor-pointer"
-                        } ${dark ? "text-slate-300" : "text-slate-700"}`}>
-                        <input type="radio" name="schoolPrefSimple" className="accent-emerald-600"
+                        } ${dark ? "text-sonnencreme/80" : "text-espresso"}`}>
+                        <input type="radio" name="schoolPrefSimple" className="accent-beckenwasser"
                           disabled={schoolPrefOptionsDisabled}
                           checked={schoolHolidayPreference === k}
                           onChange={() => setSchoolHolidayPreference(k)} />
@@ -1772,8 +1772,8 @@ function Urlaubsplaner({ onPlanReady }) {
                   <p className={labelCls}>{t("simple.step6Question")}</p>
                   <div className="space-y-2">
                     {[["free", t("simple.goal.free")], ["blocks", t("simple.goal.blocks")], ["short", t("simple.goal.short")], ["custom", t("simple.goal.custom")]].map(([k, l]) => (
-                      <label key={k} className={`flex items-center gap-2 text-sm cursor-pointer ${dark ? "text-slate-300" : "text-slate-700"}`}>
-                        <input type="radio" name="simpleGoal" className="accent-emerald-600"
+                      <label key={k} className={`flex items-center gap-2 text-sm cursor-pointer ${dark ? "text-sonnencreme/80" : "text-espresso"}`}>
+                        <input type="radio" name="simpleGoal" className="accent-beckenwasser"
                           checked={k !== "custom" && simpleGoal === k}
                           onChange={() => { if (k === "custom") { setUiMode("profi"); } else { applySimpleGoal(k); } }} />
                         <span>{l}</span>
@@ -1783,7 +1783,7 @@ function Urlaubsplaner({ onPlanReady }) {
                 </div>
 
                 <button onClick={() => { applySimpleGoal(simpleGoal); setSimpleStarted(true); }}
-                  className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700">
+                  className="w-full rounded-2xl bg-sonnenkoralle px-4 py-3 text-sm font-bold text-kalkstein hover:bg-sonnenkoralle/90">
                   {t("simple.calcButton")}
                 </button>
               </section>
@@ -1793,7 +1793,7 @@ function Urlaubsplaner({ onPlanReady }) {
             <div className="space-y-6">
               {!simpleStarted ? (
                 <section className={`${cardCls} p-8 text-center`}>
-                  <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                  <p className={`text-sm ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                     {t("simple.notStartedHint")}
                   </p>
                 </section>
@@ -1803,17 +1803,17 @@ function Urlaubsplaner({ onPlanReady }) {
                     <h2 className="text-sm font-bold mb-3">{t("simple.resultHeading")}</h2>
                     <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
                       <div>
-                        <p className={`text-6xl font-bold tabular-nums ${dark ? "text-emerald-400" : "text-emerald-600"}`}>{totalFree}</p>
-                        <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("simple.freeDaysLabel")}</p>
+                        <p className="text-6xl font-data font-bold tabular-nums text-sonnenkoralle">{totalFree}</p>
+                        <p className={`text-sm ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("simple.freeDaysLabel")}</p>
                       </div>
-                      <div className={`text-sm space-y-1 ${dark ? "text-slate-300" : "text-slate-600"}`}>
+                      <div className={`text-sm space-y-1 ${dark ? "text-sonnencreme/80" : "text-espresso/80"}`}>
                         <p>{t("simple.statTotalFree", { count: totalFree, periods: periodCount })}</p>
                         <p>{t("simple.statVacationDaysUsed", { count: fmtNum(usedVac), countRaw: usedVac })}</p>
                         <p>{t("simple.statHolidaysUsed", { count: periodWorkingDayHolidayCount })}</p>
                         <p>{t("simple.statLongestStreak", { count: longest })}</p>
                       </div>
                     </div>
-                    <p className={`mt-4 text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                    <p className={`mt-4 text-sm ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                       {t("simple.summarySentence", { usedVac: fmtNum(usedVac), totalVac: fmtNum(num(vac)), totalFree, periods: periodCount })}
                     </p>
                   </section>
@@ -1821,23 +1821,23 @@ function Urlaubsplaner({ onPlanReady }) {
                   <section className={`${cardCls} p-4`}>
                     <h3 className="text-sm font-bold mb-2">{t("simple.recommendedBlocksHeading")}</h3>
                     {result.periods.length === 0 ? (
-                      <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                      <p className={`text-sm ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                         {t("simple.noSuggestions")}
                       </p>
                     ) : (
-                      <ul className={`divide-y ${dark ? "divide-slate-800" : "divide-slate-100"}`}>
+                      <ul className={`divide-y ${dark ? "divide-tiefwasser-hell" : "divide-beckenwasser/20"}`}>
                         {result.periods.map((p, i) => (
                           <li key={i} role="button" tabIndex={0}
                             onClick={() => scrollToPeriod(p)}
                             onKeyDown={(e) => onRowKeyDown(e, p)}
                             title={t("simple.jumpToMonthTitle")}
-                            className={`py-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm cursor-pointer rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                              dark ? "active:bg-slate-800/60" : "active:bg-slate-100"
+                            className={`py-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm cursor-pointer rounded-xl focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+                              dark ? "active:bg-tiefwasser-hell/60" : "active:bg-beckenwasser-hell/30"
                             }`}>
                             <span className="font-medium">{fmtDate(days[p.s])} – {fmtDate(days[p.e])}</span>
-                            <span className={`tabular-nums flex items-center gap-1 ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                            <span className={`tabular-nums flex items-center gap-1 ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                               <span>{t("simple.periodFreeDaysLabel", { len: p.len, vac: fmtNum(p.vac), vacRaw: p.vac })}</span>
-                              <span aria-hidden="true" className={dark ? "text-slate-600" : "text-slate-300"}>›</span>
+                              <span aria-hidden="true" className={dark ? "text-espresso/80" : "text-sonnencreme/80"}>›</span>
                             </span>
                             {reasonLines(p)}
                           </li>
@@ -1847,8 +1847,8 @@ function Urlaubsplaner({ onPlanReady }) {
                   </section>
 
                   <button onClick={() => setShowSimpleCal(!showSimpleCal)}
-                    className={`w-full rounded-lg border px-4 py-3 text-sm font-bold ${
-                      dark ? "border-slate-600 text-slate-200 hover:bg-slate-800" : "border-slate-300 text-slate-700 hover:bg-slate-100"
+                    className={`w-full rounded-2xl border px-4 py-3 text-sm font-bold ${
+                      dark ? "border-tiefwasser-hell text-sonnencreme/90 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso hover:bg-beckenwasser-hell/30"
                     }`}>
                     {showSimpleCal ? t("simple.hideCalendar") : t("simple.showCalendar")}
                   </button>
