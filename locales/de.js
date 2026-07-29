@@ -895,6 +895,7 @@
     /* ---- Kalender ---- */
     calendar: {
       weekdaysMonFirst: ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
+      weekNumberAbbr: "KW",
       summary: {
         publicHolidays: "Feiertage:",
         schoolHolidays: "Schulferien:",

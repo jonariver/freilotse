@@ -72,6 +72,18 @@ const fmtDDMM = (ts) => {
   const dt = new Date(ts);
   return `${String(dt.getUTCDate()).padStart(2, "0")}.${String(dt.getUTCMonth() + 1).padStart(2, "0")}.`;
 };
+// ISO-8601-Kalenderwoche (Woche mit dem meisten Tagen im Jahr / "naehester
+// Donnerstag"-Verfahren), rein fuer die Anzeige im Kalendergitter. Nimmt ein
+// UTC-Date (beliebiger Wochentag) und liefert die KW dieser Woche.
+const isoWeek = (utcDate) => {
+  const d = new Date(Date.UTC(utcDate.getUTCFullYear(), utcDate.getUTCMonth(), utcDate.getUTCDate()));
+  const dayNum = (d.getUTCDay() + 6) % 7; // Montag = 0 ... Sonntag = 6
+  d.setUTCDate(d.getUTCDate() - dayNum + 3); // Donnerstag dieser Woche
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  const firstDayNum = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDayNum + 3);
+  return 1 + Math.round((d - firstThursday) / (7 * 24 * 3600 * 1000));
+};
 
 function dayClass(day, selType, dark) {
   if (selType === "vac") return "bg-beckenwasser text-kalkstein";
@@ -103,7 +115,10 @@ function dayClass(day, selType, dark) {
       ? "bg-tiefwasser-hell/30 text-sonnencreme/30 border border-dashed border-tiefwasser-hell"
       : "bg-espresso/5 text-espresso/30 border border-dashed border-espresso/20";
   }
-  return dark ? "bg-tiefwasser-hell text-sonnencreme border border-tiefwasser-hell" : "bg-kalkstein text-espresso border border-beckenwasser/20";
+  // Ganz normaler Arbeitstag ohne jede Besonderheit: bewusst OHNE Rahmen, damit
+  // nur wirklich bemerkenswerte Zustände (Urlaub/Überstunden/Feiertag/Sonderfall/
+  // regelmäßig frei) optisch Gewicht bekommen, kein "Kasten" um jeden x-beliebigen Tag.
+  return dark ? "bg-tiefwasser-hell text-sonnencreme" : "bg-kalkstein text-espresso";
 }
 
 // Mariä Himmelfahrt (15.8.) ist in Bayern gesetzlich nur in Gemeinden mit
@@ -1340,20 +1355,37 @@ function Urlaubsplaner({ onPlanReady }) {
               // Trennlinie zu Feiertage/Schulferien darunter uneinheitlich hoch
               // sitzt. Leere Füllzellen am Monatsende sorgen für eine über alle
               // Monatskarten gleiche Tagesraster-Höhe.
-              const trail = 42 - lead - mDays.length;
               const summary = monthSummary(m);
+              // Zeilenweise Aufbereitung nur für die KW-Spalte: pro Wochenzeile die
+              // sieben Tages-Slots (Tag-Objekt oder null bei Lücke) plus die per
+              // Datumsarithmetik berechnete ISO-Kalenderwoche des Zeilen-Montags
+              // (unabhängig davon, ob dieser Montag überhaupt in mDays liegt).
+              const weekRows = Array.from({ length: 6 }, (_, r) => {
+                const rowDays = Array.from({ length: 7 }, (_, c) => {
+                  const idx = r * 7 + c - lead;
+                  return idx >= 0 && idx < mDays.length ? mDays[idx] : null;
+                });
+                const rowMonday = new Date(Date.UTC(year, m, 1));
+                rowMonday.setUTCDate(rowMonday.getUTCDate() - lead + 7 * r);
+                return { days: rowDays, weekNum: isoWeek(rowMonday) };
+              });
               return (
                 <div key={m} ref={(el) => { monthRefs.current[m] = el; }}
                   className={`${cardCls} p-3 scroll-mt-24 transition-shadow duration-300 ${
                     highlightedMonth === m ? (dark ? "ring-2 ring-beckenwasser-hell" : "ring-2 ring-beckenwasser") : ""
                   }`}>
                   <h3 className="text-sm font-bold mb-2">{mName}</h3>
-                  <div className={`grid grid-cols-7 gap-1 text-center text-[10px] mb-1 ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
+                  <div className={`grid grid-cols-8 gap-1 text-center text-[10px] mb-1 ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
+                    <span className="font-semibold">{t("calendar.weekNumberAbbr")}</span>
                     {t("calendar.weekdaysMonFirst").map((w) => <span key={w}>{w}</span>)}
                   </div>
-                  <div className="grid grid-cols-7 gap-1">
-                    {Array.from({ length: lead }).map((_, i) => <span key={`x${i}`} className="h-7" />)}
-                    {mDays.map((day) => {
+                  <div className="grid grid-cols-8 gap-1">
+                    {weekRows.map((row, ri) => (
+                      <React.Fragment key={ri}>
+                        <span className={`h-7 flex items-center justify-center text-[10px] font-data tabular-nums ${dark ? "text-sonnencreme/40" : "text-espresso/40"}`}>
+                          {row.weekNum}
+                        </span>
+                        {row.days.map((day, di) => day ? (() => {
                       const selType = result.sel[day.i];
                       const clickable = day.cost > 0;
                       const manual = yearOverrides[`${day.m}-${day.d}`];
@@ -1437,8 +1469,9 @@ function Urlaubsplaner({ onPlanReady }) {
                           )}
                         </button>
                       );
-                    })}
-                    {Array.from({ length: trail }).map((_, i) => <span key={`t${i}`} className="h-7" />)}
+                    })() : <span key={`p${ri}-${di}`} className="h-7" />)}
+                      </React.Fragment>
+                    ))}
                   </div>
                   <div className={`mt-2 pt-2 border-t space-y-0.5 ${dark ? "border-tiefwasser-hell" : "border-beckenwasser/20"}`}>
                     {summary.holidaysText && (
