@@ -2173,13 +2173,13 @@ function Urlaubsplaner({ onPlanReady }) {
                         ? `${fmtDate(yearTransition.certainEndDate)}${year + 1}`
                         : fmtDate(days[p.e])}
                       {p.origins.includes("block") && (
-                        <span className="rounded-full bg-lagune-hell/60 px-2 py-0.5 text-[10px] font-semibold text-lagune">{t("results.badgeBlock")}</span>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${dark ? "bg-lagune-hell/20 text-lagune-hell" : "bg-lagune-hell/60 text-lagune"}`}>{t("results.badgeBlock")}</span>
                       )}
                       {p.origins.includes("manual") && (
                         <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${dark ? "border-sonnencreme/40 text-sonnencreme/80" : "border-espresso/30 text-espresso/70"}`}>{t("results.badgeManual")}</span>
                       )}
                       {p.origins.includes("auto") && (
-                        <span className="rounded-full bg-beckenwasser-hell/60 px-2 py-0.5 text-[10px] font-semibold text-beckenwasser">{t("results.badgeAuto")}</span>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${dark ? "bg-beckenwasser-hell/20 text-beckenwasser-hell" : "bg-beckenwasser-hell/60 text-beckenwasser"}`}>{t("results.badgeAuto")}</span>
                       )}
                     </span>
                     <span className="flex items-center gap-3">
