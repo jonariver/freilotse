@@ -444,6 +444,15 @@
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
         {
+          date: "29. Juli 2026",
+          title: "Neues Erscheinungsbild: Freibad-Kachel",
+          items: [
+            "FREILOTSE hat ein komplett neues, wärmeres Design bekommen – inspiriert vom deutschen Freibad-Sommer statt vom generischen Software-Look.",
+            "Der helle Modus ist jetzt Standard; der dunkle Modus bleibt über den bekannten Umschalter erhalten, nur wärmer gestaltet.",
+            "Kalendertage erscheinen jetzt als runde Kacheln statt eckiger Kästchen.",
+          ],
+        },
+        {
           date: "28. Juli 2026",
           title: "Unterstützung jetzt über PayPal",
           items: [
