@@ -154,7 +154,8 @@
 
     common: {
       moreInfo: "Mehr erfahren",
-      documentTitle: "Urlaubsplaner",
+      documentTitle: "FREILOTSE – Urlaubsplaner für Brückentage & Feiertage",
+      metaDescription: "FREILOTSE plant deine Brückentage automatisch: Feiertage, Schulferien und Urlaubstage passend zu deinem Bundesland oder Kanton – kostenlos und ohne Anmeldung.",
       loadingSharedPlan: "Geteilte Planung wird geladen …",
     },
 
@@ -188,7 +189,7 @@
     landing: {
       hero: {
         heading: "Mach mehr aus deinen Urlaubstagen",
-        description: "Nutze Feiertage, Brückentage und Schulferien passend zu deinem Bundesland oder Kanton. Lass dir automatisch eine Planung erstellen und passe sie anschließend direkt im Kalender an.",
+        description: "Berechne deine Brückentage 2026 und 2027 automatisch: FREILOTSE kombiniert Feiertage, Brückentage und Schulferien passend zu deinem Bundesland oder Kanton und zeigt dir, wie du mit wenigen Urlaubstagen möglichst viele freie Tage am Stück bekommst.",
         example: "4 Urlaubstage können bis zu 10 freie Tage ergeben.",
       },
       modes: {
@@ -253,6 +254,18 @@
       aboutTeaser: {
         text: "FREILOTSE ist ein unabhängiges Projekt von Jonathan.",
         linkText: "Mehr über das Projekt",
+      },
+    },
+
+    /* ---- Impressum/Datenschutz (/impressum, /datenschutz) ---- */
+    legal: {
+      impressum: {
+        documentTitle: "Impressum – FREILOTSE",
+        metaDescription: "Impressum von FREILOTSE – Anbieterkennzeichnung und Kontaktmöglichkeit.",
+      },
+      datenschutz: {
+        documentTitle: "Datenschutzerklärung – FREILOTSE",
+        metaDescription: "Datenschutzerklärung von FREILOTSE: Informationen zur Verarbeitung personenbezogener Daten, u. a. bei Hosting, Kalenderdaten und Land-Vorauswahl.",
       },
     },
 
@@ -443,6 +456,14 @@
       pageTitle: "Neuigkeiten",
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
+        {
+          date: "29. Juli 2026",
+          title: "Bessere Vorschau beim Teilen von Links",
+          items: [
+            "Wenn du einen FREILOTSE-Link (z. B. zur Anleitung oder zum Rätsel) bei WhatsApp, LinkedIn oder anderen Diensten teilst, wird jetzt eine passende Vorschau mit Titel, Beschreibung und Bild angezeigt statt eines generischen Eintrags.",
+            "Der Browser-Tab-Titel von Impressum und Datenschutzerklärung zeigt jetzt korrekt den Seitennamen an.",
+          ],
+        },
         {
           date: "29. Juli 2026",
           title: "Neues Erscheinungsbild: Freibad-Kachel",

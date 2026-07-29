@@ -292,7 +292,7 @@
                       <button key={idx} type="button" onClick={() => toggleDay(idx)}
                         disabled={!clickable}
                         title={day.holiday || undefined}
-                        className={`rounded-full aspect-square flex items-center justify-center text-sm font-semibold font-data transition-colors focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+                        className={`rounded-xl aspect-square flex items-center justify-center text-sm font-semibold font-data transition-colors focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
                           isFree
                             ? (dark ? "bg-beckenwasser-hell/20 text-sonnencreme" : "bg-beckenwasser-hell/60 text-espresso")
                             : isSelected

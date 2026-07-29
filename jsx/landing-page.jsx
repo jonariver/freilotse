@@ -116,7 +116,7 @@
         <main className="max-w-6xl mx-auto px-4 py-10 space-y-14">
           {/* Hero */}
           <section className="text-center max-w-2xl mx-auto space-y-4" style={{ animation: "upFade .35s ease" }}>
-            <h2 className="text-3xl sm:text-4xl font-bold font-display tracking-tight [text-wrap:balance]">{t("landing.hero.heading")}</h2>
+            <h1 className="text-3xl sm:text-4xl font-bold font-display tracking-tight [text-wrap:balance]">{t("landing.hero.heading")}</h1>
             <p className={`text-sm sm:text-base leading-relaxed ${softTextCls}`}>{t("landing.hero.description")}</p>
             <p className={`inline-block rounded-full px-4 py-2 text-sm font-semibold ${dark ? "bg-beckenwasser/30 text-beckenwasser-hell" : "bg-beckenwasser/10 text-beckenwasser"}`}>
               {t("landing.hero.example")}

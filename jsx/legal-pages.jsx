@@ -13,8 +13,9 @@
   "use strict";
   const { useEffect } = React;
   const { SiteLink, SiteFooter } = window.FREILOTSE.ui;
+  const t = window.I18N.t;
 
-  function LegalLayout({ title, children }) {
+  function LegalLayout({ title, documentTitle, metaDescription, children }) {
     useEffect(() => {
       let robots = document.querySelector('meta[name="robots"]');
       const created = !robots;
@@ -33,6 +34,28 @@
         else robots.setAttribute("content", previousContent);
       };
     }, []);
+
+    useEffect(() => {
+      const previousTitle = document.title;
+      document.title = documentTitle;
+
+      let meta = document.querySelector('meta[name="description"]');
+      const created = !meta;
+      const previousContent = meta ? meta.getAttribute("content") : null;
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute("name", "description");
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute("content", metaDescription);
+
+      return () => {
+        document.title = previousTitle;
+        if (created) meta.remove();
+        else if (previousContent === null) meta.removeAttribute("content");
+        else meta.setAttribute("content", previousContent);
+      };
+    }, [documentTitle, metaDescription]);
 
     return (
       <div className="min-h-screen bg-tiefwasser text-sonnencreme flex flex-col font-body">
@@ -83,7 +106,7 @@
 
   function ImpressumPage() {
     return (
-      <LegalLayout title="Impressum">
+      <LegalLayout title="Impressum" documentTitle={t("legal.impressum.documentTitle")} metaDescription={t("legal.impressum.metaDescription")}>
         <LegalSection title="Angaben gemäß § 5 DDG">
           <p><strong className="text-sonnencreme">FREILOTSE</strong></p>
           <ProviderDetailsImage />
@@ -100,7 +123,7 @@
 
   function DatenschutzPage() {
     return (
-      <LegalLayout title="Datenschutzerklärung">
+      <LegalLayout title="Datenschutzerklärung" documentTitle={t("legal.datenschutz.documentTitle")} metaDescription={t("legal.datenschutz.metaDescription")}>
         <p>Stand: 26. Juli 2026</p>
 
         <LegalSection title="1. Verantwortlicher">

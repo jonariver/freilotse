@@ -356,6 +356,14 @@ function Urlaubsplaner({ onPlanReady }) {
   // und UI-Texte").
   useEffect(() => {
     document.title = t("common.documentTitle");
+
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", t("common.metaDescription"));
   }, []);
 
   // Beim Fokussieren eines Zahlenfelds den gesamten Wert markieren,
@@ -1391,7 +1399,7 @@ function Urlaubsplaner({ onPlanReady }) {
                               setDrag({ anchor: day.i, current: day.i });
                             }
                           }}
-                          className={`relative h-7 aspect-square rounded-full flex items-center justify-center text-[11px] font-data tabular-nums select-none ${
+                          className={`relative h-7 rounded-xl flex items-center justify-center text-[11px] font-data tabular-nums select-none ${
                             clickable ? "cursor-pointer" : "cursor-default"
                           } ${ring} ${dayClass(day, selType, dark)}`}>
                           {day.d}
@@ -1405,8 +1413,8 @@ function Urlaubsplaner({ onPlanReady }) {
                                Kurz-Hervorhebung (highlightedPeriodValid) kräftiger/deckend statt dezent. */
                             <span aria-hidden="true"
                               className={`pointer-events-none absolute inset-0.5 border-t-2 border-b-2 transition-colors duration-300 ${
-                                periodInfo.isStart ? "rounded-l-full border-l-2" : "border-l-0"
-                              } ${periodInfo.isEnd ? "rounded-r-full border-r-2" : "border-r-0"} ${
+                                periodInfo.isStart ? "rounded-l-xl border-l-2" : "border-l-0"
+                              } ${periodInfo.isEnd ? "rounded-r-xl border-r-2" : "border-r-0"} ${
                                 inHighlightedPeriod
                                   ? (dark ? "border-beckenwasser-hell" : "border-beckenwasser")
                                   : (dark ? "border-beckenwasser-hell/50" : "border-beckenwasser/40")

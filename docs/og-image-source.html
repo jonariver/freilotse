@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>og:image Quelle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Manrope:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          sonnencreme: "#F7F1E4",
+          kalkstein: "#FFFDF8",
+          beckenwasser: { DEFAULT: "#0E9A70", hell: "#BFE8DC" },
+          tiefwasser: { DEFAULT: "#0B1E36", hell: "#15304F" },
+          sonnenkoralle: "#FF8A5B",
+          espresso: "#4A3F35",
+          lagune: { DEFAULT: "#2E8FC2", hell: "#CFE7F3" },
+          ziegelrot: { DEFAULT: "#C4432A", hell: "#F2D3C8" },
+          sonnengelb: { DEFAULT: "#F4C542", hell: "#FBEAB0" }
+        },
+        fontFamily: {
+          display: ["Manrope", "system-ui", "sans-serif"],
+          body: ["Figtree", "system-ui", "sans-serif"],
+          data: ['"Space Mono"', "monospace"]
+        }
+      }
+    }
+  };
+</script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  #card {
+    width: 1200px;
+    height: 630px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #F7F1E4 0%, #FFFDF8 100%);
+  }
+  .tile {
+    position: absolute;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Space Mono", monospace;
+    font-weight: 700;
+    color: #FFFDF8;
+  }
+</style>
+</head>
+<body>
+  <div id="card">
+    <!-- Logo -->
+    <img src="../assets/logo/freilotse-logo-horizontal-light-bg.svg" alt="FREILOTSE"
+      style="position:absolute; top:60px; left:60px; width:260px; height:auto;">
+
+    <!-- Headline + Subline -->
+    <div style="position:absolute; top:230px; left:60px; width:620px;">
+      <h1 style="margin:0 0 20px; font-family:'Manrope',sans-serif; font-weight:800; font-size:52px; line-height:1.08; color:#0B1E36; letter-spacing:-0.01em;">
+        Mach mehr aus deinen Urlaubstagen
+      </h1>
+      <p style="margin:0; font-family:'Figtree',sans-serif; font-weight:500; font-size:24px; line-height:1.4; color:#4A3F35;">
+        Brückentage &amp; Feiertage optimal nutzen &ndash; kostenlos, ohne Anmeldung
+      </p>
+    </div>
+
+    <!-- Decorative round calendar-tile cluster, right side -->
+    <div class="tile" style="width:130px; height:130px; top:70px; right:110px; background:#0E9A70; font-size:34px;">04</div>
+    <div class="tile" style="width:100px; height:100px; top:230px; right:70px; background:#FF8A5B; font-size:28px;">11</div>
+    <div class="tile" style="width:150px; height:150px; top:330px; right:180px; background:#F4C542; font-size:38px; color:#0B1E36;">24</div>
+    <div class="tile" style="width:90px; height:90px; top:490px; right:90px; background:#2E8FC2; font-size:24px;">31</div>
+    <div class="tile" style="width:70px; height:70px; top:150px; right:290px; background:#C4432A; font-size:20px;">08</div>
+  </div>
+</body>
+</html>

@@ -1,2 +1,8 @@
 https://freilotse.de/* https://freilotse.netlify.app/:splat 302!
+/anleitung /anleitung.html 200
+/neuigkeiten /neuigkeiten.html 200
+/ueber-freilotse /ueber-freilotse.html 200
+/raetsel /raetsel.html 200
+/impressum /impressum.html 200
+/datenschutz /datenschutz.html 200
 /* /index.html 200
