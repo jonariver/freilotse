@@ -1404,20 +1404,26 @@ function Urlaubsplaner({ onPlanReady }) {
                           } ${ring} ${dayClass(day, selType, dark)}`}>
                           {day.d}
                           {periodInfo && (
-                            /* Freier Zeitraum (result.periods): dünner mintgrüner Innenrahmen als
-                               reines Overlay – überschreibt die Grundfarbe/den Ring der Zelle nicht.
-                               Abgerundete Ecken nur am tatsächlichen Anfang/Ende des Zeitraums (p.s/p.e);
-                               dazwischen (auch über Zeilen-/Monatsgrenzen hinweg) bewusst ohne Rundung
-                               und ohne seitlichen Rand auf der "offenen" Seite, damit die Fortsetzung
-                               als durchgehendes Band erkennbar bleibt. Bei aktiver, gültiger
-                               Kurz-Hervorhebung (highlightedPeriodValid) kräftiger/deckend statt dezent. */
+                            /* Freier Zeitraum (result.periods): kräftiger Tinten-Rahmen (Tiefwasser/
+                               Sonnencreme statt Beckenwasser) als reines Overlay – überschreibt die
+                               Grundfarbe/den Ring der Zelle nicht. Bewusst NICHT in einer der
+                               Status-Farben (Beckenwasser/Lagune/Ziegelrot/Sonnengelb), da der Rahmen
+                               sonst auf gleichfarbig gefüllten Tagen (z. B. Beckenwasser-Rahmen auf
+                               einem Urlaubstag) unsichtbar würde – die Tinten-Farbe hält auf jeder
+                               Kachelfarbe Kontrast. Eckig statt abgerundet am tatsächlichen Anfang/
+                               Ende des Zeitraums (p.s/p.e), damit das Band bewusst NICHT wie eine
+                               weitere Kalender-Kachel wirkt, sondern als eigene Markierungsebene
+                               erkennbar bleibt; dazwischen (auch über Zeilen-/Monatsgrenzen hinweg)
+                               ohne seitlichen Rand, damit die Fortsetzung als durchgehendes Band
+                               erkennbar bleibt. Bei aktiver, gültiger Kurz-Hervorhebung
+                               (highlightedPeriodValid) wechselt die Farbe auf Sonnenkoralle. */
                             <span aria-hidden="true"
-                              className={`pointer-events-none absolute inset-0.5 border-t-2 border-b-2 transition-colors duration-300 ${
-                                periodInfo.isStart ? "rounded-l-xl border-l-2" : "border-l-0"
-                              } ${periodInfo.isEnd ? "rounded-r-xl border-r-2" : "border-r-0"} ${
+                              className={`pointer-events-none absolute inset-0.5 border-t-4 border-b-4 transition-colors duration-300 ${
+                                periodInfo.isStart ? "border-l-4" : "border-l-0"
+                              } ${periodInfo.isEnd ? "border-r-4" : "border-r-0"} ${
                                 inHighlightedPeriod
-                                  ? (dark ? "border-beckenwasser-hell" : "border-beckenwasser")
-                                  : (dark ? "border-beckenwasser-hell/50" : "border-beckenwasser/40")
+                                  ? "border-sonnenkoralle"
+                                  : (dark ? "border-sonnencreme" : "border-tiefwasser")
                               }`} />
                           )}
                           {vac && (
