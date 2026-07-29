@@ -1527,13 +1527,13 @@ function Urlaubsplaner({ onPlanReady }) {
     return (
       <>
         {r.reason && (
-          <span className={`w-full text-[11px] leading-snug ${dark ? "text-slate-500" : "text-slate-400"}`}>{r.reason}</span>
+          <span className={`w-full text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{r.reason}</span>
         )}
         {r.holidayNote && (
           <span className={`w-full text-[11px] leading-snug ${
             r.holidayConflict
               ? (dark ? "text-orange-300/80" : "text-orange-600/90")
-              : (dark ? "text-slate-500" : "text-slate-400")
+              : (dark ? "text-sonnencreme/60" : "text-espresso/60")
           }`}>{r.holidayNote}</span>
         )}
       </>
@@ -1719,7 +1719,7 @@ function Urlaubsplaner({ onPlanReady }) {
                           {t("workingDays.closeButton")}
                         </button>
                       </div>
-                      <p className={`text-[11px] leading-snug ${dark ? "text-espresso/60" : "text-sonnencreme/60"}`}>
+                      <p className={`text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                         {t("workingDays.minOneRequired")}
                       </p>
                     </div>
@@ -1739,7 +1739,7 @@ function Urlaubsplaner({ onPlanReady }) {
                       </label>
                     ))}
                   </div>
-                  <p className={`text-[11px] leading-snug ${dark ? "text-espresso/60" : "text-sonnencreme/60"}`}>
+                  <p className={`text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                     {t("simple.step4Hint")}
                   </p>
                 </div>
