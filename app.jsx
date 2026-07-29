@@ -191,7 +191,7 @@ function Urlaubsplaner({ onPlanReady }) {
   const initialState = shared || (restoredLocal ? restoredLocal.state : null);
 
   const [year, setYear] = useState(initialState ? initialState.year : currentYear);
-  const [dark, setDark] = useState(true); // Dark-Mode ist Standard, umschaltbar im Kopfbereich
+  const [dark, setDark] = useState(false); // Hell-Modus ist Standard, umschaltbar im Kopfbereich
   // Land (DE/AT/CH) – bestimmt, welche Bundesländer/Kantone (STATES) zur
   // Auswahl stehen sowie countryIsoCode/subdivisionCode für die API-Aufrufe.
   // Ohne geteilte Planung wird das Land nachträglich per IP-/Sprach-Erkennung
@@ -1176,8 +1176,8 @@ function Urlaubsplaner({ onPlanReady }) {
             title={schoolPrefOptionsDisabled ? t("schoolHolidays.optionsDisabledTitle") : undefined}
             className={`flex items-center gap-2 text-sm ${
               schoolPrefOptionsDisabled ? "cursor-not-allowed" : "cursor-pointer"
-            } ${dark ? "text-slate-300" : "text-slate-700"}`}>
-            <input type="radio" name="schoolPref" className="accent-emerald-600"
+            } ${dark ? "text-sonnencreme/80" : "text-espresso"}`}>
+            <input type="radio" name="schoolPref" className="accent-beckenwasser"
               disabled={schoolPrefOptionsDisabled}
               checked={schoolHolidayPreference === k}
               onChange={() => setSchoolHolidayPreference(k)} />
@@ -1186,12 +1186,12 @@ function Urlaubsplaner({ onPlanReady }) {
         ))}
       </div>
       {withHint && (
-        <p className={`mt-1 text-[11px] leading-snug ${dark ? "text-slate-400" : "text-slate-500"}`}>
+        <p className={`mt-1 text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
           {t("schoolHolidays.hint")}
         </p>
       )}
       {schoolHolidayNotice && (
-        <p className={`mt-1 text-[11px] leading-snug font-semibold ${dark ? "text-orange-300/90" : "text-orange-700"}`}>
+        <p className={`mt-1 text-[11px] leading-snug font-semibold ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>
           {schoolHolidayNotice}
         </p>
       )}
@@ -1337,10 +1337,10 @@ function Urlaubsplaner({ onPlanReady }) {
               return (
                 <div key={m} ref={(el) => { monthRefs.current[m] = el; }}
                   className={`${cardCls} p-3 scroll-mt-24 transition-shadow duration-300 ${
-                    highlightedMonth === m ? (dark ? "ring-2 ring-emerald-400" : "ring-2 ring-emerald-500") : ""
+                    highlightedMonth === m ? (dark ? "ring-2 ring-beckenwasser-hell" : "ring-2 ring-beckenwasser") : ""
                   }`}>
                   <h3 className="text-sm font-bold mb-2">{mName}</h3>
-                  <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-slate-400 mb-1">
+                  <div className={`grid grid-cols-7 gap-1 text-center text-[10px] mb-1 ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                     {t("calendar.weekdaysMonFirst").map((w) => <span key={w}>{w}</span>)}
                   </div>
                   <div className="grid grid-cols-7 gap-1">
@@ -1413,25 +1413,26 @@ function Urlaubsplaner({ onPlanReady }) {
                               }`} />
                           )}
                           {vac && (
-                            /* Schulferien: dezente Ebene – Streifen am unteren Rand in eigener Farbe (Orange),
-                               deutlich verschieden von Urlaub (grün), Feiertag (rot), Überstunden (blau),
-                               Wochenende (grau). Überschreibt die Grundfarbe der Zelle nicht. */
+                            /* Schulferien: dezente Ebene – Streifen am unteren Rand in eigener Farbe
+                               (helles Ziegelrot, identisch zur Legende), deutlich verschieden von Urlaub
+                               (Beckenwasser), Feiertag (kräftiges Ziegelrot), Überstunden (Lagune),
+                               Wochenende (gedämpft). Überschreibt die Grundfarbe der Zelle nicht. */
                             <span aria-hidden="true"
-                              className="pointer-events-none absolute inset-x-1 bottom-0.5 h-[3px] rounded-full bg-orange-400" />
+                              className="pointer-events-none absolute inset-x-1 bottom-0.5 h-[3px] rounded-full bg-ziegelrot-hell" />
                           )}
                         </button>
                       );
                     })}
                     {Array.from({ length: trail }).map((_, i) => <span key={`t${i}`} className="h-7" />)}
                   </div>
-                  <div className={`mt-2 pt-2 border-t space-y-0.5 ${dark ? "border-slate-800" : "border-slate-100"}`}>
+                  <div className={`mt-2 pt-2 border-t space-y-0.5 ${dark ? "border-tiefwasser-hell" : "border-beckenwasser/20"}`}>
                     {summary.holidaysText && (
-                      <p className={`text-[10px] leading-snug ${dark ? "text-rose-400/80" : "text-rose-600/80"}`}>
+                      <p className={`text-[10px] leading-snug ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>
                         {t("calendar.summary.publicHolidays")} {summary.holidaysText}
                       </p>
                     )}
                     {summary.vacationsText && (
-                      <p className={`text-[10px] leading-snug ${dark ? "text-orange-400/80" : "text-orange-600/80"}`}>
+                      <p className={`text-[10px] leading-snug ${dark ? "text-ziegelrot-hell/80" : "text-ziegelrot/80"}`}>
                         {t("calendar.summary.schoolHolidays")} {summary.vacationsText}
                       </p>
                     )}
@@ -1532,7 +1533,7 @@ function Urlaubsplaner({ onPlanReady }) {
         {r.holidayNote && (
           <span className={`w-full text-[11px] leading-snug ${
             r.holidayConflict
-              ? (dark ? "text-orange-300/80" : "text-orange-600/90")
+              ? (dark ? "text-ziegelrot-hell" : "text-ziegelrot")
               : (dark ? "text-sonnencreme/60" : "text-espresso/60")
           }`}>{r.holidayNote}</span>
         )}
@@ -1545,7 +1546,7 @@ function Urlaubsplaner({ onPlanReady }) {
       <style>{`@keyframes upFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }`}</style>
       {view === "loading" ? (
         <div className="min-h-screen flex items-center justify-center px-4">
-          <p role="status" aria-live="polite" className={`text-sm font-semibold ${dark ? "text-slate-300" : "text-slate-600"}`}>
+          <p role="status" aria-live="polite" className={`text-sm font-semibold ${dark ? "text-sonnencreme/80" : "text-espresso/80"}`}>
             {t("common.loadingSharedPlan")}
           </p>
         </div>
@@ -1762,7 +1763,7 @@ function Urlaubsplaner({ onPlanReady }) {
                     ))}
                   </div>
                   {schoolHolidayNotice && (
-                    <p className={`text-[11px] leading-snug font-semibold ${dark ? "text-orange-300/90" : "text-orange-700"}`}>
+                    <p className={`text-[11px] leading-snug font-semibold ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>
                       {schoolHolidayNotice}
                     </p>
                   )}
@@ -1837,7 +1838,7 @@ function Urlaubsplaner({ onPlanReady }) {
                             <span className="font-medium">{fmtDate(days[p.s])} – {fmtDate(days[p.e])}</span>
                             <span className={`tabular-nums flex items-center gap-1 ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                               <span>{t("simple.periodFreeDaysLabel", { len: p.len, vac: fmtNum(p.vac), vacRaw: p.vac })}</span>
-                              <span aria-hidden="true" className={dark ? "text-espresso/80" : "text-sonnencreme/80"}>›</span>
+                              <span aria-hidden="true" className={dark ? "text-sonnencreme/80" : "text-espresso/80"}>›</span>
                             </span>
                             {reasonLines(p)}
                           </li>
@@ -1856,7 +1857,7 @@ function Urlaubsplaner({ onPlanReady }) {
                     <div style={{ animation: "upFade .35s ease" }}>
                       {calendarSection}
                       {vacTip && (
-                        <p className="mt-1 text-[11px] text-orange-500">{vacTip.text}</p>
+                        <p className="mt-1 text-[11px] text-ziegelrot">{vacTip.text}</p>
                       )}
                     </div>
                   )}
@@ -1911,12 +1912,12 @@ function Urlaubsplaner({ onPlanReady }) {
                       onFocus={selectAllOnFocus} onChange={(e) => setOt(e.target.value)} />
                     <button type="button" onClick={() => setShowOtCalc((v) => !v)}
                       aria-expanded={showOtCalc} aria-controls="ot-calc-panel"
-                      className="mt-1 text-[11px] font-semibold text-emerald-600 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded">
+                      className="mt-1 text-[11px] font-semibold text-beckenwasser hover:underline focus:outline-none focus:ring-2 focus:ring-beckenwasser rounded">
                       {showOtCalc ? t("settings.otCalc.toggleHide") : t("settings.otCalc.toggleShow")}
                     </button>
                     {showOtCalc && (
                       <div id="ot-calc-panel"
-                        className={`mt-2 space-y-2 rounded-md border p-2 ${dark ? "border-slate-700 bg-slate-800/60" : "border-slate-200 bg-slate-50"}`}>
+                        className={`mt-2 space-y-2 rounded-xl border p-2 ${dark ? "border-tiefwasser-hell bg-tiefwasser/60" : "border-beckenwasser/20 bg-beckenwasser-hell/20"}`}>
                         <div>
                           <label htmlFor="ot-calc-hours" className={labelCls}>{t("settings.otCalc.hoursLabel")}</label>
                           <input id="ot-calc-hours" className={inputCls} type="number" min="0" step="0.5"
@@ -1929,36 +1930,38 @@ function Urlaubsplaner({ onPlanReady }) {
                             value={otCalcHoursPerDay} onFocus={selectAllOnFocus}
                             onChange={(e) => updateOtCalcHoursPerDay(e.target.value)} />
                         </div>
-                        <p aria-live="polite" className={`text-xs font-semibold ${dark ? "text-slate-200" : "text-slate-700"}`}>
+                        <p aria-live="polite" className={`text-xs font-semibold ${dark ? "text-sonnencreme/90" : "text-espresso"}`}>
                           {otCalcResult !== null
                             ? t("settings.otCalc.result", { value: fmtNum2(otCalcResult), valueRaw: otCalcResult })
                             : t("settings.otCalc.resultInvalid")}
                         </p>
                         <button type="button" onClick={applyOtCalc} disabled={otCalcResult === null}
                           aria-label={t("settings.otCalc.applyAriaLabel")}
-                          className="w-full rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-emerald-600">
+                          className="w-full rounded-xl bg-sonnenkoralle px-3 py-1.5 text-xs font-bold text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-sonnenkoralle">
                           {t("settings.otCalc.apply")}
                         </button>
                       </div>
                     )}
                   </div>
                 </div>
-                <p className="text-[11px] text-slate-400">
+                <p className={`text-[11px] ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                   {t("settings.holidaySource")}{" "}
-                  {apiStatus === "api" && <span className="text-emerald-600 font-semibold">{t("settings.holidaySourceApi")}</span>}
+                  {apiStatus === "api" && <span className="text-beckenwasser font-semibold">{t("settings.holidaySourceApi")}</span>}
                   {apiStatus === "laedt" && t("settings.holidaySourceLoading")}
                   {apiStatus === "lokal" && t("settings.holidaySourceLocal")}
                 </p>
-                <p className="text-[11px] text-slate-400">
+                <p className={`text-[11px] ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                   {t("settings.schoolHolidaySourceLabel")}{" "}
-                  {vacStatus === "openholidays" && <span className="text-emerald-600 font-semibold">{t("settings.schoolHolidaySourceOpenHolidays")}</span>}
-                  {vacStatus === "ersatz" && <span className="text-orange-500 font-semibold">{t("settings.schoolHolidaySourceErsatz")}</span>}
+                  {vacStatus === "openholidays" && <span className="text-beckenwasser font-semibold">{t("settings.schoolHolidaySourceOpenHolidays")}</span>}
+                  {vacStatus === "ersatz" && <span className="text-ziegelrot font-semibold">{t("settings.schoolHolidaySourceErsatz")}</span>}
                   {vacStatus === "laedt" && t("settings.holidaySourceLoading")}
-                  {vacStatus === "keine" && <span className="text-rose-600 font-semibold">{t("settings.schoolHolidaySourceNone")}</span>}
-                  {vacStatus === "fehler" && <span className="text-rose-600 font-semibold">{t("settings.schoolHolidaySourceUnreachable")}</span>}
+                  {vacStatus === "keine" && <span className="text-ziegelrot font-semibold">{t("settings.schoolHolidaySourceNone")}</span>}
+                  {vacStatus === "fehler" && <span className="text-ziegelrot font-semibold">{t("settings.schoolHolidaySourceUnreachable")}</span>}
                 </p>
                 {st === "BY" && (
-                  <p className={`text-[11px] leading-snug ${dark ? "text-amber-300/90" : "text-amber-700"}`}>
+                  <p className={`text-[11px] leading-snug rounded-xl border px-2 py-1.5 ${
+                    dark ? "bg-sonnengelb/10 border-sonnengelb/70 text-sonnengelb-hell" : "bg-sonnengelb-hell border-sonnengelb text-tiefwasser"
+                  }`}>
                     {t("holidayCaveats.assumptionDayNotice")}
                   </p>
                 )}
@@ -1979,16 +1982,16 @@ function Urlaubsplaner({ onPlanReady }) {
                     <span className={subLabelCls}>{t("workingDays.proPanelTitle")}</span>
                     {!isDefaultWorkweek && (
                       <button type="button" onClick={resetWorkingWeekdays}
-                        className="text-[11px] font-semibold text-emerald-600 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded">
+                        className="text-[11px] font-semibold text-beckenwasser hover:underline focus:outline-none focus:ring-2 focus:ring-beckenwasser rounded">
                         {t("workingDays.resetButton")}
                       </button>
                     )}
                   </div>
                   {workingWeekdayButtons()}
-                  <p className={`mt-1 text-[11px] leading-snug ${dark ? "text-slate-500" : "text-slate-400"}`}>
+                  <p className={`mt-1 text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                     {t("workingDays.proHint")}
                   </p>
-                  <p className={`text-[11px] leading-snug ${dark ? "text-slate-500" : "text-slate-400"}`}>
+                  <p className={`text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                     {t("workingDays.minOneRequired")}
                   </p>
                 </div>
@@ -1999,7 +2002,7 @@ function Urlaubsplaner({ onPlanReady }) {
                 <div className="flex items-center justify-between">
                   <span className={subLabelCls}>{t("auto.budgetLabel")}</span>
                   <button onClick={() => { setAutoVac(""); setAutoOt("0"); }}
-                    className="text-[11px] font-semibold text-emerald-600 hover:underline">
+                    className="text-[11px] font-semibold text-beckenwasser hover:underline">
                     {t("auto.toMinimum")}
                   </button>
                 </div>
@@ -2007,11 +2010,11 @@ function Urlaubsplaner({ onPlanReady }) {
                   <div>
                     <div className="flex items-baseline justify-between mb-1">
                       <span className={subLabelCls}>{t("auto.useVacationDays")}</span>
-                      <span className={`text-xs font-bold tabular-nums ${dark ? "text-emerald-300" : "text-emerald-800"}`}>
+                      <span className={`text-xs font-bold tabular-nums ${dark ? "text-beckenwasser-hell" : "text-beckenwasser"}`}>
                         {fmtNum(Math.min(effAutoVac, num(vac)))} / {fmtNum(num(vac))}
                       </span>
                     </div>
-                    <input type="range" className="w-full accent-emerald-600 disabled:opacity-40"
+                    <input type="range" className="w-full accent-beckenwasser disabled:opacity-40"
                       min="0" max={num(vac)} step="0.5"
                       value={Math.min(effAutoVac, num(vac))} disabled={num(vac) === 0}
                       onChange={(e) => setAutoVac(e.target.value)} />
@@ -2019,11 +2022,11 @@ function Urlaubsplaner({ onPlanReady }) {
                   <div>
                     <div className="flex items-baseline justify-between mb-1">
                       <span className={subLabelCls}>{t("auto.useOvertimeDays")}</span>
-                      <span className={`text-xs font-bold tabular-nums ${dark ? "text-emerald-300" : "text-emerald-800"}`}>
+                      <span className={`text-xs font-bold tabular-nums ${dark ? "text-beckenwasser-hell" : "text-beckenwasser"}`}>
                         {fmtNum(Math.min(effAutoOt, num(ot)))} / {fmtNum(num(ot))}
                       </span>
                     </div>
-                    <input type="range" className="w-full accent-emerald-600 disabled:opacity-40"
+                    <input type="range" className="w-full accent-beckenwasser disabled:opacity-40"
                       min="0" max={num(ot)} step="0.5"
                       value={Math.min(effAutoOt, num(ot))} disabled={num(ot) === 0}
                       onChange={(e) => setAutoOt(e.target.value)} />
@@ -2040,13 +2043,13 @@ function Urlaubsplaner({ onPlanReady }) {
                 </div>
                 <div>
                   <span className={`block ${subLabelCls} mb-1`}>{t("auto.spendFirst")}</span>
-                  <div className={`grid grid-cols-2 gap-1 rounded-md border p-1 ${dark ? "bg-slate-800 border-slate-600" : "bg-white border-slate-200"}`}>
+                  <div className={`grid grid-cols-2 gap-1 rounded-xl border p-1 ${dark ? "bg-tiefwasser/60 border-tiefwasser-hell" : "bg-beckenwasser-hell/20 border-beckenwasser/20"}`}>
                     {[["vac", t("auto.spendFirstVac")], ["ot", t("auto.spendFirstOt")]].map(([k, l]) => (
                       <button key={k} onClick={() => setSpendFirst(k)}
                         className={`rounded px-2 py-1 text-xs font-semibold transition-colors ${
                           spendFirst === k
-                            ? "bg-emerald-600 text-white"
-                            : dark ? "text-slate-300 hover:bg-slate-700" : "text-slate-600 hover:bg-slate-100"
+                            ? "bg-beckenwasser text-kalkstein"
+                            : dark ? "text-sonnencreme/80 hover:bg-tiefwasser-hell" : "text-espresso/80 hover:bg-beckenwasser-hell/30"
                         }`}>
                         {l}
                       </button>
@@ -2054,7 +2057,7 @@ function Urlaubsplaner({ onPlanReady }) {
                   </div>
                 </div>
                 {schoolPrefControl(true)}
-                <p className={`text-[11px] leading-snug ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                <p className={`text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                   {t("auto.minimumHintPrefix", { days: fmtNum(Math.min(minBudget, num(vac))) })}
                   <InfoHint dark={dark} text={t("auto.minimumHintDetail")} />
                 </p>
@@ -2063,21 +2066,21 @@ function Urlaubsplaner({ onPlanReady }) {
               <CollapsibleCard icon="⭐" title={t("blocks.panelTitle")} open={panels.bloecke}
                 onToggle={() => togglePanel("bloecke")} dark={dark} cardCls={cardCls}>
                 <div className="flex items-center justify-between">
-                  <span className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("blocks.prioritizedHint")}</span>
+                  <span className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("blocks.prioritizedHint")}</span>
                   <button onClick={addBlock}
-                    className="rounded-md bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700">
+                    className="rounded-xl bg-sonnenkoralle px-2.5 py-1 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90">
                     {t("blocks.addButton")}
                   </button>
                 </div>
                 {blocks.length === 0 && (
-                  <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                  <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                     {t("blocks.emptyHint")}
                   </p>
                 )}
                 {blocks.map((b, i) => {
                   const r = result.blockResults[i];
                   return (
-                    <div key={i} className={`rounded-lg border p-2.5 space-y-2 ${dark ? "border-slate-700" : "border-slate-200"}`}>
+                    <div key={i} className={`rounded-2xl border p-2.5 space-y-2 ${dark ? "border-tiefwasser-hell" : "border-beckenwasser/20"}`}>
                       <div className="grid grid-cols-3 gap-2">
                         <div>
                           <label className={labelCls}>{t("blocks.freeDaysLabel")}</label>
@@ -2102,14 +2105,15 @@ function Urlaubsplaner({ onPlanReady }) {
                       <div className="flex items-center justify-between">
                         <p className="text-xs">
                           {r?.placed ? (
-                            <span className="text-emerald-700">
+                            <span className="text-beckenwasser">
                               {t("blocks.placed", { start: fmtDate(days[r.start]), end: fmtDate(days[r.end]), cost: fmtNum(r.cost) })}
                             </span>
                           ) : (
-                            <span className="text-rose-600">{t("blocks.notPlaced")}</span>
+                            <span className="text-ziegelrot">{t("blocks.notPlaced")}</span>
                           )}
                         </p>
-                        <button onClick={() => delBlock(i)} className="text-xs text-slate-400 hover:text-rose-600">{t("blocks.removeButton")}</button>
+                        <button onClick={() => delBlock(i)}
+                          className={`text-xs ${dark ? "text-sonnencreme/60 hover:text-ziegelrot-hell" : "text-espresso/60 hover:text-ziegelrot"}`}>{t("blocks.removeButton")}</button>
                       </div>
                     </div>
                   );
@@ -2129,7 +2133,7 @@ function Urlaubsplaner({ onPlanReady }) {
             ].map((s, i) => (
               <div key={i} className={`${cardCls} p-3 text-center`}>
                 <p className="text-2xl font-bold tabular-nums">{s.v}</p>
-                <p className={`text-xs leading-tight mt-0.5 ${dark ? "text-slate-400" : "text-slate-500"}`}>{s.l}</p>
+                <p className={`text-xs leading-tight mt-0.5 ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{s.l}</p>
               </div>
             ))}
           </section>
@@ -2141,17 +2145,17 @@ function Urlaubsplaner({ onPlanReady }) {
               {result.periods.length > 0 && (
                 <button onClick={downloadAllIcs}
                   title={t("results.exportAllTitle")}
-                  className={`rounded-md border px-2 py-0.5 text-[11px] font-semibold ${
-                    dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                  className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
+                    dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"
                   }`}>
                   {t("results.exportAllButton")}
                 </button>
               )}
             </div>
             {result.periods.length === 0 ? (
-              <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("results.periodsEmptyHint")}</p>
+              <p className={`text-sm ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("results.periodsEmptyHint")}</p>
             ) : (
-              <ul className={`divide-y ${dark ? "divide-slate-800" : "divide-slate-100"}`}>
+              <ul className={`divide-y ${dark ? "divide-tiefwasser-hell" : "divide-beckenwasser/20"}`}>
                 {result.periods.map((p, i) => {
                   const isTransitionPeriod = i === result.periods.length - 1 && !!yearTransition;
                   const certainLen = isTransitionPeriod ? p.len + yearTransition.freeExtensionDays : p.len;
@@ -2160,62 +2164,62 @@ function Urlaubsplaner({ onPlanReady }) {
                     onClick={() => scrollToPeriod(p)}
                     onKeyDown={(e) => onRowKeyDown(e, p)}
                     title={t("results.jumpToMonthTitle")}
-                    className={`py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm cursor-pointer rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                      dark ? "active:bg-slate-800/60" : "active:bg-slate-100"
+                    className={`py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm cursor-pointer rounded-xl focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+                      dark ? "active:bg-tiefwasser-hell/60" : "active:bg-beckenwasser-hell/30"
                     }`}>
                     <span className="flex flex-wrap items-center gap-2 font-medium">
                       {fmtDate(days[p.s])} – {isTransitionPeriod
                         ? `${fmtDate(yearTransition.certainEndDate)}${year + 1}`
                         : fmtDate(days[p.e])}
                       {p.origins.includes("block") && (
-                        <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700">{t("results.badgeBlock")}</span>
+                        <span className="rounded-full bg-lagune-hell/60 px-2 py-0.5 text-[10px] font-semibold text-lagune">{t("results.badgeBlock")}</span>
                       )}
                       {p.origins.includes("manual") && (
-                        <span className="rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-semibold text-white">{t("results.badgeManual")}</span>
+                        <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${dark ? "border-sonnencreme/40 text-sonnencreme/80" : "border-espresso/30 text-espresso/70"}`}>{t("results.badgeManual")}</span>
                       )}
                       {p.origins.includes("auto") && (
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">{t("results.badgeAuto")}</span>
+                        <span className="rounded-full bg-beckenwasser-hell/60 px-2 py-0.5 text-[10px] font-semibold text-beckenwasser">{t("results.badgeAuto")}</span>
                       )}
                     </span>
                     <span className="flex items-center gap-3">
                       {isTransitionPeriod ? (
-                        <span className={`text-right tabular-nums ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                        <span className={`text-right tabular-nums ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                           <span className="block">{t("yearTransition.certainLabel", { len: certainLen })}</span>
                           <span className="block text-xs">{t("yearTransition.neededLabel", { vac: fmtNum(p.vac), vacRaw: p.vac, year })}</span>
                         </span>
                       ) : (
-                        <span className={`tabular-nums ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                        <span className={`tabular-nums ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                           {t("results.periodSummary", { len: p.len, vac: fmtNum(p.vac), ot: fmtNum(p.ot), otRaw: p.ot })}
                         </span>
                       )}
                       <span className="flex items-center gap-1.5">
                         <button onClick={(e) => { e.stopPropagation(); downloadIcs(p); }}
                           title={t("results.icsTitle")}
-                          className={`rounded-md border px-2 py-0.5 text-[11px] font-semibold ${
-                            dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                          className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
+                            dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"
                           }`}>
                           {t("results.icsButton")}
                         </button>
                         <a href={googleUrl(p)} target="_blank" rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           title={t("results.googleTitle")}
-                          className={`rounded-md border px-2 py-0.5 text-[11px] font-semibold ${
-                            dark ? "border-slate-600 text-slate-300 hover:bg-slate-800" : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                          className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
+                            dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"
                           }`}>
                           {t("results.googleButton")}
                         </a>
                       </span>
-                      <span aria-hidden="true" className={`hidden sm:inline-block ${dark ? "text-slate-600" : "text-slate-300"}`}>›</span>
+                      <span aria-hidden="true" className={`hidden sm:inline-block ${dark ? "text-sonnencreme/40" : "text-espresso/40"}`}>›</span>
                     </span>
                     {reasonLines(p)}
                     {isTransitionPeriod && yearTransition.neededVac > 0 && (
-                      <div className={`basis-full mt-2 rounded-lg border border-dashed p-3 ${
-                        dark ? "border-amber-600/70 bg-amber-950/20" : "border-amber-400 bg-amber-50"
+                      <div className={`basis-full mt-2 rounded-2xl border border-dashed p-3 ${
+                        dark ? "border-sonnengelb/70 bg-sonnengelb/10" : "border-sonnengelb bg-sonnengelb-hell"
                       }`}>
-                        <p className={`text-[11px] font-bold uppercase tracking-wide ${dark ? "text-amber-400" : "text-amber-700"}`}>
+                        <p className={`text-[11px] font-bold uppercase tracking-wide ${dark ? "text-sonnengelb-hell" : "text-tiefwasser"}`}>
                           {t("yearTransition.hypotheticalBadge", { year: year + 1 })}
                         </p>
-                        <p className={`mt-1 text-xs ${dark ? "text-amber-200" : "text-amber-900"}`}>
+                        <p className={`mt-1 text-xs ${dark ? "text-sonnengelb-hell/90" : "text-tiefwasser/80"}`}>
                           {t("yearTransition.hypotheticalText", {
                             extra: fmtNum(yearTransition.neededVac),
                             extraRaw: yearTransition.neededVac,
@@ -2242,19 +2246,20 @@ function Urlaubsplaner({ onPlanReady }) {
                 onChange={(e) => setSharedLinkInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") addSharedPerson(); }} />
               <button onClick={addSharedPerson} disabled={sharedLinkLoading}
-                className="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
+                className="rounded-xl bg-sonnenkoralle px-3 py-2 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90 disabled:opacity-60">
                 {t("sharedFree.addButton")}
               </button>
             </div>
             {sharedLinkError && (
-              <p className="text-xs text-rose-600">{sharedLinkError}</p>
+              <p className="text-xs text-ziegelrot">{sharedLinkError}</p>
             )}
             {sharedPeople.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {sharedPeople.map((p) => (
-                  <span key={p.id} className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs ${dark ? "border-slate-600 text-slate-300" : "border-slate-300 text-slate-600"}`}>
+                  <span key={p.id} className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs ${dark ? "border-tiefwasser-hell text-sonnencreme/80" : "border-beckenwasser/30 text-espresso/80"}`}>
                     {p.label}
-                    <button onClick={() => removeSharedPerson(p.id)} className="text-slate-400 hover:text-rose-500">
+                    <button onClick={() => removeSharedPerson(p.id)}
+                      className={dark ? "text-sonnencreme/60 hover:text-ziegelrot-hell" : "text-espresso/60 hover:text-ziegelrot"}>
                       {t("sharedFree.removeButton")}
                     </button>
                   </span>
@@ -2262,20 +2267,20 @@ function Urlaubsplaner({ onPlanReady }) {
               </div>
             )}
             {sharedPeople.length === 0 ? (
-              <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("sharedFree.emptyNoPeople")}</p>
+              <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("sharedFree.emptyNoPeople")}</p>
             ) : sharedFreePeriods.length === 0 ? (
-              <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("sharedFree.emptyNoOverlap")}</p>
+              <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("sharedFree.emptyNoOverlap")}</p>
             ) : (
-              <ul className={`divide-y ${dark ? "divide-slate-800" : "divide-slate-100"}`}>
+              <ul className={`divide-y ${dark ? "divide-tiefwasser-hell" : "divide-beckenwasser/20"}`}>
                 {sharedFreePeriods.map((p, i) => (
                   <li key={i} className="py-2 text-sm space-y-1">
                     <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
                       <span className="font-medium">{fmtDate(days[p.s])} – {fmtDate(days[p.e])}</span>
-                      <span className={`tabular-nums ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                      <span className={`tabular-nums ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                         {t("sharedFree.periodHeading", { len: p.len })}
                       </span>
                     </div>
-                    <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>
+                    <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                       {t("sharedFree.myCost", { vac: fmtNum(p.mine.vac), vacRaw: p.mine.vac, ot: fmtNum(p.mine.ot), otRaw: p.mine.ot })}
                       {p.others.map((o, oi) => (
                         <span key={oi}> · {t("sharedFree.personCost", { label: o.label, vac: fmtNum(o.vac), vacRaw: o.vac, ot: fmtNum(o.ot), otRaw: o.ot })}</span>
@@ -2291,13 +2296,13 @@ function Urlaubsplaner({ onPlanReady }) {
           <section className={`${cardCls} p-3 space-y-2`}>
             <div className="flex flex-wrap items-center gap-3">
               <span className={subLabelCls}>{t("manual.clickSetsLabel")}</span>
-              <div className={`grid grid-cols-2 gap-1 rounded-md border p-1 ${dark ? "border-slate-600" : "border-slate-200"}`}>
+              <div className={`grid grid-cols-2 gap-1 rounded-xl border p-1 ${dark ? "border-tiefwasser-hell" : "border-beckenwasser/20"}`}>
                 {[["vac", t("manual.vacationDay")], ["ot", t("manual.overtimeReduction")]].map(([k, l]) => (
                   <button key={k} onClick={() => setClickMode(k)}
                     className={`rounded px-2 py-1 text-xs font-semibold transition-colors ${
                       clickMode === k
-                        ? k === "vac" ? "bg-emerald-600 text-white" : "bg-sky-600 text-white"
-                        : dark ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-100"
+                        ? k === "vac" ? "bg-beckenwasser text-kalkstein" : "bg-lagune text-kalkstein"
+                        : dark ? "text-sonnencreme/80 hover:bg-tiefwasser-hell" : "text-espresso/80 hover:bg-beckenwasser-hell/30"
                     }`}>
                     {l}
                   </button>
@@ -2305,19 +2310,19 @@ function Urlaubsplaner({ onPlanReady }) {
               </div>
               {Object.keys(overrides).length > 0 && (
                 <button onClick={() => setOverrides({})}
-                  className="text-xs text-slate-400 hover:text-rose-600">
+                  className={`text-xs ${dark ? "text-sonnencreme/60 hover:text-ziegelrot-hell" : "text-espresso/60 hover:text-ziegelrot"}`}>
                   {t("manual.resetButton", { count: Object.keys(overrides).length })}
                 </button>
               )}
             </div>
             {result.failedManual > 0 && (
-              <p className="text-xs font-semibold text-rose-600">
+              <p className="text-xs font-semibold text-ziegelrot">
                 {result.failedManual === 1
                   ? t("manual.failedOne")
                   : t("manual.failedMany", { count: result.failedManual })}
               </p>
             )}
-            <div className={`flex flex-wrap gap-x-4 gap-y-1 text-xs ${dark ? "text-slate-300" : "text-slate-600"}`}>
+            <div className={`flex flex-wrap gap-x-4 gap-y-1 text-xs ${dark ? "text-sonnencreme/80" : "text-espresso/80"}`}>
               {[
                 ["bg-beckenwasser", t("legend.vacation")],
                 ["bg-lagune", t("legend.overtime")],
@@ -2342,7 +2347,7 @@ function Urlaubsplaner({ onPlanReady }) {
                 </span>
               ))}
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className={`text-[11px] ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
               {t("manual.helpText")}
               <InfoHint dark={dark} text={t("manual.helpDetail")} />
             </p>
@@ -2351,10 +2356,10 @@ function Urlaubsplaner({ onPlanReady }) {
           {/* Jahreskalender */}
           {calendarSection}
           {vacTip && (
-            <p className="text-[11px] text-orange-500">{vacTip.text}</p>
+            <p className="text-[11px] text-ziegelrot">{vacTip.text}</p>
           )}
 
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className={`text-xs leading-relaxed ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
             {t("footerHint.text")}
             <InfoHint dark={dark} text={t("footerHint.detail", { country })} />
           </p>
@@ -2367,13 +2372,13 @@ function Urlaubsplaner({ onPlanReady }) {
 
       {/* Dialog: geplanten Tag entfernen oder tauschen */}
       {dialogDay !== null && result.sel[dialogDay] && (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${dark ? "bg-black/60" : "bg-slate-900/40"}`}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tiefwasser/60"
           onClick={() => setDialogDay(null)}>
-          <div className={`w-full max-w-xs rounded-xl p-4 shadow-xl space-y-3 ${dark ? "bg-slate-900 border border-slate-700" : "bg-white"}`}
+          <div className={`w-full max-w-xs rounded-3xl p-4 space-y-3 ${dark ? "bg-tiefwasser-hell border border-tiefwasser-hell shadow-warm-dark" : "bg-kalkstein border border-beckenwasser/20 shadow-warm"}`}
             onClick={(e) => e.stopPropagation()}>
             <div>
               <p className="text-sm font-bold">{fmtDate(days[dialogDay])}</p>
-              <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>
+              <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                 {t("dayDialog.currentLabel", {
                   type: result.sel[dialogDay] === "vac" ? t("dayDialog.vacationDayType") : t("dayType.overtime"),
                   half: days[dialogDay].cost === 0.5,
@@ -2382,17 +2387,19 @@ function Urlaubsplaner({ onPlanReady }) {
             </div>
             <div className="space-y-2">
               <button onClick={() => applyDialog("swap")}
-                className={`w-full rounded-md px-3 py-2 text-sm font-semibold text-white ${
-                  result.sel[dialogDay] === "vac" ? "bg-sky-600 hover:bg-sky-700" : "bg-emerald-600 hover:bg-emerald-700"
+                className={`w-full rounded-xl px-3 py-2 text-sm font-semibold text-kalkstein ${
+                  result.sel[dialogDay] === "vac" ? "bg-lagune hover:bg-lagune/90" : "bg-beckenwasser hover:bg-beckenwasser/90"
                 }`}>
                 {t("dayDialog.swapButton", { target: result.sel[dialogDay] === "vac" ? t("dayType.overtime") : t("dayDialog.vacationDayType") })}
               </button>
               <button onClick={() => applyDialog("remove")}
-                className="w-full rounded-md border border-rose-200 px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50">
+                className={`w-full rounded-xl border px-3 py-2 text-sm font-semibold ${
+                  dark ? "border-ziegelrot/50 text-ziegelrot-hell hover:bg-ziegelrot/20" : "border-ziegelrot/40 text-ziegelrot hover:bg-ziegelrot-hell/50"
+                }`}>
                 {t("dayDialog.removeButton")}
               </button>
               <button onClick={() => setDialogDay(null)}
-                className={`w-full rounded-md px-3 py-2 text-sm ${dark ? "text-slate-400 hover:bg-slate-800" : "text-slate-500 hover:bg-slate-100"}`}>
+                className={`w-full rounded-xl px-3 py-2 text-sm ${dark ? "text-sonnencreme/60 hover:bg-tiefwasser-hell" : "text-espresso/60 hover:bg-beckenwasser-hell/30"}`}>
                 {t("dayDialog.cancelButton")}
               </button>
             </div>
@@ -2404,12 +2411,12 @@ function Urlaubsplaner({ onPlanReady }) {
           Clipboard-API nicht verfügbar sind) */}
       {copyUrl && (
         <div role="dialog" aria-modal="true" aria-label={t("share.modal.title")}
-          className={`fixed inset-0 z-[60] flex items-center justify-center p-4 ${dark ? "bg-black/60" : "bg-slate-900/40"}`}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-tiefwasser/60"
           onClick={() => setCopyUrl(null)}>
-          <div className={`w-full max-w-md rounded-xl p-4 shadow-xl space-y-3 ${dark ? "bg-slate-900 border border-slate-700" : "bg-white"}`}
+          <div className={`w-full max-w-md rounded-3xl p-4 space-y-3 ${dark ? "bg-tiefwasser-hell border border-tiefwasser-hell shadow-warm-dark" : "bg-kalkstein border border-beckenwasser/20 shadow-warm"}`}
             onClick={(e) => e.stopPropagation()}>
             <p className="text-sm font-bold">{t("share.modal.title")}</p>
-            <p className={`text-[11px] leading-snug ${dark ? "text-slate-400" : "text-slate-500"}`}>
+            <p className={`text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
               {t("share.modal.privacyNote")}
             </p>
             <label htmlFor="share-url-input" className="sr-only">{t("share.modal.linkLabel")}</label>
@@ -2417,11 +2424,11 @@ function Urlaubsplaner({ onPlanReady }) {
               onFocus={(e) => e.target.select()} className={inputCls} />
             <div className="flex gap-2">
               <button onClick={copyFromModal}
-                className="flex-1 rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                className="flex-1 rounded-xl bg-sonnenkoralle px-3 py-2 text-sm font-semibold text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                 {t("share.modal.copyButton")}
               </button>
               <button onClick={() => setCopyUrl(null)}
-                className={`rounded-md px-3 py-2 text-sm ${dark ? "text-slate-400 hover:bg-slate-800" : "text-slate-500 hover:bg-slate-100"}`}>
+                className={`rounded-xl px-3 py-2 text-sm ${dark ? "text-sonnencreme/60 hover:bg-tiefwasser-hell" : "text-espresso/60 hover:bg-beckenwasser-hell/30"}`}>
                 {t("share.modal.closeButton")}
               </button>
             </div>
@@ -2432,34 +2439,34 @@ function Urlaubsplaner({ onPlanReady }) {
       {/* Dialog: lokal gespeicherte Pläne verwalten */}
       {plansDialogOpen && (
         <div role="dialog" aria-modal="true" aria-label={t("localPlans.modal.title")}
-          className={`fixed inset-0 z-[60] flex items-center justify-center p-4 ${dark ? "bg-black/60" : "bg-slate-900/40"}`}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-tiefwasser/60"
           onClick={() => setPlansDialogOpen(false)}>
-          <div className={`w-full max-w-md rounded-xl p-4 shadow-xl space-y-3 max-h-[80vh] overflow-y-auto ${dark ? "bg-slate-900 border border-slate-700" : "bg-white"}`}
+          <div className={`w-full max-w-md rounded-3xl p-4 space-y-3 max-h-[80vh] overflow-y-auto ${dark ? "bg-tiefwasser-hell border border-tiefwasser-hell shadow-warm-dark" : "bg-kalkstein border border-beckenwasser/20 shadow-warm"}`}
             onClick={(e) => e.stopPropagation()}>
             <p className="text-sm font-bold">{t("localPlans.modal.title")}</p>
-            <p className={`text-[11px] leading-snug ${dark ? "text-slate-400" : "text-slate-500"}`}>
+            <p className={`text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
               {t("localPlans.modal.privacyNote")}
             </p>
             <div className="flex gap-2">
               <input className={inputCls} placeholder={t("localPlans.modal.newPlanNamePlaceholder")}
                 value={newPlanName} onChange={(e) => setNewPlanName(e.target.value)} />
               <button onClick={() => { savePlanAsNew(newPlanName); setNewPlanName(""); }}
-                className="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700">
+                className="rounded-xl bg-sonnenkoralle px-3 py-2 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90">
                 {t("localPlans.modal.newPlanButton")}
               </button>
             </div>
             {plansStore.plans.length === 0 ? (
-              <p className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("localPlans.modal.emptyHint")}</p>
+              <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("localPlans.modal.emptyHint")}</p>
             ) : (
               [...plansStore.plans].sort((a, b) => b.updatedAt - a.updatedAt).map((p) => (
-                <div key={p.id} className={`rounded-lg border p-2.5 space-y-2 ${dark ? "border-slate-700" : "border-slate-200"}`}>
+                <div key={p.id} className={`rounded-2xl border p-2.5 space-y-2 ${dark ? "border-tiefwasser-hell" : "border-beckenwasser/20"}`}>
                   {renamingPlanId === p.id ? (
                     <div className="flex gap-2">
                       <input className={inputCls} value={renameDraft} onChange={(e) => setRenameDraft(e.target.value)} />
                       <button onClick={() => { renamePlanAction(p.id, renameDraft); setRenamingPlanId(null); }}
-                        className="text-xs font-semibold text-emerald-600">{t("localPlans.modal.renameSaveButton")}</button>
+                        className="text-xs font-semibold text-beckenwasser">{t("localPlans.modal.renameSaveButton")}</button>
                       <button onClick={() => setRenamingPlanId(null)}
-                        className={`text-xs ${dark ? "text-slate-400" : "text-slate-500"}`}>{t("localPlans.modal.renameCancelButton")}</button>
+                        className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("localPlans.modal.renameCancelButton")}</button>
                     </div>
                   ) : (
                     <>
@@ -2467,33 +2474,33 @@ function Urlaubsplaner({ onPlanReady }) {
                         <span className="text-sm font-semibold">
                           {p.name}
                           {p.id === plansStore.activePlanId && (
-                            <span className="ml-2 rounded bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-500">
+                            <span className="ml-2 rounded bg-beckenwasser/20 px-1.5 py-0.5 text-[10px] font-bold text-beckenwasser">
                               {t("localPlans.modal.activeBadge")}
                             </span>
                           )}
                         </span>
                       </div>
-                      <p className={`text-[11px] ${dark ? "text-slate-500" : "text-slate-400"}`}>
+                      <p className={`text-[11px] ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                         {t("localPlans.modal.updatedAtLabel", {
                           date: new Date(p.updatedAt).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "short" }),
                         })}
                       </p>
                       <div className="flex flex-wrap gap-3 text-xs">
                         {p.id !== plansStore.activePlanId && (
-                          <button onClick={() => switchToPlan(p.id)} className="font-semibold text-emerald-600">
+                          <button onClick={() => switchToPlan(p.id)} className="font-semibold text-beckenwasser">
                             {t("localPlans.modal.openButton")}
                           </button>
                         )}
                         <button onClick={() => { setRenamingPlanId(p.id); setRenameDraft(p.name); }}
-                          className={dark ? "text-slate-400 hover:text-slate-200" : "text-slate-500 hover:text-slate-800"}>
+                          className={dark ? "text-sonnencreme/60 hover:text-sonnencreme/90" : "text-espresso/60 hover:text-espresso"}>
                           {t("localPlans.modal.renameButton")}
                         </button>
                         <button onClick={() => duplicatePlanAction(p.id)}
-                          className={dark ? "text-slate-400 hover:text-slate-200" : "text-slate-500 hover:text-slate-800"}>
+                          className={dark ? "text-sonnencreme/60 hover:text-sonnencreme/90" : "text-espresso/60 hover:text-espresso"}>
                           {t("localPlans.modal.duplicateButton")}
                         </button>
                         <button onClick={() => removePlanAction(p.id)}
-                          className={dark ? "text-slate-400 hover:text-rose-500" : "text-slate-500 hover:text-rose-600"}>
+                          className={dark ? "text-sonnencreme/60 hover:text-ziegelrot-hell" : "text-espresso/60 hover:text-ziegelrot"}>
                           {t("localPlans.modal.deleteButton")}
                         </button>
                       </div>
@@ -2503,7 +2510,7 @@ function Urlaubsplaner({ onPlanReady }) {
               ))
             )}
             <button onClick={() => setPlansDialogOpen(false)}
-              className={`w-full rounded-md px-3 py-2 text-sm ${dark ? "text-slate-400 hover:bg-slate-800" : "text-slate-500 hover:bg-slate-100"}`}>
+              className={`w-full rounded-xl px-3 py-2 text-sm ${dark ? "text-sonnencreme/60 hover:bg-tiefwasser-hell" : "text-espresso/60 hover:bg-beckenwasser-hell/30"}`}>
               {t("localPlans.modal.closeButton")}
             </button>
           </div>
@@ -2515,7 +2522,7 @@ function Urlaubsplaner({ onPlanReady }) {
       {/* Kurze Statusmeldung (Screenreader-freundlich) */}
       {toast && (
         <div role="status" aria-live="polite"
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70] rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[70] rounded-2xl border border-tiefwasser-hell bg-tiefwasser-hell px-4 py-2 text-sm text-kalkstein shadow-warm-dark">
           {toast}
         </div>
       )}
