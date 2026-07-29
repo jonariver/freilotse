@@ -1414,11 +1414,12 @@ function Urlaubsplaner({ onPlanReady }) {
                           )}
                           {vac && (
                             /* Schulferien: dezente Ebene – Streifen am unteren Rand in eigener Farbe
-                               (helles Ziegelrot, identisch zur Legende), deutlich verschieden von Urlaub
-                               (Beckenwasser), Feiertag (kräftiges Ziegelrot), Überstunden (Lagune),
-                               Wochenende (gedämpft). Überschreibt die Grundfarbe der Zelle nicht. */
+                               (helle Lagune, identisch zur Legende), deutlich verschieden von Urlaub
+                               (Beckenwasser), Feiertag (kräftiges Ziegelrot), Überstunden (kräftige
+                               Lagune), Wochenende (gedämpft). Überschreibt die Grundfarbe der Zelle
+                               nicht. */
                             <span aria-hidden="true"
-                              className="pointer-events-none absolute inset-x-1 bottom-0.5 h-[3px] rounded-full bg-ziegelrot-hell" />
+                              className="pointer-events-none absolute inset-x-1 bottom-0.5 h-[3px] rounded-full bg-lagune-hell" />
                           )}
                         </button>
                       );
@@ -1432,7 +1433,7 @@ function Urlaubsplaner({ onPlanReady }) {
                       </p>
                     )}
                     {summary.vacationsText && (
-                      <p className={`text-[10px] leading-snug ${dark ? "text-ziegelrot-hell/80" : "text-ziegelrot/80"}`}>
+                      <p className={`text-[10px] leading-snug ${dark ? "text-lagune-hell/80" : "text-lagune/80"}`}>
                         {t("calendar.summary.schoolHolidays")} {summary.vacationsText}
                       </p>
                     )}
@@ -1570,7 +1571,7 @@ function Urlaubsplaner({ onPlanReady }) {
             </p>
             <h1 className="text-3xl font-display font-bold tracking-tight">{t("header.title", { year })}</h1>
           </div>
-          <div className="flex items-center gap-1 rounded-md border border-tiefwasser-hell p-1 self-start">
+          <div className="flex items-center gap-1 rounded-xl border border-tiefwasser-hell p-1 self-start">
             {[["einfach", t("nav.simpleMode")], ["profi", t("nav.proMode")]].map(([k, l]) => (
               <button key={k}
                 onClick={() => {
@@ -1586,7 +1587,7 @@ function Urlaubsplaner({ onPlanReady }) {
             ))}
           </div>
           <button onClick={handleShare}
-            className="self-start inline-flex items-center gap-1.5 rounded-md border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell focus:outline-none focus:ring-2 focus:ring-beckenwasser"
+            className="self-start inline-flex items-center gap-1.5 rounded-xl border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell focus:outline-none focus:ring-2 focus:ring-beckenwasser"
             aria-label={t("share.ariaLabel")}
             title={t("share.title")}>
             <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none"
@@ -1602,7 +1603,7 @@ function Urlaubsplaner({ onPlanReady }) {
                 if (plansStore.plans.length === 0) savePlanAsNew();
                 else setPlansDialogOpen(true);
               }}
-              className="self-start inline-flex items-center gap-1.5 rounded-md border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell focus:outline-none focus:ring-2 focus:ring-beckenwasser"
+              className="self-start inline-flex items-center gap-1.5 rounded-xl border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell focus:outline-none focus:ring-2 focus:ring-beckenwasser"
               aria-label={plansStore.plans.length === 0 ? t("localPlans.header.saveAriaLabel") : t("localPlans.header.manageAriaLabel")}
               title={plansStore.plans.length === 0 ? t("localPlans.header.saveButton") : t("localPlans.header.manageButton")}>
               <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none"
@@ -1614,7 +1615,7 @@ function Urlaubsplaner({ onPlanReady }) {
             </button>
           )}
           <button onClick={() => setDark(!dark)}
-            className="self-start rounded-md border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell"
+            className="self-start rounded-xl border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser-hell focus:outline-none focus:ring-2 focus:ring-beckenwasser"
             title={t("theme.toggleTitle")}>
             {dark ? t("theme.toLight") : t("theme.toDark")}
           </button>
@@ -1784,7 +1785,7 @@ function Urlaubsplaner({ onPlanReady }) {
                 </div>
 
                 <button onClick={() => { applySimpleGoal(simpleGoal); setSimpleStarted(true); }}
-                  className="w-full rounded-2xl bg-sonnenkoralle px-4 py-3 text-sm font-bold text-kalkstein hover:bg-sonnenkoralle/90">
+                  className="w-full rounded-2xl bg-sonnenkoralle px-4 py-3 text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                   {t("simple.calcButton")}
                 </button>
               </section>
@@ -1857,7 +1858,7 @@ function Urlaubsplaner({ onPlanReady }) {
                     <div style={{ animation: "upFade .35s ease" }}>
                       {calendarSection}
                       {vacTip && (
-                        <p className="mt-1 text-[11px] text-ziegelrot">{vacTip.text}</p>
+                        <p className={`mt-1 text-[11px] ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>{vacTip.text}</p>
                       )}
                     </div>
                   )}
@@ -1953,10 +1954,10 @@ function Urlaubsplaner({ onPlanReady }) {
                 <p className={`text-[11px] ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                   {t("settings.schoolHolidaySourceLabel")}{" "}
                   {vacStatus === "openholidays" && <span className="text-beckenwasser font-semibold">{t("settings.schoolHolidaySourceOpenHolidays")}</span>}
-                  {vacStatus === "ersatz" && <span className="text-ziegelrot font-semibold">{t("settings.schoolHolidaySourceErsatz")}</span>}
+                  {vacStatus === "ersatz" && <span className={`font-semibold ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>{t("settings.schoolHolidaySourceErsatz")}</span>}
                   {vacStatus === "laedt" && t("settings.holidaySourceLoading")}
-                  {vacStatus === "keine" && <span className="text-ziegelrot font-semibold">{t("settings.schoolHolidaySourceNone")}</span>}
-                  {vacStatus === "fehler" && <span className="text-ziegelrot font-semibold">{t("settings.schoolHolidaySourceUnreachable")}</span>}
+                  {vacStatus === "keine" && <span className={`font-semibold ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>{t("settings.schoolHolidaySourceNone")}</span>}
+                  {vacStatus === "fehler" && <span className={`font-semibold ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>{t("settings.schoolHolidaySourceUnreachable")}</span>}
                 </p>
                 {st === "BY" && (
                   <p className={`text-[11px] leading-snug rounded-xl border px-2 py-1.5 ${
@@ -2068,7 +2069,7 @@ function Urlaubsplaner({ onPlanReady }) {
                 <div className="flex items-center justify-between">
                   <span className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("blocks.prioritizedHint")}</span>
                   <button onClick={addBlock}
-                    className="rounded-xl bg-sonnenkoralle px-2.5 py-1 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90">
+                    className="rounded-xl bg-sonnenkoralle px-2.5 py-1 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                     {t("blocks.addButton")}
                   </button>
                 </div>
@@ -2109,7 +2110,7 @@ function Urlaubsplaner({ onPlanReady }) {
                               {t("blocks.placed", { start: fmtDate(days[r.start]), end: fmtDate(days[r.end]), cost: fmtNum(r.cost) })}
                             </span>
                           ) : (
-                            <span className="text-ziegelrot">{t("blocks.notPlaced")}</span>
+                            <span className={dark ? "text-ziegelrot-hell" : "text-ziegelrot"}>{t("blocks.notPlaced")}</span>
                           )}
                         </p>
                         <button onClick={() => delBlock(i)}
@@ -2246,12 +2247,12 @@ function Urlaubsplaner({ onPlanReady }) {
                 onChange={(e) => setSharedLinkInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") addSharedPerson(); }} />
               <button onClick={addSharedPerson} disabled={sharedLinkLoading}
-                className="rounded-xl bg-sonnenkoralle px-3 py-2 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90 disabled:opacity-60">
+                className="rounded-xl bg-sonnenkoralle px-3 py-2 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                 {t("sharedFree.addButton")}
               </button>
             </div>
             {sharedLinkError && (
-              <p className="text-xs text-ziegelrot">{sharedLinkError}</p>
+              <p className={`text-xs ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>{sharedLinkError}</p>
             )}
             {sharedPeople.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -2316,7 +2317,7 @@ function Urlaubsplaner({ onPlanReady }) {
               )}
             </div>
             {result.failedManual > 0 && (
-              <p className="text-xs font-semibold text-ziegelrot">
+              <p className={`text-xs font-semibold ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>
                 {result.failedManual === 1
                   ? t("manual.failedOne")
                   : t("manual.failedMany", { count: result.failedManual })}
@@ -2337,7 +2338,7 @@ function Urlaubsplaner({ onPlanReady }) {
                   t("legend.regularlyOff"),
                 ]]),
                 [dark ? "bg-tiefwasser-hell ring-2 ring-sonnencreme/50" : "bg-kalkstein ring-2 ring-tiefwasser/40", t("legend.manualSet")],
-                ["bg-ziegelrot-hell", t("legend.schoolHolidays")],
+                ["bg-lagune-hell", t("legend.schoolHolidays")],
                 // Swatch als Rahmen statt Füllung, passend zur tatsächlichen
                 // Darstellung im Kalender (dünner Innenrahmen, kein Flächenfüllen).
                 [`bg-transparent border-2 rounded ${dark ? "border-beckenwasser-hell" : "border-beckenwasser"}`, t("legend.freePeriod")],
@@ -2356,7 +2357,7 @@ function Urlaubsplaner({ onPlanReady }) {
           {/* Jahreskalender */}
           {calendarSection}
           {vacTip && (
-            <p className="text-[11px] text-ziegelrot">{vacTip.text}</p>
+            <p className={`text-[11px] ${dark ? "text-ziegelrot-hell" : "text-ziegelrot"}`}>{vacTip.text}</p>
           )}
 
           <p className={`text-xs leading-relaxed ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
@@ -2451,7 +2452,7 @@ function Urlaubsplaner({ onPlanReady }) {
               <input className={inputCls} placeholder={t("localPlans.modal.newPlanNamePlaceholder")}
                 value={newPlanName} onChange={(e) => setNewPlanName(e.target.value)} />
               <button onClick={() => { savePlanAsNew(newPlanName); setNewPlanName(""); }}
-                className="rounded-xl bg-sonnenkoralle px-3 py-2 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90">
+                className="rounded-xl bg-sonnenkoralle px-3 py-2 text-xs font-semibold text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
                 {t("localPlans.modal.newPlanButton")}
               </button>
             </div>

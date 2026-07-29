@@ -114,7 +114,7 @@
           onMouseLeave={() => { if (canHoverRef.current) setInteractiveExpanded(false); }}
           onFocus={() => setInteractiveExpanded(true)}
           onBlur={() => setInteractiveExpanded(false)}
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center gap-2 rounded-l-2xl bg-sonnenkoralle px-3 py-2.5 text-kalkstein shadow-warm hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
+          className="fixed right-0 top-1/2 -translate-y-1/2 max-sm:top-auto max-sm:translate-y-0 max-sm:bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 flex items-center gap-2 rounded-l-2xl bg-sonnenkoralle px-3 py-2.5 text-kalkstein shadow-warm hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
           <HeartIcon className="shrink-0 text-kalkstein" />
           <span className={`support-fab-label text-sm font-semibold${expanded ? " is-expanded" : ""}`}>
             {autoExpanded ? t("support.floatingHintText") : t("support.floatingLabelText")}

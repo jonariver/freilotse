@@ -450,6 +450,7 @@
             "FREILOTSE hat ein komplett neues, wärmeres Design bekommen – inspiriert vom deutschen Freibad-Sommer statt vom generischen Software-Look.",
             "Der helle Modus ist jetzt Standard; der dunkle Modus bleibt über den bekannten Umschalter erhalten, nur wärmer gestaltet.",
             "Kalendertage erscheinen jetzt als runde Kacheln statt eckiger Kästchen.",
+            "Feinschliff nach genauerem Hinsehen: Schulferien im Kalender haben jetzt eine eigene Farbe statt der Feiertagsfarbe, Warnhinweise im dunklen Modus sind besser lesbar, der schwebende Unterstützen-Button rutscht auf dem Smartphone wieder an den unteren Rand statt mittig zu schweben, und mehrere Buttons haben ihren Tastatur-Fokusring zurückbekommen.",
           ],
         },
         {

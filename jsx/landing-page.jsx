@@ -96,7 +96,7 @@
   function LandingPage({ dark, setDark, cardCls, onStartSimple, onStartPro }) {
     const softTextCls = dark ? "text-sonnencreme/80" : "text-espresso/80";
     const mutedTextCls = dark ? "text-sonnencreme/60" : "text-espresso/60";
-    const badgeCls = dark ? "bg-beckenwasser/30 text-beckenwasser" : "bg-beckenwasser/10 text-beckenwasser";
+    const badgeCls = dark ? "bg-beckenwasser/30 text-beckenwasser-hell" : "bg-beckenwasser/10 text-beckenwasser";
 
     return (
       <>
@@ -118,7 +118,7 @@
           <section className="text-center max-w-2xl mx-auto space-y-4" style={{ animation: "upFade .35s ease" }}>
             <h2 className="text-3xl sm:text-4xl font-bold font-display tracking-tight [text-wrap:balance]">{t("landing.hero.heading")}</h2>
             <p className={`text-sm sm:text-base leading-relaxed ${softTextCls}`}>{t("landing.hero.description")}</p>
-            <p className={`inline-block rounded-full px-4 py-2 text-sm font-semibold ${dark ? "bg-beckenwasser/30 text-beckenwasser" : "bg-beckenwasser/10 text-beckenwasser"}`}>
+            <p className={`inline-block rounded-full px-4 py-2 text-sm font-semibold ${dark ? "bg-beckenwasser/30 text-beckenwasser-hell" : "bg-beckenwasser/10 text-beckenwasser"}`}>
               {t("landing.hero.example")}
             </p>
           </section>

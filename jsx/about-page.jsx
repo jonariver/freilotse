@@ -60,8 +60,8 @@
     const softTextCls = dark ? "text-sonnencreme/80" : "text-espresso/80";
     const mutedTextCls = dark ? "text-sonnencreme/60" : "text-espresso/60";
     const cardCls = dark
-      ? "bg-tiefwasser-hell border border-tiefwasser-hell rounded-2xl shadow-warm-dark"
-      : "bg-kalkstein border border-beckenwasser/20 rounded-2xl shadow-warm";
+      ? "bg-tiefwasser-hell border border-tiefwasser-hell rounded-3xl shadow-warm-dark"
+      : "bg-kalkstein border border-beckenwasser/20 rounded-3xl shadow-warm";
 
     return (
       <div className={`min-h-screen flex flex-col font-body ${dark ? "bg-tiefwasser text-sonnencreme" : "bg-sonnencreme text-espresso"}`}>
