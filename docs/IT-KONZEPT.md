@@ -261,9 +261,7 @@ flowchart LR
 
 `_redirects` (Netlify-Syntax) mappt jede „schöne" URL per **Rewrite**
 (Statuscode 200, kein 302) auf die physische Datei, sodass sowohl direkte
-Aufrufe als auch Client-Navigation funktionieren. Zusätzlich leitet
-`_redirects` die historische Domain `freilotse.de` per 302 auf
-`freilotse.netlify.app` um.
+Aufrufe als auch Client-Navigation funktionieren.
 
 ## 11. Deployment und Hosting
 
@@ -281,6 +279,12 @@ vor Deployment) — jeder Push auf `main` ist unmittelbar live. Das ist eine
 bewusste Konsequenz des bundlerfreien Ansatzes: Es gibt nichts zu
 kompilieren, das fehlschlagen könnte. Qualitätssicherung erfolgt manuell
 bzw. durch Review vor dem Push.
+
+`freilotse.de` ist als primäre Custom Domain in Netlify hinterlegt (DNS
+zeigt direkt auf Netlify); `freilotse.netlify.app` bleibt zusätzlich
+erreichbar. Es findet **kein** Redirect zwischen den beiden Domains mehr
+statt (historisch leitete `_redirects` `freilotse.de` per 302 auf
+`freilotse.netlify.app` um, diese Zeile wurde entfernt).
 
 ## 12. Sicherheit und Datenschutz (technisch)
 

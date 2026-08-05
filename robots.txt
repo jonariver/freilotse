@@ -3,4 +3,4 @@ Allow: /
 Disallow: /impressum
 Disallow: /datenschutz
 
-Sitemap: https://freilotse.netlify.app/sitemap.xml
+Sitemap: https://freilotse.de/sitemap.xml

@@ -4,7 +4,7 @@ Dein smarter Urlaubsplaner: FREILOTSE plant Brückentage automatisch –
 Feiertage, Schulferien und Urlaubstage passend zu deinem Bundesland (oder
 Kanton) – kostenlos und ohne Anmeldung.
 
-🔗 Live: https://freilotse.netlify.app/
+🔗 Live: https://freilotse.de/
 
 ## Funktionen
 
@@ -16,7 +16,7 @@ Kanton) – kostenlos und ohne Anmeldung.
 - Planung per Link teilen – ganz ohne Backend, ohne Konto
 - Mehrere Pläne lokal im Browser speichern und verwalten
 - „Gemeinsam frei": gemeinsame freie Tage mit Kolleg:innen/Partner:in finden
-- Tägliches Brückentage-Rätsel unter [`/raetsel`](https://freilotse.netlify.app/raetsel)
+- Tägliches Brückentage-Rätsel unter [`/raetsel`](https://freilotse.de/raetsel)
 
 ## Technischer Stack
 
@@ -52,5 +52,7 @@ Anschließend `index.html` im Browser öffnen.
 
 ## Deployment
 
-Statisches Hosting via Netlify unter [freilotse.netlify.app](https://freilotse.netlify.app/) –
+Statisches Hosting via Netlify unter der Custom Domain
+[freilotse.de](https://freilotse.de/) (weiterhin auch über
+[freilotse.netlify.app](https://freilotse.netlify.app/) erreichbar) –
 kein Build-Kommando nötig, das Publish-Verzeichnis ist der Repo-Root.
