@@ -457,6 +457,13 @@
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
         {
+          date: "7. August 2026",
+          title: "Trip-Links bei langen freien Zeiträumen",
+          items: [
+            "Bei freien Zeiträumen ab 3 zusammenhängenden Tagen zeigt der Profi-Modus jetzt zusätzlich Schaltflächen für Google Flights und Booking.com mit dem passenden Datumsbereich – ein schneller Ausgangspunkt für die Reiseplanung. Trag optional ein Reiseziel ein, damit auch das direkt vorausgefüllt wird.",
+          ],
+        },
+        {
           date: "29. Juli 2026",
           title: "Bessere Vorschau beim Teilen von Links",
           items: [
@@ -828,6 +835,12 @@
       googleTitle: "In Google Kalender öffnen (vorausgefüllter Termin)",
       exportAllButton: "Gesamten Plan exportieren",
       exportAllTitle: "Alle freien Zeiträume als eine .ics-Datei herunterladen (Apple Kalender, Outlook, iCal; in Google Kalender über \"Kalender importieren\" einbindbar)",
+      destinationLabel: "Reiseziel (optional)",
+      destinationPlaceholder: "z. B. Paris, Mallorca …",
+      flightsButton: "Flüge",
+      flightsTitle: "Flugsuche für diesen Zeitraum öffnen (Google Flights). Ohne Reiseziel oben öffnet sich nur die Startseite ohne Vorbefüllung.",
+      bookingButton: "Unterkunft",
+      bookingTitle: "Unterkunftssuche für diesen Zeitraum öffnen (Booking.com). Ohne Reiseziel oben öffnet sich nur die Startseite ohne Vorbefüllung.",
       reason: {
         xmasBoth: "Die Weihnachtsfeiertage sowie Heiligabend und Silvester werden verbunden.",
         xmasEveOnly: "Die Weihnachtsfeiertage und Heiligabend werden verbunden.",

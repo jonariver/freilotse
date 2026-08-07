@@ -21,6 +21,10 @@ const COUNTRY_CODES = Object.keys(COUNTRIES);
 const MONTHS = t("months");
 const DOWS = t("weekdaysApiOrder");
 
+// Mindestlänge (zusammenhängende freie Tage), ab der ein Zeitraum als
+// reisewürdig gilt und Trip-Links (Flüge/Unterkunft) angezeigt bekommt.
+const TRIP_LINKS_MIN_LEN = 3;
+
 /* ------------------------------------------------------------------ */
 /* Ausgelagerte Module (kein Modulsystem -> window.FREILOTSE.*-Namespaces, */
 /* siehe js/planning.js, js/calendar.js, js/data-sources.js,                */
@@ -289,6 +293,9 @@ function Urlaubsplaner({ onPlanReady }) {
   const [dialogDay, setDialogDay] = useState(null); // Index des angeklickten geplanten Tags
   const [drag, setDrag] = useState(null); // { anchor, current } während einer Zieh-Auswahl
   const [vacTip, setVacTip] = useState(null); // { text } – Ferien-Info per Antippen (mobil)
+  // Optionaler Zielort für die Trip-Links (Flüge/Unterkunft), rein UI-lokal:
+  // nicht persistiert, nicht Teil des Share-Link-Payloads oder gespeicherter Pläne.
+  const [tripDestination, setTripDestination] = useState("");
   // Übergeordnete Ansicht: "landing" (Startansicht) | "loading" (kurzer,
   // neutraler Zwischenzustand) | "planner" (bestehende Einfach-/Profi-
   // Ansicht). Reines Rendering – kein Reset bestehender Eingaben beim
@@ -919,6 +926,39 @@ function Urlaubsplaner({ onPlanReady }) {
     const { dtStart, dtEnd, desc } = exportInfo(p);
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t("exportCal.eventTitle"))}` +
       `&dates=${dtStart}/${dtEnd}&details=${encodeURIComponent(desc)}`;
+  };
+  // Trip-Links (Flüge/Unterkunft) für reisewürdige Zeiträume ab TRIP_LINKS_MIN_LEN
+  // Tagen. Der Zielort kommt aus dem optionalen tripDestination-Freitextfeld
+  // (siehe Zeitraum-Liste); ohne Zielort öffnen beide Links lediglich die
+  // jeweilige Startseite ohne Vorbefüllung.
+  const toIsoDate = (ymd) => `${ymd.slice(0, 4)}-${ymd.slice(4, 6)}-${ymd.slice(6, 8)}`;
+  const bookingUrl = (p, destination) => {
+    const { dtStart, dtEnd } = exportInfo(p);
+    const dest = destination.trim();
+    return `https://www.booking.com/searchresults.html?checkin=${toIsoDate(dtStart)}&checkout=${toIsoDate(dtEnd)}` +
+      (dest ? `&ss=${encodeURIComponent(dest)}` : "");
+  };
+  // Englische Monatsnamen ohne Jahr, ausschließlich für den Google-Flights-
+  // Query-Parameter unten (kein UI-Text der App, siehe dort). Ohne Jahr, weil
+  // Google Flights' Textsuche mit Jahresangabe in jedem getesteten Format
+  // (mit/ohne Komma, numerisch) komplett fehlschlägt und nur die leere
+  // Startseite öffnet; ohne Jahr wählt Google Flights selbst das nächste
+  // künftige Vorkommen des Datums – bei Zeiträumen über ca. 12 Monate in der
+  // Zukunft (z. B. weit vorausgeplante Jahre) kann das theoretisch das
+  // falsche Jahr treffen, das ist ein bewusst in Kauf genommenes Risiko einer
+  // undokumentierten Google-Funktion.
+  const EN_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const enMonthDay = (day) => `${EN_MONTHS[day.m]} ${day.d}`;
+  const googleFlightsUrl = (startDay, endDay, destination) => {
+    const dest = destination.trim();
+    if (!dest) return "https://www.google.com/travel/flights";
+    // Bewusst englischsprachig zusammengesetzt (nicht über t()/locale) – das
+    // ist kein in FREILOTSE sichtbarer UI-Text, sondern ein technischer
+    // URL-Parameter für Google Flights' Textsuche, die nur englische Anfragen
+    // zuverlässig erkennt (siehe CLAUDE.md, PRODID-Ausnahme für vergleichbare
+    // rein technische, nicht nutzersichtbare Inhalte).
+    const query = `Flights to ${dest} on ${enMonthDay(startDay)} through ${enMonthDay(endDay)}`;
+    return `https://www.google.com/travel/flights?q=${encodeURIComponent(query)}`;
   };
   // Ein VEVENT-Block für einen Zeitraum. stamp wird übergeben (statt selbst
   // berechnet), damit ein Sammel-Export für alle Zeiträume denselben
@@ -2200,6 +2240,14 @@ function Urlaubsplaner({ onPlanReady }) {
                 </button>
               )}
             </div>
+            {result.periods.length > 0 && (
+              <div className="mb-3 max-w-xs">
+                <label htmlFor="trip-destination" className={labelCls}>{t("results.destinationLabel")}</label>
+                <input id="trip-destination" type="text" className={inputCls}
+                  value={tripDestination} onChange={(e) => setTripDestination(e.target.value)}
+                  placeholder={t("results.destinationPlaceholder")} />
+              </div>
+            )}
             {result.periods.length === 0 ? (
               <p className={`text-sm ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{t("results.periodsEmptyHint")}</p>
             ) : (
@@ -2256,6 +2304,27 @@ function Urlaubsplaner({ onPlanReady }) {
                           }`}>
                           {t("results.googleButton")}
                         </a>
+                        {certainLen >= TRIP_LINKS_MIN_LEN && (
+                          <>
+                            <a href={googleFlightsUrl(days[p.s], isTransitionPeriod ? yearTransition.certainEndDate : days[p.e], tripDestination)}
+                              target="_blank" rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              title={t("results.flightsTitle")}
+                              className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
+                                dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"
+                              }`}>
+                              {t("results.flightsButton")}
+                            </a>
+                            <a href={bookingUrl(p, tripDestination)} target="_blank" rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              title={t("results.bookingTitle")}
+                              className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
+                                dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"
+                              }`}>
+                              {t("results.bookingButton")}
+                            </a>
+                          </>
+                        )}
                       </span>
                       <span aria-hidden="true" className={`hidden sm:inline-block ${dark ? "text-sonnencreme/40" : "text-espresso/40"}`}>›</span>
                     </span>

@@ -124,7 +124,7 @@
   function DatenschutzPage() {
     return (
       <LegalLayout title="Datenschutzerklärung" documentTitle={t("legal.datenschutz.documentTitle")} metaDescription={t("legal.datenschutz.metaDescription")}>
-        <p>Stand: 26. Juli 2026</p>
+        <p>Stand: 7. August 2026</p>
 
         <LegalSection title="1. Verantwortlicher">
           <ProviderDetailsImage />
@@ -156,6 +156,7 @@
           <p>Deine Eingaben und berechneten Urlaubsdaten werden nicht an mich übermittelt und nicht dauerhaft in deinem Browser gespeichert. Die Berechnung erfolgt lokal in deinem Browser.</p>
           <p>Wenn du die Teilen-Funktion nutzt, werden die Planungseinstellungen in einem URL-Fragment gespeichert. Dieses Fragment wird beim normalen Seitenaufruf nicht an den Webserver übertragen. Der Inhalt ist kodiert, aber nicht verschlüsselt. Jede Person mit dem Link kann die darin enthaltene Planung öffnen. Teile einen solchen Link deshalb nur mit Personen, für die diese Informationen bestimmt sind.</p>
           <p>Beim Herunterladen einer ICS-Datei wird die Kalenderdatei lokal in deinem Browser erzeugt. Erst wenn du ausdrücklich „Google“ auswählst, wird Google Kalender geöffnet und die für den Termin erforderliche Information an Google übergeben. Dann gelten die Datenschutzbestimmungen von <ExternalLegalLink href="https://policies.google.com/privacy?hl=de">Google</ExternalLegalLink>.</p>
+          <p>Bei ausreichend langen freien Zeiträumen zeigt der Urlaubsplaner zusätzlich die Schaltflächen „Flüge“ und „Unterkunft“ an. Diese enthalten normale externe Links zu Google Flights beziehungsweise Booking.com, vorausgefüllt mit dem Datumsbereich des jeweiligen Zeitraums sowie – falls du sie freiwillig in das optionale Reiseziel-Feld einträgst – deiner Zielort-Eingabe. Das Reiseziel-Feld wird nicht gespeichert und nicht Teil eines Freigabelinks. Beim bloßen Anzeigen dieser Schaltflächen werden keine Daten übertragen. Erst wenn du eine der Schaltflächen anklickst, verlässt du diese Website und dein Browser stellt eine Verbindung zum jeweiligen Anbieter her; dabei können personenbezogene Daten, insbesondere deine IP-Adresse, technische Verbindungsdaten sowie eine eingetragene Zielort-Angabe, verarbeitet werden. Für die weitere Datenverarbeitung auf der jeweiligen Website ist der jeweilige Anbieter verantwortlich. Weitere Informationen findest du in der <ExternalLegalLink href="https://policies.google.com/privacy?hl=de">Datenschutzerklärung von Google</ExternalLegalLink> beziehungsweise der <ExternalLegalLink href="https://www.booking.com/content/privacy.html">Datenschutzerklärung von Booking.com</ExternalLegalLink>.</p>
         </LegalSection>
 
         <LegalSection title="7. Kontaktaufnahme per E-Mail">
