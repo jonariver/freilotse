@@ -461,6 +461,7 @@
           title: "Trip-Links bei langen freien Zeiträumen",
           items: [
             "Bei freien Zeiträumen ab 3 zusammenhängenden Tagen zeigt der Profi-Modus jetzt zusätzlich Schaltflächen für Google Flights und Booking.com mit dem passenden Datumsbereich – ein schneller Ausgangspunkt für die Reiseplanung. Trag optional ein Reiseziel ein, damit auch das direkt vorausgefüllt wird.",
+            "Für einzelne Zeiträume mit abweichendem Reiseziel gibt es jetzt direkt unter den Schaltflächen ein eigenes kleines Eingabefeld, das für diesen Zeitraum das Reiseziel oben überschreibt.",
           ],
         },
         {
