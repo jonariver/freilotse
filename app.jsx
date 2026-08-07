@@ -1172,6 +1172,9 @@ function Urlaubsplaner({ onPlanReady }) {
   const inputCls = dark
     ? "w-full rounded-xl border border-tiefwasser-hell bg-tiefwasser-hell px-2.5 py-1.5 text-sm text-sonnencreme focus:outline-none focus:ring-2 focus:ring-beckenwasser"
     : "w-full rounded-xl border border-beckenwasser/30 bg-kalkstein px-2.5 py-1.5 text-sm text-tiefwasser focus:outline-none focus:ring-2 focus:ring-beckenwasser";
+  const inputSmCls = dark
+    ? "w-full rounded-xl border border-tiefwasser-hell bg-tiefwasser-hell px-2.5 py-1 text-xs text-sonnencreme focus:outline-none focus:ring-2 focus:ring-beckenwasser"
+    : "w-full rounded-xl border border-beckenwasser/30 bg-kalkstein px-2.5 py-1 text-xs text-tiefwasser focus:outline-none focus:ring-2 focus:ring-beckenwasser";
   const labelCls = `block text-xs font-semibold uppercase tracking-wide ${dark ? "text-sonnencreme/60" : "text-espresso/60"} mb-1`;
   const cardCls = dark ? "bg-tiefwasser-hell border border-tiefwasser-hell rounded-3xl shadow-warm-dark" : "bg-kalkstein border border-beckenwasser/20 rounded-3xl shadow-warm";
   const subLabelCls = `text-xs font-semibold uppercase tracking-wide ${dark ? "text-sonnencreme/60" : "text-espresso/80"}`;
@@ -2337,7 +2340,7 @@ function Urlaubsplaner({ onPlanReady }) {
                     {reasonLines(p)}
                     {showTripLinks && (
                       <div className="basis-full" onClick={(e) => e.stopPropagation()}>
-                        <input type="text" className={`${inputCls} max-w-xs text-xs py-1`}
+                        <input type="text" className={`${inputSmCls} max-w-xs`}
                           value={perPeriodDestination[p.s] ?? ""}
                           onChange={(e) => setPerPeriodDestination((prev) => ({ ...prev, [p.s]: e.target.value }))}
                           aria-label={t("results.destinationPeriodAriaLabel")}
