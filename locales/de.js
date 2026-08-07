@@ -462,6 +462,7 @@
           items: [
             "Bei freien Zeiträumen ab 3 zusammenhängenden Tagen zeigt der Profi-Modus jetzt zusätzlich Schaltflächen für Google Flights und Booking.com mit dem passenden Datumsbereich – ein schneller Ausgangspunkt für die Reiseplanung. Trag optional ein Reiseziel ein, damit auch das direkt vorausgefüllt wird.",
             "Für einzelne Zeiträume mit abweichendem Reiseziel gibt es jetzt direkt unter den Schaltflächen ein eigenes kleines Eingabefeld, das für diesen Zeitraum das Reiseziel oben überschreibt.",
+            "Die Reiseziel-Felder schlagen jetzt beim Tippen passende Ziele vor (z. B. große Städte und beliebte Urlaubsorte), um Tippfehler zu vermeiden.",
           ],
         },
         {
