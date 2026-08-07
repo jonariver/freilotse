@@ -296,6 +296,7 @@ function Urlaubsplaner({ onPlanReady }) {
   // Optionaler Zielort für die Trip-Links (Flüge/Unterkunft), rein UI-lokal:
   // nicht persistiert, nicht Teil des Share-Link-Payloads oder gespeicherter Pläne.
   const [tripDestination, setTripDestination] = useState("");
+  const [perPeriodDestination, setPerPeriodDestination] = useState({});
   // Übergeordnete Ansicht: "landing" (Startansicht) | "loading" (kurzer,
   // neutraler Zwischenzustand) | "planner" (bestehende Einfach-/Profi-
   // Ansicht). Reines Rendering – kein Reset bestehender Eingaben beim
@@ -922,6 +923,10 @@ function Urlaubsplaner({ onPlanReady }) {
     const desc = t("exportCal.icsDescription", { len, vac: fmtNum(p.vac), ot: fmtNum(p.ot), otRaw: p.ot });
     return { dtStart, dtEnd, desc };
   };
+  // Reiseziel für einen einzelnen Zeitraum: eigener Wert (falls gesetzt)
+  // überschreibt das globale Feld, sonst Fallback auf tripDestination.
+  const effectiveDestination = (p) =>
+    (perPeriodDestination[p.s] ?? "").trim() || tripDestination;
   const googleUrl = (p) => {
     const { dtStart, dtEnd, desc } = exportInfo(p);
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t("exportCal.eventTitle"))}` +
@@ -2255,6 +2260,7 @@ function Urlaubsplaner({ onPlanReady }) {
                 {result.periods.map((p, i) => {
                   const isTransitionPeriod = i === result.periods.length - 1 && !!yearTransition;
                   const certainLen = isTransitionPeriod ? p.len + yearTransition.freeExtensionDays : p.len;
+                  const showTripLinks = certainLen >= TRIP_LINKS_MIN_LEN;
                   return (
                   <li key={i} role="button" tabIndex={0}
                     onClick={() => scrollToPeriod(p)}
@@ -2304,9 +2310,9 @@ function Urlaubsplaner({ onPlanReady }) {
                           }`}>
                           {t("results.googleButton")}
                         </a>
-                        {certainLen >= TRIP_LINKS_MIN_LEN && (
+                        {showTripLinks && (
                           <>
-                            <a href={googleFlightsUrl(days[p.s], isTransitionPeriod ? yearTransition.certainEndDate : days[p.e], tripDestination)}
+                            <a href={googleFlightsUrl(days[p.s], isTransitionPeriod ? yearTransition.certainEndDate : days[p.e], effectiveDestination(p))}
                               target="_blank" rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
                               title={t("results.flightsTitle")}
@@ -2315,7 +2321,7 @@ function Urlaubsplaner({ onPlanReady }) {
                               }`}>
                               {t("results.flightsButton")}
                             </a>
-                            <a href={bookingUrl(p, tripDestination)} target="_blank" rel="noopener noreferrer"
+                            <a href={bookingUrl(p, effectiveDestination(p))} target="_blank" rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
                               title={t("results.bookingTitle")}
                               className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
@@ -2329,6 +2335,15 @@ function Urlaubsplaner({ onPlanReady }) {
                       <span aria-hidden="true" className={`hidden sm:inline-block ${dark ? "text-sonnencreme/40" : "text-espresso/40"}`}>›</span>
                     </span>
                     {reasonLines(p)}
+                    {showTripLinks && (
+                      <div className="basis-full" onClick={(e) => e.stopPropagation()}>
+                        <input type="text" className={`${inputCls} max-w-xs text-xs py-1`}
+                          value={perPeriodDestination[p.s] ?? ""}
+                          onChange={(e) => setPerPeriodDestination((prev) => ({ ...prev, [p.s]: e.target.value }))}
+                          aria-label={t("results.destinationPeriodAriaLabel")}
+                          placeholder={t("results.destinationPeriodPlaceholder", { fallback: tripDestination })} />
+                      </div>
+                    )}
                     {isTransitionPeriod && yearTransition.neededVac > 0 && (
                       <div className={`basis-full mt-2 rounded-2xl border border-dashed p-3 ${
                         dark ? "border-sonnengelb/70 bg-sonnengelb/10" : "border-sonnengelb bg-sonnengelb-hell"
