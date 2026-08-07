@@ -841,6 +841,41 @@
       destinationPeriodPlaceholder: (p) =>
         p.fallback ? `Abweichendes Ziel (Standard: ${p.fallback})` : "Abweichendes Reiseziel für diesen Zeitraum",
       destinationPeriodAriaLabel: "Reiseziel für diesen Zeitraum (überschreibt das Feld oben)",
+      destinationSuggestions: [
+        // Deutschland – große Städte
+        "Berlin", "Hamburg", "München", "Köln", "Frankfurt am Main", "Stuttgart",
+        "Düsseldorf", "Leipzig", "Dresden", "Hannover", "Nürnberg", "Bremen",
+        "Bonn", "Mannheim", "Augsburg", "Freiburg im Breisgau", "Rostock", "Kiel",
+        "Heidelberg", "Potsdam",
+        // Deutschland – beliebte Reiseziele
+        "Trier", "Regensburg", "Würzburg", "Passau", "Konstanz", "Lindau",
+        "Garmisch-Partenkirchen", "Sylt", "Rügen", "Usedom", "Norderney",
+        "Berchtesgaden",
+        // Österreich
+        "Wien", "Salzburg", "Graz", "Innsbruck", "Linz", "Kitzbühel",
+        "Zell am See", "Villach",
+        // Schweiz
+        "Zürich", "Genf", "Basel", "Bern", "Luzern", "Interlaken", "Zermatt",
+        "St. Moritz",
+        // Europa – Städte
+        "Paris", "London", "Rom", "Mailand", "Venedig", "Florenz", "Neapel",
+        "Turin", "Barcelona", "Madrid", "Sevilla", "Valencia", "Lissabon",
+        "Porto", "Amsterdam", "Brüssel", "Kopenhagen", "Stockholm", "Oslo",
+        "Helsinki", "Reykjavik", "Dublin", "Edinburgh", "Prag", "Budapest",
+        "Warschau", "Krakau", "Athen", "Istanbul", "Ljubljana",
+        // Europa – Inseln und Ferienziele
+        "Mallorca", "Ibiza", "Menorca", "Gran Canaria", "Teneriffa",
+        "Fuerteventura", "Lanzarote", "Kreta", "Rhodos", "Korfu", "Santorin",
+        "Mykonos", "Sardinien", "Sizilien", "Malta", "Zypern", "Madeira",
+        "Algarve", "Côte d'Azur", "Toskana",
+        // Internationale Fernziele
+        "New York", "Los Angeles", "San Francisco", "Las Vegas", "Miami",
+        "Chicago", "Toronto", "Vancouver", "Mexiko-Stadt", "Cancún",
+        "Rio de Janeiro", "Buenos Aires", "Kapstadt", "Marrakesch", "Kairo",
+        "Dubai", "Abu Dhabi", "Tel Aviv", "Bangkok", "Phuket", "Bali",
+        "Singapur", "Kuala Lumpur", "Hongkong", "Tokio", "Kyoto", "Seoul",
+        "Sydney", "Melbourne", "Malediven",
+      ],
       flightsButton: "Flüge",
       flightsTitle: "Flugsuche für diesen Zeitraum öffnen (Google Flights). Ohne Reiseziel oben öffnet sich nur die Startseite ohne Vorbefüllung.",
       bookingButton: "Unterkunft",
