@@ -2252,8 +2252,14 @@ function Urlaubsplaner({ onPlanReady }) {
               <div className="mb-3 max-w-xs">
                 <label htmlFor="trip-destination" className={labelCls}>{t("results.destinationLabel")}</label>
                 <input id="trip-destination" type="text" className={inputCls}
+                  list="destination-suggestions"
                   value={tripDestination} onChange={(e) => setTripDestination(e.target.value)}
                   placeholder={t("results.destinationPlaceholder")} />
+                <datalist id="destination-suggestions">
+                  {t("results.destinationSuggestions").map((name) => (
+                    <option key={name} value={name} />
+                  ))}
+                </datalist>
               </div>
             )}
             {result.periods.length === 0 ? (
@@ -2341,6 +2347,7 @@ function Urlaubsplaner({ onPlanReady }) {
                     {showTripLinks && (
                       <div className="basis-full" onClick={(e) => e.stopPropagation()}>
                         <input type="text" className={`${inputSmCls} max-w-xs`}
+                          list="destination-suggestions"
                           value={perPeriodDestination[p.s] ?? ""}
                           onChange={(e) => setPerPeriodDestination((prev) => ({ ...prev, [p.s]: e.target.value }))}
                           aria-label={t("results.destinationPeriodAriaLabel")}
