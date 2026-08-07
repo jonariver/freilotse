@@ -837,6 +837,9 @@
       exportAllTitle: "Alle freien Zeiträume als eine .ics-Datei herunterladen (Apple Kalender, Outlook, iCal; in Google Kalender über \"Kalender importieren\" einbindbar)",
       destinationLabel: "Reiseziel (optional)",
       destinationPlaceholder: "z. B. Paris, Mallorca …",
+      destinationPeriodPlaceholder: (p) =>
+        p.fallback ? `Abweichendes Ziel (Standard: ${p.fallback})` : "Abweichendes Reiseziel für diesen Zeitraum",
+      destinationPeriodAriaLabel: "Reiseziel für diesen Zeitraum (überschreibt das Feld oben)",
       flightsButton: "Flüge",
       flightsTitle: "Flugsuche für diesen Zeitraum öffnen (Google Flights). Ohne Reiseziel oben öffnet sich nur die Startseite ohne Vorbefüllung.",
       bookingButton: "Unterkunft",
