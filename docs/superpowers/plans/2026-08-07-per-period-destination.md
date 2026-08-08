@@ -1,5 +1,10 @@
 # Reiseziel pro Zeitraum – Implementierungsplan
 
+> **Status: umgesetzt und ausgeliefert** (7. August 2026). Commits `1b63258`
+> (Locale-Texte), `174adb8` (Feature), `580eb90` (Changelog), Feinschliff am
+> Eingabefeld in `eacf231`. Changelog-Eintrag „Trip-Links bei langen freien
+> Zeiträumen" vom 7. August 2026 (`locales/de.js`, `changelog.entries`).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** In der Zeiträume-Liste im Profi-Modus soll jeder Zeitraum mit
@@ -51,7 +56,7 @@ prüfen (siehe CLAUDE.md, Abschnitt zu UI-Änderungen).
   `t("results.destinationPeriodAriaLabel")` (String, keine Params) – werden in
   Task 2 aus `app.jsx` aufgerufen.
 
-- [ ] **Step 1: Neue Schlüssel ergänzen**
+- [x] **Step 1: Neue Schlüssel ergänzen**
 
 In `locales/de.js` direkt nach Zeile 839 (`destinationPlaceholder: "z. B.
 Paris, Mallorca …",`) einfügen:
@@ -62,7 +67,7 @@ Paris, Mallorca …",`) einfügen:
       destinationPeriodAriaLabel: "Reiseziel für diesen Zeitraum (überschreibt das Feld oben)",
 ```
 
-- [ ] **Step 2: Manuell prüfen**
+- [x] **Step 2: Manuell prüfen**
 
 `locales/de.js` im Editor öffnen, sicherstellen, dass die Datei weiterhin
 gültiges JS ist (keine fehlenden Kommas/Klammern rund um die neuen Zeilen) und
@@ -70,7 +75,7 @@ dass `window.I18N` beim Laden von `index.html` im Browser keine Konsolenfehler
 wirft (Browser-Konsole prüfen, siehe Task 3 für den vollständigen manuellen
 Testlauf – an dieser Stelle reicht ein kurzer Ladecheck ohne Konsolenfehler).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add locales/de.js
@@ -103,7 +108,7 @@ EOF
   gibt String zurück) – ausschließlich lokal in `Urlaubsplaner` genutzt, keine
   weiteren Konsumenten außerhalb dieser Komponente.
 
-- [ ] **Step 1: State direkt neben `tripDestination` ergänzen**
+- [x] **Step 1: State direkt neben `tripDestination` ergänzen**
 
 In `app.jsx` Zeile 298 (`const [tripDestination, setTripDestination] =
 useState("");`) direkt danach einfügen:
@@ -112,7 +117,7 @@ useState("");`) direkt danach einfügen:
   const [perPeriodDestination, setPerPeriodDestination] = useState({});
 ```
 
-- [ ] **Step 2: Auflösungs-Helfer ergänzen**
+- [x] **Step 2: Auflösungs-Helfer ergänzen**
 
 Direkt vor der `googleUrl`-Definition (`app.jsx:925`, `const googleUrl = (p)
 => {`) einfügen:
@@ -124,7 +129,7 @@ Direkt vor der `googleUrl`-Definition (`app.jsx:925`, `const googleUrl = (p)
     (perPeriodDestination[p.s] ?? "").trim() || tripDestination;
 ```
 
-- [ ] **Step 3: Bestehende Aufrufstellen auf `effectiveDestination` umstellen
+- [x] **Step 3: Bestehende Aufrufstellen auf `effectiveDestination` umstellen
   und die Sichtbarkeits-Bedingung in eine Variable ziehen**
 
 In `app.jsx` Zeile 2257 (`const certainLen = isTransitionPeriod ? p.len +
@@ -165,7 +170,7 @@ ersetzen:
                         )}
 ```
 
-- [ ] **Step 4: Neues Eingabefeld unterhalb der Button-Zeile ergänzen**
+- [x] **Step 4: Neues Eingabefeld unterhalb der Button-Zeile ergänzen**
 
 Das neue Feld gehört **nicht** in den Button-`<span>` selbst, sondern als
 eigene `basis-full`-Zeile auf Höhe von `reasonLines(p)`. Direkt nach
@@ -187,14 +192,14 @@ eigene `basis-full`-Zeile auf Höhe von `reasonLines(p)`. Direkt nach
 (Die bestehende Zeile `{reasonLines(p)}` bleibt unverändert bestehen, der neue
 Block wird direkt danach ergänzt.)
 
-- [ ] **Step 5: Cache-Busting-Version hochzählen**
+- [x] **Step 5: Cache-Busting-Version hochzählen**
 
 In `index.html` Zeile 113 `app.jsx?v=32` auf `app.jsx?v=33` ändern und Zeile
 85 `locales/de.js?v=23` auf `locales/de.js?v=24` ändern (Task 1 hat
 `locales/de.js` bereits verändert, die Version dafür wird hier mit erledigt,
 da beide Dateien in derselben Feature-Auslieferung hängen).
 
-- [ ] **Step 6: Manuell im Browser prüfen**
+- [x] **Step 6: Manuell im Browser prüfen**
 
 `index.html` im Browser öffnen (z. B. per lokalem Static-Server, falls
 `file://` wegen `fetch()` in `data-sources.js` Probleme macht – ein einfacher
@@ -219,7 +224,7 @@ da beide Dateien in derselben Feature-Auslieferung hängen).
    Warnungen (insbesondere keine `⚠ <key>`-Ausgabe, die auf einen fehlenden
    Locale-Schlüssel hindeuten würde).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add app.jsx index.html
@@ -245,7 +250,7 @@ EOF
 **Interfaces:**
 - Consumes: keine (reine Textänderung, kein Code-Interface betroffen).
 
-- [ ] **Step 1: Zweiten Stichpunkt zum bestehenden Eintrag vom 7. August 2026
+- [x] **Step 1: Zweiten Stichpunkt zum bestehenden Eintrag vom 7. August 2026
   ergänzen**
 
 In `locales/de.js` den bestehenden Eintrag
@@ -273,12 +278,12 @@ um einen zweiten Eintrag im `items`-Array erweitern:
         },
 ```
 
-- [ ] **Step 2: Manuell prüfen**
+- [x] **Step 2: Manuell prüfen**
 
 Im Browser die Seite `/neuigkeiten` öffnen, den Eintrag vom 7. August 2026
 mit beiden Stichpunkten sichten, keine Konsolenfehler.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add locales/de.js

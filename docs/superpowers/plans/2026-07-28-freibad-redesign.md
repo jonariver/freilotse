@@ -1,5 +1,10 @@
 # FREILOTSE Redesign "Freibad-Kachel" Implementation Plan
 
+> **Status: umgesetzt und ausgeliefert** (29. Juli 2026). Abschluss-Commit
+> `08f100d`, Nachbesserungen aus dem Gesamt-Review in `c6d8603`, `ddc20b9`
+> und `a97e72a`. Changelog-Eintrag „Neues Erscheinungsbild: Freibad-Kachel"
+> vom 29. Juli 2026 (`locales/de.js`, `changelog.entries`).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Re-skin the entire FREILOTSE app (marketing pages + the dense Planer screen in Einfach- and Profi-Modus) from a generic Tailwind-default dark-navy/emerald look to the warm "Freibad-Kachel" identity approved in `docs/superpowers/specs/2026-07-28-freibad-redesign-design.md`, with light mode as the new default.
@@ -76,7 +81,7 @@ Calendar/semantic status colors (used only in `dayClass`-equivalent functions in
 **Interfaces:**
 - Produces: Tailwind color utilities (`bg-sonnencreme`, `bg-kalkstein`, `bg-beckenwasser`, `bg-beckenwasser-hell`, `bg-tiefwasser`, `bg-tiefwasser-hell`, `bg-sonnenkoralle`, `bg-espresso`, `bg-lagune`, `bg-lagune-hell`, `bg-ziegelrot`, `bg-ziegelrot-hell`, `bg-sonnengelb`, `bg-sonnengelb-hell`, and the `text-`/`border-`/`ring-`/`divide-` variants of all of them), font utilities (`font-display`, `font-body`, `font-data`), and CSS classes `.shadow-warm`, `.shadow-warm-dark`, `.wave-divider`, `.wave-divider-dark`. All later tasks consume these.
 
-- [ ] **Step 1: Add Google Fonts to `<head>`**
+- [x] **Step 1: Add Google Fonts to `<head>`**
 
 In `index.html`, immediately after the existing `<meta name="apple-mobile-web-app-title" ...>` line (line 15) and before the Tailwind CDN `<script>` (line 16), add:
 
@@ -86,7 +91,7 @@ In `index.html`, immediately after the existing `<meta name="apple-mobile-web-ap
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Manrope:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 ```
 
-- [ ] **Step 2: Add the Tailwind runtime config**
+- [x] **Step 2: Add the Tailwind runtime config**
 
 Immediately after the Tailwind CDN `<script src="https://cdn.tailwindcss.com"></script>` line (currently line 16), add:
 
@@ -117,7 +122,7 @@ Immediately after the Tailwind CDN `<script src="https://cdn.tailwindcss.com"></
 </script>
 ```
 
-- [ ] **Step 3: Create `css/theme.css`**
+- [x] **Step 3: Create `css/theme.css`**
 
 ```css
 /* css/theme.css — Freibad-Kachel Redesign: Ergaenzungen jenseits von
@@ -145,7 +150,7 @@ Immediately after the Tailwind CDN `<script src="https://cdn.tailwindcss.com"></
 }
 ```
 
-- [ ] **Step 4: Link the new stylesheet**
+- [x] **Step 4: Link the new stylesheet**
 
 In `index.html`, add right after the Tailwind config `<script>` block from Step 2:
 
@@ -153,7 +158,7 @@ In `index.html`, add right after the Tailwind config `<script>` block from Step 
 <link rel="stylesheet" href="css/theme.css?v=1">
 ```
 
-- [ ] **Step 5: Update the `<body>` default background and `theme-color`**
+- [x] **Step 5: Update the `<body>` default background and `theme-color`**
 
 Change line 12 from:
 ```html
@@ -173,11 +178,11 @@ to:
 <body class="bg-sonnencreme">
 ```
 
-- [ ] **Step 6: Verify in browser**
+- [x] **Step 6: Verify in browser**
 
 Start the server: `python -m http.server 8000` (background). Open `http://localhost:8000/`. Expected: page background is now warm cream instead of black (the rest of the UI still looks like the old dark theme until later tasks land — that's expected and fine at this stage). Open DevTools console: zero errors. Check the Network tab: the Google Fonts stylesheet and `css/theme.css` both return 200.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add index.html css/theme.css
@@ -194,7 +199,7 @@ git commit -m "Grundlage Freibad-Redesign: Tailwind-Farbtokens, Google Fonts, th
 - Consumes: Tailwind tokens from Task 1.
 - Produces: no signature/prop changes — `CollapsibleCard` and `InfoHint` keep their exact existing props.
 
-- [ ] **Step 1: Restyle `CollapsibleCard`'s chevron color** (line 23)
+- [x] **Step 1: Restyle `CollapsibleCard`'s chevron color** (line 23)
 
 Change:
 ```jsx
@@ -210,7 +215,7 @@ Also change the panel title span (line 20) to use the display font for a bit of 
 <span className="text-sm font-bold font-display flex items-center gap-2">
 ```
 
-- [ ] **Step 2: Restyle `InfoHint`'s "i" button and text** (lines 42-49)
+- [x] **Step 2: Restyle `InfoHint`'s "i" button and text** (lines 42-49)
 
 Change:
 ```jsx
@@ -229,15 +234,15 @@ And the revealed text span (line 49):
 <span className={`mt-1 block text-[11px] leading-snug ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>{text}</span>
 ```
 
-- [ ] **Step 2: Bump cache-busting version**
+- [x] **Step 2: Bump cache-busting version**
 
 In `index.html`, change `jsx/common-components.jsx?v=1` to `?v=2`.
 
-- [ ] **Step 3: Verify in browser**
+- [x] **Step 3: Verify in browser**
 
 Reload `http://localhost:8000/`, navigate to the Planer (any mode with an info-hint/collapsible card, e.g. Einfachmodus). Click an info "i" icon and an accordion header — confirm the new warm-toned colors render in both light and dark (use the existing theme toggle to check dark). Console clean.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add jsx/common-components.jsx index.html
@@ -254,7 +259,7 @@ git commit -m "Freibad-Redesign: common-components.jsx (CollapsibleCard, InfoHin
 - Consumes: Tailwind tokens from Task 1.
 - Produces: `SiteFooter`, `SiteLink`, `SupportFooterLink`, `SupportFloatingButton`, `HeartIcon` — same props/signatures as before.
 
-- [ ] **Step 1: Restyle `SupportFooterLink`'s pill button** (line 42-44)
+- [x] **Step 1: Restyle `SupportFooterLink`'s pill button** (line 42-44)
 
 Replace the emerald pill classes with beckenwasser:
 ```jsx
@@ -264,7 +269,7 @@ className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs fo
 ```
 (apply the same structural shape the current code already has — only the color tokens named above change; keep whatever wrapper/icon layout already exists around this className).
 
-- [ ] **Step 2: Restyle `SupportFloatingButton`** (line ~121)
+- [x] **Step 2: Restyle `SupportFloatingButton`** (line ~121)
 
 Change the floating tab background/shadow/rounding:
 ```jsx
@@ -272,19 +277,19 @@ className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex items-center gap-2 r
 ```
 And the heart icon tint (line 122) from `text-emerald-400` to `text-kalkstein` (it now sits on a solid Koralle background, so it should match the button's own text color rather than carry its own accent tint).
 
-- [ ] **Step 3: Restyle `SiteFooter`** (around lines 132-135)
+- [x] **Step 3: Restyle `SiteFooter`** (around lines 132-135)
 
 Apply the neutral-text mapping table rows (`text-slate-400/500` → `text-sonnencreme/60`/`text-espresso/60`, `text-white` → `text-sonnencreme`/`text-tiefwasser`, `border-slate-800`/`bg-slate-950` → `border-tiefwasser-hell`/`bg-tiefwasser`, `border-slate-200`/`bg-white` → `border-beckenwasser/20`/`bg-sonnencreme`) to every occurrence in this block, following the Global Constraints table exactly.
 
-- [ ] **Step 4: Bump cache-busting version**
+- [x] **Step 4: Bump cache-busting version**
 
 `jsx/support-components.jsx?v=1` → `?v=2` in `index.html`.
 
-- [ ] **Step 5: Verify in browser**
+- [x] **Step 5: Verify in browser**
 
 Reload the landing page (`/`) and any sub-page with `SiteFooter` (e.g. `/anleitung`). Confirm footer, floating support button, and footer support pill render in the new palette, light and dark. Console clean.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add jsx/support-components.jsx index.html
@@ -300,18 +305,18 @@ git commit -m "Freibad-Redesign: support-components.jsx (Footer, Floating-Button
 **Interfaces:**
 - Consumes: Tailwind tokens from Task 1, restyled `SiteFooter` from Task 3.
 
-- [ ] **Step 1: Restyle the header** (line 103)
+- [x] **Step 1: Restyle the header** (line 103)
 
 `<header className="bg-slate-900 text-white">` → `<header className="bg-tiefwasser text-sonnencreme">`. Keep this header always-dark regardless of the page's own theme (matches existing intent — the header band is a fixed brand-navy strip in the current design; do not make it ternary since it wasn't one before).
 
-- [ ] **Step 2: Restyle the primary CTA ("Einfach starten")** (lines 148-151)
+- [x] **Step 2: Restyle the primary CTA ("Einfach starten")** (lines 148-151)
 
 ```jsx
 <button onClick={onStartSimple}
   className="w-full rounded-2xl bg-sonnenkoralle px-4 py-3 text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
 ```
 
-- [ ] **Step 3: Restyle the secondary CTA ("Profi starten")** (lines 166-171)
+- [x] **Step 3: Restyle the secondary CTA ("Profi starten")** (lines 166-171)
 
 ```jsx
 <button onClick={onStartPro}
@@ -320,30 +325,30 @@ git commit -m "Freibad-Redesign: support-components.jsx (Footer, Floating-Button
   }`}>
 ```
 
-- [ ] **Step 4: Sweep remaining occurrences**
+- [x] **Step 4: Sweep remaining occurrences**
 
 Apply the Global Constraints mapping table to every remaining `slate-*`/`emerald-*` class in this file: the benefit-list checkmarks (`text-emerald-500` → `text-beckenwasser`), the step-connector line (`bg-slate-700`/`bg-slate-300` → `bg-tiefwasser-hell`/`bg-beckenwasser/30`), all body/heading text classes, and `rounded-full`/`rounded-md`/`rounded-lg` per the shape mapping. The video play-button (`fill-emerald-600`, `bg-black/20`, `bg-white/90`) becomes `fill-sonnenkoralle`, `bg-tiefwasser/20`, `bg-kalkstein/90`.
 
-- [ ] **Step 5: Add the H1/hero heading font**
+- [x] **Step 5: Add the H1/hero heading font**
 
 Wherever the hero headline is rendered (top of the returned fragment, look for the largest heading element), add `font-display` to its className alongside existing size/weight classes.
 
-- [ ] **Step 6: Add the wave-divider motif under the header**
+- [x] **Step 6: Add the wave-divider motif under the header**
 
 Immediately after the closing `</header>` tag (the element restyled in Step 1), insert:
 ```jsx
 <div aria-hidden="true" className={`wave-divider ${dark ? "wave-divider-dark" : ""}`}></div>
 ```
 
-- [ ] **Step 7: Bump cache-busting version**
+- [x] **Step 7: Bump cache-busting version**
 
 `jsx/landing-page.jsx?v=5` → `?v=6` in `index.html`.
 
-- [ ] **Step 8: Verify in browser**
+- [x] **Step 8: Verify in browser**
 
 Reload `/`. Confirm hero, both CTA buttons, benefit checkmarks, step indicators, and the wave-divider under the header all render in the new palette in both light and dark. Console clean.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add jsx/landing-page.jsx index.html
@@ -359,21 +364,21 @@ git commit -m "Freibad-Redesign: landing-page.jsx"
 **Interfaces:**
 - Consumes: Tailwind tokens from Task 1, `PAYPAL_URL`/`SiteFooter`/`SiteLink` from `support-components.jsx` (untouched).
 
-- [ ] **Step 1: Restyle the root wrapper** (line 67)
+- [x] **Step 1: Restyle the root wrapper** (line 67)
 
 ```jsx
 <div className={`min-h-screen flex flex-col font-body ${dark ? "bg-tiefwasser text-sonnencreme" : "bg-sonnencreme text-espresso"}`}>
 ```
 (adding `font-body` here sets the default body typeface for the whole page in one place.)
 
-- [ ] **Step 2: Restyle the PayPal CTA** (lines 142-145)
+- [x] **Step 2: Restyle the PayPal CTA** (lines 142-145)
 
 ```jsx
 <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" aria-label={t("about.support.buttonAriaLabel")}
   className="inline-flex items-center gap-2 rounded-full bg-sonnenkoralle px-5 py-2.5 text-sm font-bold font-display text-kalkstein hover:bg-sonnenkoralle/90 focus:outline-none focus:ring-2 focus:ring-beckenwasser">
 ```
 
-- [ ] **Step 3: Restyle the LinkedIn secondary link** (lines 115-119)
+- [x] **Step 3: Restyle the LinkedIn secondary link** (lines 115-119)
 
 ```jsx
 className={`inline-flex items-center gap-1.5 rounded-2xl border px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
@@ -382,23 +387,23 @@ className={`inline-flex items-center gap-1.5 rounded-2xl border px-3 py-1.5 text
 ```
 (LinkedIn's own brand blue maps naturally onto `lagune` rather than beckenwasser/koralle, keeping it visually distinct from the primary CTA.)
 
-- [ ] **Step 4: Sweep remaining occurrences**
+- [x] **Step 4: Sweep remaining occurrences**
 
 Apply the mapping table to lines 60-80 (intro section), 104-109 (portrait card — `shadow-md` stays `shadow-md` since it's a photo frame, not a UI card, but update its `border-slate-700`/`border-slate-300` per the table), and 139 (support panel wrapper `bg-slate-950/50` → `bg-tiefwasser/50`). Checkmark bullets (line 132): `text-emerald-500` → `text-beckenwasser`.
 
-- [ ] **Step 5: Flip the default theme**
+- [x] **Step 5: Flip the default theme**
 
 Find this file's local `useState(true)` for its dark/light toggle and change to `useState(false)`.
 
-- [ ] **Step 6: Bump cache-busting version**
+- [x] **Step 6: Bump cache-busting version**
 
 `jsx/about-page.jsx?v=4` → `?v=5` in `index.html`.
 
-- [ ] **Step 7: Verify in browser**
+- [x] **Step 7: Verify in browser**
 
 Navigate to `/ueber-freilotse`. Confirm page loads light by default, PayPal button is Koralle, LinkedIn link is Lagune-toned, portrait/card styling looks warm. Toggle dark, confirm it still reads well. Console clean.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add jsx/about-page.jsx index.html
@@ -414,7 +419,7 @@ git commit -m "Freibad-Redesign: about-page.jsx, Hell als Standard"
 **Interfaces:**
 - Consumes: Tailwind tokens from Task 1. This file has **no** `dark` prop/ternary and stays that way (see Global Constraints) — it is retinted as a single fixed-dark-theme page.
 
-- [ ] **Step 1: Retint the fixed dark palette**
+- [x] **Step 1: Retint the fixed dark palette**
 
 Apply this literal substitution throughout the file (no ternary involved, just replace the hardcoded classes):
 - `bg-slate-950` → `bg-tiefwasser`
@@ -434,15 +439,15 @@ Line 38 (root wrapper) becomes:
 <div className="min-h-screen bg-tiefwasser text-sonnencreme flex flex-col font-body">
 ```
 
-- [ ] **Step 2: Bump cache-busting version**
+- [x] **Step 2: Bump cache-busting version**
 
 `jsx/legal-pages.jsx?v=4` → `?v=5` in `index.html`.
 
-- [ ] **Step 3: Verify in browser**
+- [x] **Step 3: Verify in browser**
 
 Navigate to `/impressum` and `/datenschutz`. Confirm both render in the new warm-dark palette (still dark-only, no toggle — that's correct/unchanged). Console clean.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add jsx/legal-pages.jsx index.html
@@ -458,7 +463,7 @@ git commit -m "Freibad-Redesign: legal-pages.jsx (Impressum/Datenschutz, weiterh
 **Interfaces:**
 - Consumes: Tailwind tokens from Task 1.
 
-- [ ] **Step 1: Restyle root wrapper and shell**
+- [x] **Step 1: Restyle root wrapper and shell**
 
 Apply the shared `min-h-screen` mapping row from Global Constraints (this file shares the exact wrapper string with `about-page.jsx`/`guide-page.jsx`/`puzzle-page.jsx`), adding `font-body` exactly as done in Task 5 Step 1:
 ```jsx
@@ -466,26 +471,26 @@ Apply the shared `min-h-screen` mapping row from Global Constraints (this file s
 ```
 Apply the same header/card mapping used in Task 5 (lines 47-56, 60, 66, 68).
 
-- [ ] **Step 2: Restyle the timeline rail/dot** (lines 81, 85-86, 93)
+- [x] **Step 2: Restyle the timeline rail/dot** (lines 81, 85-86, 93)
 
 - `border-emerald-600/30` (rail) → `border-beckenwasser/30`
 - `bg-emerald-500` (dot) → `bg-beckenwasser`
 - `text-emerald-400/600` (date labels) → `text-beckenwasser-hell` (dark) / `text-beckenwasser` (light)
 - `text-emerald-500` (bullet) → `text-beckenwasser`
 
-- [ ] **Step 3: Flip default theme**
+- [x] **Step 3: Flip default theme**
 
 `useState(true)` → `useState(false)` for this file's local dark state.
 
-- [ ] **Step 4: Bump cache-busting version**
+- [x] **Step 4: Bump cache-busting version**
 
 `jsx/changelog-page.jsx?v=2` → `?v=3` in `index.html`.
 
-- [ ] **Step 5: Verify in browser**
+- [x] **Step 5: Verify in browser**
 
 Navigate to `/neuigkeiten`. Confirm timeline renders in Beckenwasser tones, light by default. Console clean.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add jsx/changelog-page.jsx index.html
@@ -501,17 +506,17 @@ git commit -m "Freibad-Redesign: changelog-page.jsx, Hell als Standard"
 **Interfaces:**
 - Consumes: Tailwind tokens from Task 1. Structurally identical shell to Task 7 (no timeline, otherwise same mapping rows: lines 47, 49, 53-54, 56, 60, 65-68).
 
-- [ ] **Step 1: Apply the shared shell mapping** (same rows as Task 7 Step 1, including the added `font-body` on the root wrapper) to lines 47-68.
+- [x] **Step 1: Apply the shared shell mapping** (same rows as Task 7 Step 1, including the added `font-body` on the root wrapper) to lines 47-68.
 
-- [ ] **Step 2: Flip default theme** — `useState(true)` → `useState(false)`.
+- [x] **Step 2: Flip default theme** — `useState(true)` → `useState(false)`.
 
-- [ ] **Step 3: Bump cache-busting version** — `jsx/guide-page.jsx?v=2` → `?v=3` in `index.html`.
+- [x] **Step 3: Bump cache-busting version** — `jsx/guide-page.jsx?v=2` → `?v=3` in `index.html`.
 
-- [ ] **Step 4: Verify in browser**
+- [x] **Step 4: Verify in browser**
 
 Navigate to `/anleitung`. Confirm article page renders light by default in the new palette, headings use `font-display` where the file already marks headings bold. Console clean.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add jsx/guide-page.jsx index.html
@@ -527,31 +532,31 @@ git commit -m "Freibad-Redesign: guide-page.jsx, Hell als Standard"
 **Interfaces:**
 - Consumes: Tailwind tokens from Task 1, semantic status-color mapping from Global Constraints (this file renders its own calendar day grid, independent of `app.jsx`'s `dayClass` — locate its equivalent local day-styling logic before starting, e.g. by searching this file for `bg-emerald-600` and `bg-amber` occurrences, which is where the player's own tile-status colors are computed for the puzzle board).
 
-- [ ] **Step 1: Restyle shell** (lines 213-241) using the same shared-wrapper (including `font-body`) and card mapping as Tasks 5/7/8.
+- [x] **Step 1: Restyle shell** (lines 213-241) using the same shared-wrapper (including `font-body`) and card mapping as Tasks 5/7/8.
 
-- [ ] **Step 2: Restyle the puzzle's own calendar day tiles**
+- [x] **Step 2: Restyle the puzzle's own calendar day tiles**
 
 Find the local function/inline logic in this file that assigns tile background classes (the inventory found `bg-emerald-600`/`bg-emerald-700` at lines 321, 362, 397, 418 for buttons, and `bg-amber-600`/`bg-amber-400` at lines 273/299 for the official/practice badges — confirm whether day-tile coloring itself reuses `window.FREILOTSE...dayClass`-style logic or has its own; if it has its own, apply the identical semantic-color mapping table from Global Constraints: vac→`bg-beckenwasser`, free→neutral, work→neutral, matching what Task 11 does for `app.jsx`). Also add `rounded-full aspect-square font-data` to whatever className produces each day cell, matching the "Beckenrand-Kachel" signature shape.
 
-- [ ] **Step 3: Restyle the official/practice result badges** (lines 269, 273, 297, 299)
+- [x] **Step 3: Restyle the official/practice result badges** (lines 269, 273, 297, 299)
 
 `bg-emerald-900/40`/`bg-emerald-100`/`text-emerald-300`/`text-emerald-700` (official badge) → `bg-beckenwasser-hell/20`/`bg-beckenwasser-hell`/`text-beckenwasser-hell`/`text-beckenwasser`. `bg-amber-600`/`bg-amber-400`/`text-amber-950` (practice badge) → `bg-sonnengelb`/`bg-sonnengelb`/`text-tiefwasser`.
 
-- [ ] **Step 4: Restyle CTA buttons** (lines 321, 362, 366, 397)
+- [x] **Step 4: Restyle CTA buttons** (lines 321, 362, 366, 397)
 
 Primary "Auswerten"/"Ergebnis teilen"/"Jetzt planen" buttons: `bg-emerald-600 ... text-white` → `bg-sonnenkoralle ... text-kalkstein` (per the Global Constraints CTA row). Secondary "Erneut versuchen" button (line 366): apply the border-button mapping (`border-slate-600`/`border-slate-300` → `border-tiefwasser-hell`/`border-beckenwasser/30`).
 
-- [ ] **Step 5: Restyle the share modal** (lines 409-432) using the modal-overlay mapping (`bg-black/60`/`bg-slate-900/40` → `bg-tiefwasser/60`, `rounded-xl`/`shadow-xl` → `rounded-3xl`/`shadow-warm-dark`).
+- [x] **Step 5: Restyle the share modal** (lines 409-432) using the modal-overlay mapping (`bg-black/60`/`bg-slate-900/40` → `bg-tiefwasser/60`, `rounded-xl`/`shadow-xl` → `rounded-3xl`/`shadow-warm-dark`).
 
-- [ ] **Step 6: Flip default theme** — `useState(true)` → `useState(false)`.
+- [x] **Step 6: Flip default theme** — `useState(true)` → `useState(false)`.
 
-- [ ] **Step 7: Bump cache-busting version** — `jsx/puzzle-page.jsx?v=4` → `?v=5` in `index.html`.
+- [x] **Step 7: Bump cache-busting version** — `jsx/puzzle-page.jsx?v=4` → `?v=5` in `index.html`.
 
-- [ ] **Step 8: Verify in browser**
+- [x] **Step 8: Verify in browser**
 
 Navigate to `/raetsel`. Play through: set some days, click "Auswerten", confirm the official-result badge, share modal, and "Erneut versuchen" flow all render in the new palette with circular day tiles. Console clean.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add jsx/puzzle-page.jsx index.html
@@ -568,13 +573,13 @@ git commit -m "Freibad-Redesign: puzzle-page.jsx, Beckenrand-Kachel-Kalender, He
 - Consumes: Tailwind tokens from Task 1.
 - Produces: restyled `inputCls`, `labelCls`, `cardCls`, `subLabelCls` shared constants (same variable names, same call sites — every later `app.jsx` task in this plan relies on these already being updated).
 
-- [ ] **Step 1: Restyle the root wrapper** (line 1544)
+- [x] **Step 1: Restyle the root wrapper** (line 1544)
 
 ```jsx
 <div className={`min-h-screen font-body ${dark ? "bg-tiefwasser text-sonnencreme" : "bg-sonnencreme text-espresso"}`} style={{ fontFeatureSettings: '"tnum"' }}>
 ```
 
-- [ ] **Step 2: Restyle the shared style constants** (lines 1104-1109)
+- [x] **Step 2: Restyle the shared style constants** (lines 1104-1109)
 
 ```jsx
 const inputCls = dark ? "w-full rounded-xl border border-tiefwasser-hell bg-tiefwasser-hell px-2.5 py-1.5 text-sm text-sonnencreme focus:outline-none focus:ring-2 focus:ring-beckenwasser"
@@ -585,7 +590,7 @@ const subLabelCls = `text-xs font-semibold uppercase tracking-wide ${dark ? "tex
 ```
 (Note: light-mode `cardCls` now gets a border, fixing the pre-existing dark/light asymmetry the inventory flagged — both themes now have a card border, consistent with the "Kalkstein-Kacheln" layering concept from the spec.)
 
-- [ ] **Step 3: Restyle the header/hero region** (around lines 1567-1621)
+- [x] **Step 3: Restyle the header/hero region** (around lines 1567-1621)
 
 - Eyebrow label (line 1567, `text-emerald-400`) → `text-beckenwasser` (dark) / no change needed if already theme-aware — check and apply `dark ? "text-beckenwasser-hell" : "text-beckenwasser"`.
 - H1 (line 1570) → add `font-display` to the existing className.
@@ -597,7 +602,7 @@ const subLabelCls = `text-xs font-semibold uppercase tracking-wide ${dark ? "tex
   ```
   This is the one and only place the wave divider appears in the Planer view (per the spec: "bewusst sparsam eingesetzt").
 
-- [ ] **Step 4: Restyle the legend swatches array** (lines 2320-2337)
+- [x] **Step 4: Restyle the legend swatches array** (lines 2320-2337)
 
 ```js
 ["bg-beckenwasser", legend.vacation],
@@ -613,13 +618,13 @@ const subLabelCls = `text-xs font-semibold uppercase tracking-wide ${dark ? "tex
 ```
 (`legend.schoolHolidays` previously used `bg-orange-400` — mapped to `bg-ziegelrot-hell` here since Sonnenkoralle must stay reserved for CTAs per the spec; this keeps it visually distinct from every other legend swatch.)
 
-- [ ] **Step 5: Verify in browser**
+- [x] **Step 5: Verify in browser**
 
 Reload `/`, start the Planer (either mode). Confirm header, big number, buttons, and legend all show the new palette in both themes (toggle still works, dark state unchanged for now — flip to `false` default happens in Task 14 for `app.jsx` specifically, since this file has many more tasks left to land first).
 
-- [ ] **Step 6: Bump cache-busting version** — `app.jsx?v=21` → `?v=22` in `index.html`.
+- [x] **Step 6: Bump cache-busting version** — `app.jsx?v=21` → `?v=22` in `index.html`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add app.jsx index.html
@@ -636,7 +641,7 @@ git commit -m "Freibad-Redesign: app.jsx Teil A (Grundgeruest, Kopfbereich, Lege
 - Consumes: `cardCls`/`inputCls` etc. from Task 10 (unaffected here), semantic-color mapping table from Global Constraints.
 - Produces: `dayClass(day, selType, dark)` keeps its exact signature and branching order — only return values change.
 
-- [ ] **Step 1: Rewrite `dayClass`** (lines 76-107)
+- [x] **Step 1: Rewrite `dayClass`** (lines 76-107)
 
 ```js
 function dayClass(day, selType, dark) {
@@ -658,7 +663,7 @@ function dayClass(day, selType, dark) {
 }
 ```
 
-- [ ] **Step 2: Recolor the ring logic** (lines 1356-1359)
+- [x] **Step 2: Recolor the ring logic** (lines 1356-1359)
 
 The `ring` variable serves two purposes that must stay exactly as they are: a live drag-selection preview, and a persistent "this day was set manually, not automatically" indicator. Only recolor, don't change which condition produces which ring:
 ```js
@@ -668,7 +673,7 @@ const ring = inDrag
   : clickable ? "hover:ring-2 hover:ring-beckenwasser/60" : "";
 ```
 
-- [ ] **Step 3: Restyle the day-cell button shape** (lines 1394-1396)
+- [x] **Step 3: Restyle the day-cell button shape** (lines 1394-1396)
 
 Change:
 ```jsx
@@ -684,17 +689,17 @@ className={`relative h-7 aspect-square rounded-full flex items-center justify-ce
 ```
 (`aspect-square` guarantees the medallion stays circular regardless of the grid column's rendered width; `font-data` applies Space Mono to the day number, per the signature-element spec.)
 
-- [ ] **Step 4: Recolor the "freier Zeitraum" overlay border** (lines 1406-1409 and its continuation just below)
+- [x] **Step 4: Recolor the "freier Zeitraum" overlay border** (lines 1406-1409 and its continuation just below)
 
 Wherever this overlay's border color references emerald (look for `border-emerald` in the `className` on the `<span aria-hidden="true">` overlay), replace with `border-beckenwasser` (and its `/NN` opacity variants if any exist for the dimmed-vs-highlighted states). Keep `rounded-l-md`/`rounded-r-md` on this overlay as `rounded-l-full`/`rounded-r-full` to match the new circular tile shape.
 
-- [ ] **Step 5: Verify in browser**
+- [x] **Step 5: Verify in browser**
 
 Reload the Planer, open Profi-Modus, look at the calendar grid. Confirm: vacation days are Beckenwasser-green circles, overtime days are Lagune-blue circles, holidays are Ziegelrot-red circles (or muted-red if already free), 24./31.12. are Sonnengelb-yellow, weekends/regular-off are muted neutral circles, manually-set days show the new neutral ring, dragging to select shows the colored preview ring, and multi-day free periods still show a connected Beckenwasser border spanning the row. Test in both light and dark. Test with a non-Mon–Fri `workingWeekdays` setting if easy (Profi-Modus → regelmäßige Arbeitstage) to confirm the "regelmäßig frei" muted state still looks distinct from real weekends. Console clean.
 
-- [ ] **Step 6: Bump cache-busting version** — same `app.jsx?v=22` → `?v=23`.
+- [x] **Step 6: Bump cache-busting version** — same `app.jsx?v=22` → `?v=23`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add app.jsx index.html
@@ -710,21 +715,21 @@ git commit -m "Freibad-Redesign: app.jsx Teil B, Beckenrand-Kachel-Kalender (day
 **Interfaces:**
 - Consumes: `cardCls`/`inputCls`/`labelCls` from Task 10, `dayClass`/ring from Task 11 (calendar preview inside Einfachmodus, if any, reuses the same function — no separate work needed there).
 
-- [ ] **Step 1: Locate the Einfachmodus JSX block**
+- [x] **Step 1: Locate the Einfachmodus JSX block**
 
 Grep this file for `simple.stepperTitle` (seen at line 1641 in the earlier inventory) to find the start of the Einfachmodus render block, and read through to where the Profi-Modus block begins (look for a `uiMode === "profi"` or similar branch).
 
-- [ ] **Step 2: Sweep every class in that block through the Global Constraints mapping table**
+- [x] **Step 2: Sweep every class in that block through the Global Constraints mapping table**
 
 This includes the stepper +/- buttons (`border-slate-600`/`border-slate-300` → `border-tiefwasser-hell`/`border-beckenwasser/30`, `hover:bg-slate-800`/`hover:bg-slate-100` → `hover:bg-tiefwasser-hell`/`hover:bg-beckenwasser-hell/30`), the numeric stepper value display (add `font-data`), and any inline "Entfernen"/"remove block" link buttons (`text-emerald-600` → `text-beckenwasser`, in both the dark and light variants where present).
 
-- [ ] **Step 3: Verify in browser**
+- [x] **Step 3: Verify in browser**
 
 Reload `/`, start "Einfach" mode. Walk through: pick a vacation-day budget with the stepper, add/remove a Wunschblock, confirm all buttons and text read correctly in the new palette, both themes. Console clean.
 
-- [ ] **Step 4: Bump cache-busting version** — `?v=23` → `?v=24`.
+- [x] **Step 4: Bump cache-busting version** — `?v=23` → `?v=24`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app.jsx index.html
@@ -742,39 +747,39 @@ git commit -m "Freibad-Redesign: app.jsx Teil C, Einfachmodus"
 
 This is the largest remaining chunk — everything not already covered by Teil A/B/C. Work section by section; each sub-step is independently verifiable, but commit once at the end of the whole task (they all touch the same file and same visual "Profi-Modus" surface).
 
-- [ ] **Step 1: Panel headers and inputs**
+- [x] **Step 1: Panel headers and inputs**
 
 Sweep the Profi-Modus panel bodies (Allgemein, Kontingente, Wunschblöcke, Regelmäßige Arbeitstage, Gemeinsam frei, Jahreswechsel-Erweiterung) — every `border-slate-*`/`bg-slate-*`/`text-slate-*` through the mapping table. These panels use `CollapsibleCard` (already restyled in Task 2) as their shell, so only the *contents* need sweeping here.
 
-- [ ] **Step 2: Month-summary cards** (around lines 2170-2217 per the inventory: `bg-violet-100`/`text-violet-700`, `bg-amber-950/20`/`bg-amber-50`, `border-amber-600/70`/`border-amber-400`, `text-amber-400`/`text-amber-700`, `bg-emerald-100`/`text-emerald-700`)
+- [x] **Step 2: Month-summary cards** (around lines 2170-2217 per the inventory: `bg-violet-100`/`text-violet-700`, `bg-amber-950/20`/`bg-amber-50`, `border-amber-600/70`/`border-amber-400`, `text-amber-400`/`text-amber-700`, `bg-emerald-100`/`text-emerald-700`)
 
 - Schulferien-Info-Chip (`bg-violet-100`/`text-violet-700`) → `bg-lagune-hell/60`/`text-lagune` (keeps it visually distinct from the amber/emerald chips next to it).
 - Feiertags-Hinweis-Kasten (amber) → `bg-sonnengelb-hell`/`border-sonnengelb`/`text-tiefwasser` (dark: `bg-sonnengelb/10`/`border-sonnengelb/70`/`text-sonnengelb-hell`).
 - Erfolgs-Chip (emerald) → `bg-beckenwasser-hell/60`/`text-beckenwasser`.
 
-- [ ] **Step 3: Warning/error text** (rose/orange occurrences, e.g. lines 1194, 1429, 1434, 1535, 1764, 1858, 1954, 1956-1957, 2108, 2111, 2249, 2256, 2307, 2313, 2390, 2495 per the inventory)
+- [x] **Step 3: Warning/error text** (rose/orange occurrences, e.g. lines 1194, 1429, 1434, 1535, 1764, 1858, 1954, 1956-1957, 2108, 2111, 2249, 2256, 2307, 2313, 2390, 2495 per the inventory)
 
 These are the "failedManual"/budget-exceeded/warning messages — map every `text-rose-*`/`text-orange-*`/`bg-rose-*` occurrence to the `ziegelrot` family (`text-ziegelrot`, `bg-ziegelrot-hell`, `border-ziegelrot/40` etc., picking the closest-contrast equivalent shade for each specific dark/light literal). Keep these visually "alarm-like" (still the reddest color in the app) so warnings don't lose urgency.
 
-- [ ] **Step 4: Override list, block editor rows, share/local-plan/Gemeinsam-frei sections**
+- [x] **Step 4: Override list, block editor rows, share/local-plan/Gemeinsam-frei sections**
 
 Sweep remaining `slate-*`/`emerald-*`/`sky-*` occurrences (e.g. `divide-slate-800`/`divide-slate-100` at lines 1827/2153/2268, and the various small icon-buttons) through the mapping table.
 
-- [ ] **Step 5: Modals** (share dialog, local-plans dialog — lines ~2369-2454 per the inventory)
+- [x] **Step 5: Modals** (share dialog, local-plans dialog — lines ~2369-2454 per the inventory)
 
 `bg-black/60`/`bg-slate-900/40` overlay → `bg-tiefwasser/60`; modal panel `bg-slate-900`/`bg-white` → `bg-tiefwasser-hell`/`bg-kalkstein`; `rounded-xl`/`shadow-xl` → `rounded-3xl`/`shadow-warm-dark` (dark) or `shadow-warm` (light); modal action buttons follow the same primary/secondary button mapping as everywhere else (`bg-emerald-600` → `bg-sonnenkoralle` for the primary confirm action, bordered secondary per the table).
 
-- [ ] **Step 6: Verify in browser**
+- [x] **Step 6: Verify in browser**
 
 Reload `/`, start Profi-Modus. Walk through every panel (expand each `CollapsibleCard`), trigger at least one warning state (e.g. exceed the vacation budget) to see the alarm coloring, open the Teilen-Dialog and the Meine-Pläne-Dialog. Confirm everything reads correctly in both themes. Console clean.
 
-- [ ] **Step 7: Flip `app.jsx`'s default theme**
+- [x] **Step 7: Flip `app.jsx`'s default theme**
 
 Change `const [dark, setDark] = useState(true);` (line 194) to `useState(false)`.
 
-- [ ] **Step 8: Bump cache-busting version** — `?v=24` → `?v=25`.
+- [x] **Step 8: Bump cache-busting version** — `?v=24` → `?v=25`.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add app.jsx index.html
@@ -787,7 +792,7 @@ git commit -m "Freibad-Redesign: app.jsx Teil D (Profi-Modus, Dialoge), Hell als
 - Modify: `locales/de.js` (new changelog entry only)
 - Verify: every file touched in Tasks 1-13 (no further edits expected unless the regression pass finds a mismatch)
 
-- [ ] **Step 1: Full manual regression pass**
+- [x] **Step 1: Full manual regression pass**
 
 With the server still running, click through, in order, in **both** light and dark (use the toggle) and at least once each in **Einfach-** and **Profi-Modus**:
 1. `/` (Landing Page)
@@ -797,7 +802,7 @@ With the server still running, click through, in order, in **both** light and da
 
 For each, confirm: no leftover `slate`/`emerald`/`sky`/`rose`/`amber`/`orange`/`violet` classes visibly render as the old colors (a quick `grep -rn "slate-\|emerald-\|sky-\|rose-\|amber-\|orange-\|violet-" app.jsx jsx/ index.html` should return **zero** matches once this task starts — if it doesn't, go back and fix the missed spot in the relevant earlier task's file before proceeding), keyboard focus rings are visible (Tab through a form), and the browser console has zero errors across every page.
 
-- [ ] **Step 2: Add the changelog entry**
+- [x] **Step 2: Add the changelog entry**
 
 In `locales/de.js`, add a new entry at the **start** of the `changelog.entries` array (newest first), following the existing `{ date, title, items[] }` shape and tone:
 
@@ -815,17 +820,17 @@ In `locales/de.js`, add a new entry at the **start** of the `changelog.entries` 
 
 Bump `locales/de.js?v=18` → `?v=19` in `index.html`.
 
-- [ ] **Step 3: Final verification**
+- [x] **Step 3: Final verification**
 
 Reload once more from a hard-refresh (clear cache) to confirm the new `locales/de.js` version loads, the changelog entry appears at the top of `/neuigkeiten`, and nothing else regressed.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add locales/de.js index.html
 git commit -m "Freibad-Redesign: Abschluss, Neuigkeiten-Eintrag"
 ```
 
-- [ ] **Step 5: Stop the test server**
+- [x] **Step 5: Stop the test server**
 
 Kill the background `python -m http.server 8000` process.

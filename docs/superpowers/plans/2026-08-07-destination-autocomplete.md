@@ -1,5 +1,12 @@
 # Autovervollständigung für Reiseziel-Felder – Implementierungsplan
 
+> **Status: umgesetzt und ausgeliefert** (7. August 2026). Commits `cefe96f`
+> (Vorschlagsliste), `0bc4511` (Feature), `9cdcb9c` (Changelog); Nachbesserung
+> am 8. August 2026 in `ea79b59` (3-Zeichen-Schwelle, mehr Ziele,
+> Hinweis-Icon). Changelog-Einträge „Trip-Links bei langen freien Zeiträumen"
+> vom 7. August und „Verbesserungen bei den Reiseziel-Vorschlägen" vom
+> 8. August 2026 (`locales/de.js`, `changelog.entries`).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Beim Tippen in das globale Reiseziel-Feld und in die
@@ -48,7 +55,7 @@ manuell prüfen (siehe CLAUDE.md, Abschnitt zu UI-Änderungen).
 - Produces: `t("results.destinationSuggestions")` → `string[]` (Array aus
   ca. 128 Reisezielnamen), wird in Task 2 aus `app.jsx` gelesen.
 
-- [ ] **Step 1: Neuen Schlüssel ergänzen**
+- [x] **Step 1: Neuen Schlüssel ergänzen**
 
 In `locales/de.js` direkt nach Zeile 843
 (`destinationPeriodAriaLabel: "Reiseziel für diesen Zeitraum (überschreibt das Feld oben)",`)
@@ -92,14 +99,14 @@ einfügen:
       ],
 ```
 
-- [ ] **Step 2: Manuell prüfen**
+- [x] **Step 2: Manuell prüfen**
 
 `locales/de.js` im Editor öffnen, sicherstellen, dass die Datei weiterhin
 gültiges JS ist (Kommas/Klammern rund um die neuen Zeilen korrekt, keine
 doppelten Einträge). Ein vollständiger Ladecheck im Browser erfolgt in
 Task 2, Step 5.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add locales/de.js
@@ -124,7 +131,7 @@ EOF
 - Consumes: `t("results.destinationSuggestions")` (`string[]`, aus Task 1).
 - Produces: keine neuen Funktionen/States – rein deklarative JSX-Änderung.
 
-- [ ] **Step 1: `<datalist>` direkt nach dem globalen Eingabefeld ergänzen**
+- [x] **Step 1: `<datalist>` direkt nach dem globalen Eingabefeld ergänzen**
 
 In `app.jsx` den bestehenden Block (Zeilen 2251–2257):
 
@@ -161,7 +168,7 @@ ersetzen durch:
 (Einzige Änderungen: neues `list="destination-suggestions"`-Attribut auf
 dem `<input>` sowie das neue `<datalist>`-Element direkt danach.)
 
-- [ ] **Step 2: Pro-Zeitraum-Feld mit derselben Datalist verbinden**
+- [x] **Step 2: Pro-Zeitraum-Feld mit derselben Datalist verbinden**
 
 In `app.jsx` Zeile 2343 (`<input type="text" className={`${inputSmCls}
 max-w-xs`}`) das `list`-Attribut ergänzen:
@@ -181,12 +188,12 @@ aus Step 1 im DOM vorhanden ist (sie wird immer gemeinsam mit den
 Trip-Link-Buttons sichtbar, also genau dann, wenn auch das Pro-Zeitraum-
 Feld existiert).
 
-- [ ] **Step 3: Cache-Busting-Version hochzählen**
+- [x] **Step 3: Cache-Busting-Version hochzählen**
 
 In `index.html` Zeile 113 `app.jsx?v=33` auf `app.jsx?v=34` ändern und
 Zeile 85 `locales/de.js?v=25` auf `locales/de.js?v=26` ändern.
 
-- [ ] **Step 4: Manuell im Browser prüfen**
+- [x] **Step 4: Manuell im Browser prüfen**
 
 `index.html` im Browser öffnen (lokaler Static-Server, z. B. `python -m
 http.server` im Repo-Root). Dann:
@@ -206,7 +213,7 @@ http.server` im Repo-Root). Dann:
    Fehler/Warnungen (insbesondere keine `⚠ <key>`-Ausgabe für den neuen
    Locale-Schlüssel).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app.jsx index.html
@@ -233,7 +240,7 @@ EOF
 **Interfaces:**
 - Consumes: keine (reine Textänderung, kein Code-Interface betroffen).
 
-- [ ] **Step 1: Dritten Stichpunkt zum bestehenden Eintrag vom 7. August
+- [x] **Step 1: Dritten Stichpunkt zum bestehenden Eintrag vom 7. August
   2026 ergänzen**
 
 Den bestehenden Eintrag (aktuell mit zwei Stichpunkten zu Trip-Links und
@@ -243,12 +250,12 @@ Pro-Zeitraum-Reiseziel) um einen dritten Stichpunkt erweitern:
             "Die Reiseziel-Felder schlagen jetzt beim Tippen passende Ziele vor (z. B. große Städte und beliebte Urlaubsorte), um Tippfehler zu vermeiden.",
 ```
 
-- [ ] **Step 2: Manuell prüfen**
+- [x] **Step 2: Manuell prüfen**
 
 Im Browser die Seite `/neuigkeiten` öffnen, den Eintrag vom 7. August 2026
 mit allen drei Stichpunkten sichten, keine Konsolenfehler.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add locales/de.js
