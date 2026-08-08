@@ -522,11 +522,23 @@ Vorrang** – die lokale Wiederherstellung greift nur, wenn kein Fragment
 vorliegt. Bei vorhandenem aktivem Plan wird beim Laden direkt in die
 Planer-Ansicht gesprungen (kein Picker, keine Landing Page).
 
-Autosave beginnt erst ab dem ersten expliziten Speichern (kein stilles
-Persistieren vorher), danach automatisch bei jeder relevanten
-Eingabe-Änderung in denselben aktiven Plan – Teil des bestehenden
-Prebuild-`useEffect`, der auch den vorab erzeugten Share-Link baut (bewusst
-**ein** Effekt, damit die Dependency-Listen nicht auseinanderlaufen können).
+Autosave beginnt ab dem ersten Speichern eines Plans, danach automatisch bei
+jeder relevanten Eingabe-Änderung in denselben aktiven Plan – Teil des
+bestehenden Prebuild-`useEffect`, der auch den vorab erzeugten Share-Link
+baut (bewusst **ein** Effekt, damit die Dependency-Listen nicht
+auseinanderlaufen können). Dieses erste Speichern ist entweder ein
+expliziter Klick auf „Plan speichern" **oder** – existiert nach 3 Minuten
+aktiver Nutzung im Planer (`view === "planner"`) immer noch kein einziger
+lokaler Plan – ein automatisches Erst-Speichern (eigener `useEffect`,
+Dependency `plansStore.plans.length`, damit ein zwischenzeitliches
+manuelles Speichern den Timer via Cleanup abbricht statt einen zweiten Plan
+anzulegen). Der Toast-Hinweis unterscheidet die beiden Auslöser bewusst mit
+leicht abweichendem Text (`localPlans.toast.firstSaveNotice` bei manuellem
+Klick vs. `localPlans.toast.autoFirstSaveNotice` bei automatischem
+Erst-Speichern, per `auto`-Flag an `savePlanAsNew()`), damit klar bleibt,
+dass hier ohne Zutun gespeichert wurde. Ab diesem ersten Plan ist das
+Verhalten in beiden Fällen gleich: sofort/synchron bei jeder Änderung, ohne
+Debounce und ohne Diff-Prüfung gegen den zuletzt gespeicherten Payload.
 
 ### Verfügbarkeit
 Ist `localStorage` nicht verfügbar (z. B. Safaris privates Fenster), blendet

@@ -744,7 +744,7 @@ function Urlaubsplaner({ onPlanReady }) {
     catch (e) { showToast(t("localPlans.toast.saveFailed")); }
   };
 
-  const savePlanAsNew = (name) => {
+  const savePlanAsNew = (name, { auto = false } = {}) => {
     if (plansStore.plans.length >= LOCAL_PLANS_MAX) {
       showToast(t("localPlans.toast.limitReached", { max: LOCAL_PLANS_MAX }));
       return;
@@ -752,7 +752,7 @@ function Urlaubsplaner({ onPlanReady }) {
     const isFirstEver = plansStore.plans.length === 0;
     const plan = makePlan(name && name.trim() ? name.trim() : t("localPlans.defaultName"), currentSharePayload());
     persistPlansStore(setActivePlanId(addPlan(plansStore, plan), plan.id));
-    if (isFirstEver) showToast(t("localPlans.toast.firstSaveNotice"));
+    if (isFirstEver) showToast(t(auto ? "localPlans.toast.autoFirstSaveNotice" : "localPlans.toast.firstSaveNotice"));
   };
 
   const switchToPlan = (id) => {
@@ -853,6 +853,22 @@ function Urlaubsplaner({ onPlanReady }) {
   }, [year, st, vac, ot, xmasRule, uiMode, simpleGoal, simpleStarted,
       schoolHolidayPreference, autoVac, autoOt, spendFirst, autoFrom,
       workingWeekdays, blocks, yearOverrides, view, plansStore.activePlanId]);
+
+  // Automatisches Erst-Speichern: Existiert noch kein einziger lokaler Plan
+  // und ist der Nutzer im Planer aktiv, wird nach 3 Minuten automatisch ein
+  // erster Plan angelegt (identisch zum manuellen "Plan speichern"-Button) -
+  // sonst geht bei einem Tab-Schließen ohne expliziten Klick jede Eingabe
+  // verloren. Wurde in der Zwischenzeit bereits manuell gespeichert, bricht
+  // der Effekt-Cleanup den Timer ab (plansStore.plans.length als Dependency),
+  // bevor ein zweiter Plan entstehen könnte. Nachfolgende Änderungen an einem
+  // bereits bestehenden Plan bleiben unverändert sofort/synchron (kein
+  // Debounce, siehe Autosave-Effekt oben).
+  useEffect(() => {
+    if (!localStorageAvailable || view !== "planner" || plansStore.plans.length > 0) return;
+    const timer = setTimeout(() => savePlanAsNew(undefined, { auto: true }), 3 * 60 * 1000);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, plansStore.plans.length, localStorageAvailable]);
 
   // Beim Start: geteilte Planung anwenden (bei #p= asynchron dekomprimieren),
   // Hinweis zeigen und das Fragment aus der Adresszeile entfernen (sauberes

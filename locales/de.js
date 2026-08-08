@@ -458,6 +458,14 @@
       entries: [
         {
           date: "8. August 2026",
+          title: "Automatisches Erst-Speichern nach 3 Minuten",
+          items: [
+            "Hast du noch keinen Plan gespeichert, sichert FREILOTSE deine Eingaben jetzt automatisch nach 3 Minuten aktiver Nutzung auf diesem Gerät – so geht nichts verloren, falls du den Tab schließt, ohne selbst auf „Plan speichern\" zu klicken.",
+            "Ein kurzer Hinweis macht dabei deutlich, dass die Planung automatisch gespeichert wurde – unterscheidbar vom Hinweis beim manuellen Speichern.",
+          ],
+        },
+        {
+          date: "8. August 2026",
           title: "Verbesserungen bei den Reiseziel-Vorschlägen",
           items: [
             "Die Vorschlagsliste bei den Reiseziel-Feldern öffnet sich jetzt erst, wenn du mindestens drei Zeichen eingetippt hast, statt schon beim Anklicken des leeren Felds.",
@@ -639,6 +647,7 @@
       copySuffix: " (Kopie)",
       toast: {
         firstSaveNotice: "Plan wurde auf diesem Gerät gespeichert. Es wird nichts an einen Server übertragen.",
+        autoFirstSaveNotice: "Deine Planung wurde automatisch auf diesem Gerät gespeichert. Es wird nichts an einen Server übertragen.",
         saveFailed: "Plan konnte nicht gespeichert werden (Speicherplatz voll?).",
         limitReached: (p) => `Maximal ${p.max} gespeicherte Pläne möglich.`,
         loadedFully: "Plan wurde geladen.",
