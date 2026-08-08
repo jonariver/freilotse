@@ -611,6 +611,79 @@ unverändert – die Erweiterung fließt ausschließlich in die Darstellung des
 letzten Listeneintrags ein. Export (ICS/Google) dieses Zeitraums schließt
 den sicheren Anhang mit ein, nicht die hypothetische Verlängerung.
 
+## Trip-Links (Flüge/Unterkunft) und Trip.com-Stadt-IDs
+
+### Zweck und Sichtbarkeit
+Bei freien Zeiträumen ab `TRIP_LINKS_MIN_LEN = 3` zusammenhängenden Tagen
+(`app.jsx`) zeigt die Zeitraum-Liste zusätzlich die Schaltflächen „Flüge" und
+„Unterkunft". Ein optionales Reiseziel-Freitextfeld (`tripDestination`, pro
+Zeitraum überschreibbar via `perPeriodDestination`, aufgelöst durch
+`effectiveDestination(p)`) füllt die Ziel-Portale vor. Beide States sind
+bewusst **rein UI-lokal**: nicht im Share-Link, nicht in gespeicherten Plänen.
+
+### „Unterkunft" führt zu einer Portal-Auswahl
+„Unterkunft" ist **kein Link**, sondern öffnet einen Dialog (State
+`accDialogIdx` = Index in `result.periods`, `null` = zu; Index statt Objekt,
+damit ein neu berechneter Plan keinen veralteten Zeitraum festhält). Der
+Dialog bietet Booking.com und Trip.com als echte `<a target="_blank">`-Links
+an, damit Neuer-Tab/Mittelklick erhalten bleiben. Die Wahl wird **nicht**
+gespeichert – bei jedem Klick wird neu gefragt.
+
+### Warum Trip.com eine ID-Tabelle braucht
+Booking.com akzeptiert einen Freitext-Zielort (`&ss=<Ort>`). **Trip.com nicht:**
+Eine Suche allein über `searchWord`/`searchType` zeigt zwar Ort und Zeitraum
+korrekt im Formular an, liefert aber nachweislich „0 Unterkünfte gefunden".
+Erst der Parameter `city=<numerische ID>` liefert Treffer (und genügt allein,
+`searchWord` ist entbehrlich). Achtung auf die abweichende Schreibweise:
+Trip.com erwartet **`checkIn`/`checkOut` in camelCase**, Booking.com
+`checkin`/`checkout` klein.
+
+Deshalb trägt jeder Eintrag in `results.destinationSuggestions`
+(`locales/de.js`) neben `name` ein Feld `tripCityId`. `app.jsx` baut daraus
+einmalig die Map `TRIP_CITY_IDS` (normalisiert auf `trim().toLowerCase()`);
+`tripCityIdFor()` liefert die ID, `tripUrl()` baut den Link. Ohne bekannte ID
+öffnet `tripUrl()` bewusst nur `https://de.trip.com/hotels/` **ohne**
+Vorbefüllung – dasselbe Prinzip wie `googleFlightsUrl()` ohne Reiseziel, und
+deutlich besser als eine garantiert leere Trefferliste. Der Dialog weist per
+`results.accommodation.tripNoIdHint` sichtbar darauf hin.
+
+`tripCityId: null` ist damit ein **gültiger, dokumentierter Zustand**, kein
+Fehler (aktuell: Havanna – die ID 690 zeigt zwar korrekt „Havanna", liefert
+aus dem deutschen Markt heraus aber 0 buchbare Unterkünfte).
+
+### Verbindliche Regel für neue oder geänderte IDs
+IDs werden **niemals geraten**, sondern zweistufig ermittelt:
+
+1. **Finden:** `https://de.trip.com/hotels/star3/city/<ISO-Ländercode>/<englischer-slug>.html`
+   laden und die Zahl aus einem Link `…/hotels/<slug>-hotels-list-<ID>/` lesen.
+   Slug-Abweichungen sind häufig (`de/hannover` statt `de/hanover`,
+   `ma/marrakech` statt `ma/marrakesh`, `il/tel-aviv-yafo`); notfalls per
+   Websuche.
+2. **Gegenprüfen (Pflicht):**
+   `https://de.trip.com/hotels/list?city=<ID>&checkIn=<Datum>&checkOut=<Datum>`
+   laden und bestätigen, dass der angezeigte Ortsname passt **und** die
+   Trefferzahl > 0 ist. Andernfalls `null` eintragen.
+
+Schritt 2 ist nicht optional – beim erstmaligen Aufbau der Tabelle hat er
+mehrere falsche IDs entlarvt, die aus Schritt 1 plausibel aussahen (u. a.
+lieferte eine vermeintliche „Kreta"-ID in Wahrheit Dalian/China, und eine per
+Websuche gefundene „Goa"-ID zeigte Goa auf den **Philippinen** statt Indien).
+
+### Inseln und Regionen ohne eigene Trip.com-Kennung
+Manche Ziele der Vorschlagsliste sind Inseln oder Regionen, für die Trip.com
+keine passende Kennung führt. Dort steht die ID des **touristischen Hauptorts**
+(im Code als Kommentar hinter dem Eintrag vermerkt), z. B. Sylt → Westerland,
+Rügen → Binz, Usedom → Heringsdorf, Mallorca → Palma de Mallorca, Kreta →
+Heraklion, Sizilien → Palermo, Sardinien → Cagliari, Toskana → Florenz,
+Algarve → Albufeira, Côte d'Azur → Nizza, Malediven → Malé, Fidschi → Nadi.
+Das ist eine bewusste Abwägung: ein brauchbarer Startpunkt in der richtigen
+Region schlägt „gar keine Vorbefüllung". Booking.com erhält in diesen Fällen
+weiterhin den vollen Regionsnamen als Freitext und sucht daher regionsweit.
+
+### Bewusst nicht enthalten
+Keine Affiliate-/Partner-IDs in den erzeugten Links (weder Booking.com noch
+Trip.com) – die Links sind reine, nicht monetarisierte Deeplinks.
+
 ## Brückentage-Rätsel des Tages (`/raetsel`)
 
 ### Zweck

@@ -25,6 +25,20 @@ const DOWS = t("weekdaysApiOrder");
 // reisewürdig gilt und Trip-Links (Flüge/Unterkunft) angezeigt bekommt.
 const TRIP_LINKS_MIN_LEN = 3;
 
+// Nachschlagetabelle Reiseziel -> Trip.com-Stadt-ID. Anders als Booking.com
+// versteht Trip.com keinen Freitext-Zielort: eine Suche allein über das
+// Suchwort liefert dort nachweislich "0 Unterkünfte gefunden", erst die
+// numerische city-ID liefert Treffer. Die IDs stammen aus tripCityId in
+// results.destinationSuggestions (siehe locales/de.js); Ziele ohne bekannte
+// ID stehen dort auf null und öffnen Trip.com bewusst ohne Vorbefüllung.
+// Normalisiert auf trim()/toLowerCase(), damit auch abweichende Schreibweisen
+// aus dem Freitextfeld greifen.
+const TRIP_CITY_IDS = new Map(
+  t("results.destinationSuggestions")
+    .filter((o) => o.tripCityId != null)
+    .map((o) => [o.name.trim().toLowerCase(), o.tripCityId])
+);
+
 /* ------------------------------------------------------------------ */
 /* Ausgelagerte Module (kein Modulsystem -> window.FREILOTSE.*-Namespaces, */
 /* siehe js/planning.js, js/calendar.js, js/data-sources.js,                */
@@ -297,6 +311,10 @@ function Urlaubsplaner({ onPlanReady }) {
   // nicht persistiert, nicht Teil des Share-Link-Payloads oder gespeicherter Pläne.
   const [tripDestination, setTripDestination] = useState("");
   const [perPeriodDestination, setPerPeriodDestination] = useState({});
+  // Index des Zeitraums, für den der Unterkunfts-Dialog offen ist (null = zu).
+  // Bewusst der Index statt des Zeitraum-Objekts – wie bei dialogDay –, damit
+  // ein zwischenzeitlich neu berechneter Plan keinen veralteten Zeitraum hält.
+  const [accDialogIdx, setAccDialogIdx] = useState(null);
   // Übergeordnete Ansicht: "landing" (Startansicht) | "loading" (kurzer,
   // neutraler Zwischenzustand) | "planner" (bestehende Einfach-/Profi-
   // Ansicht). Reines Rendering – kein Reset bestehender Eingaben beim
@@ -958,6 +976,20 @@ function Urlaubsplaner({ onPlanReady }) {
     const dest = destination.trim();
     return `https://www.booking.com/searchresults.html?checkin=${toIsoDate(dtStart)}&checkout=${toIsoDate(dtEnd)}` +
       (dest ? `&ss=${encodeURIComponent(dest)}` : "");
+  };
+  const tripCityIdFor = (destination) =>
+    TRIP_CITY_IDS.get(destination.trim().toLowerCase()) ?? null;
+  const tripUrl = (p, destination) => {
+    const id = tripCityIdFor(destination);
+    // Ohne bekannte Stadt-ID bewusst nur die Startseite (statt einer Suche,
+    // die garantiert leer ausfällt) – gleiches Prinzip wie googleFlightsUrl
+    // ohne Reiseziel.
+    if (!id) return "https://de.trip.com/hotels/";
+    const { dtStart, dtEnd } = exportInfo(p);
+    // Achtung: Trip.com erwartet checkIn/checkOut in camelCase, Booking.com
+    // dagegen checkin/checkout in Kleinschreibung.
+    return `https://de.trip.com/hotels/list?city=${id}` +
+      `&checkIn=${toIsoDate(dtStart)}&checkOut=${toIsoDate(dtEnd)}`;
   };
   // Englische Monatsnamen ohne Jahr, ausschließlich für den Google-Flights-
   // Query-Parameter unten (kein UI-Text der App, siehe dort). Ohne Jahr, weil
@@ -2275,8 +2307,8 @@ function Urlaubsplaner({ onPlanReady }) {
                   value={tripDestination} onChange={(e) => setTripDestination(e.target.value)}
                   placeholder={t("results.destinationPlaceholder")} />
                 <datalist id="destination-suggestions">
-                  {t("results.destinationSuggestions").map((name) => (
-                    <option key={name} value={name} />
+                  {t("results.destinationSuggestions").map((o) => (
+                    <option key={o.name} value={o.name} />
                   ))}
                 </datalist>
               </div>
@@ -2349,14 +2381,13 @@ function Urlaubsplaner({ onPlanReady }) {
                               }`}>
                               {t("results.flightsButton")}
                             </a>
-                            <a href={bookingUrl(p, effectiveDestination(p))} target="_blank" rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
+                            <button onClick={(e) => { e.stopPropagation(); setAccDialogIdx(i); }}
                               title={t("results.bookingTitle")}
                               className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
                                 dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"
                               }`}>
                               {t("results.bookingButton")}
-                            </a>
+                            </button>
                           </>
                         )}
                       </span>
@@ -2567,6 +2598,57 @@ function Urlaubsplaner({ onPlanReady }) {
           </div>
         </div>
       )}
+
+      {/* Dialog: Unterkunftsportal für einen Zeitraum wählen */}
+      {accDialogIdx !== null && result.periods[accDialogIdx] && (() => {
+        const p = result.periods[accDialogIdx];
+        const isTransition = accDialogIdx === result.periods.length - 1 && !!yearTransition;
+        const dest = effectiveDestination(p);
+        // Identische Datumsdarstellung wie in der Zeitraum-Listenzeile
+        const range = `${fmtDate(days[p.s])} – ${isTransition
+          ? `${fmtDate(yearTransition.certainEndDate)}${year + 1}`
+          : fmtDate(days[p.e])}`;
+        // Im Dark-Mode bewusst border-sonnencreme statt border-tiefwasser-hell:
+        // die Dialogkarte ist selbst tiefwasser-hell, ein gleichfarbiger Rand
+        // wäre unsichtbar und die Optionen sähen aus wie bloßer Text.
+        const optionCls = `block w-full rounded-xl border px-3 py-2 text-center text-sm font-semibold ${
+          dark ? "border-sonnencreme/40 text-sonnencreme hover:bg-sonnencreme/10" : "border-beckenwasser/30 text-espresso hover:bg-beckenwasser-hell/30"
+        }`;
+        return (
+          <div role="dialog" aria-modal="true" aria-label={t("results.accommodation.dialogAriaLabel")}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tiefwasser/60"
+            onClick={() => setAccDialogIdx(null)}>
+            <div className={`w-full max-w-xs rounded-3xl p-4 space-y-3 ${dark ? "bg-tiefwasser-hell border border-tiefwasser-hell shadow-warm-dark" : "bg-kalkstein border border-beckenwasser/20 shadow-warm"}`}
+              onClick={(e) => e.stopPropagation()}>
+              <div>
+                <p className="text-sm font-bold">{t("results.accommodation.dialogTitle")}</p>
+                <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
+                  {t("results.accommodation.subtitle", { range, destination: dest.trim() })}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <a href={bookingUrl(p, dest)} target="_blank" rel="noopener noreferrer"
+                  onClick={() => setAccDialogIdx(null)} className={optionCls}>
+                  {t("results.accommodation.bookingOption")}
+                </a>
+                <a href={tripUrl(p, dest)} target="_blank" rel="noopener noreferrer"
+                  onClick={() => setAccDialogIdx(null)} className={optionCls}>
+                  {t("results.accommodation.tripOption")}
+                </a>
+              </div>
+              {(!dest.trim() || tripCityIdFor(dest) === null) && (
+                <p className={`text-[11px] ${dark ? "text-sonnencreme/50" : "text-espresso/50"}`}>
+                  {dest.trim() ? t("results.accommodation.tripNoIdHint") : t("results.accommodation.noDestinationHint")}
+                </p>
+              )}
+              <button onClick={() => setAccDialogIdx(null)}
+                className={`w-full rounded-xl px-3 py-2 text-sm ${dark ? "text-sonnencreme/60 hover:bg-tiefwasser-hell" : "text-espresso/60 hover:bg-beckenwasser-hell/30"}`}>
+                {t("results.accommodation.cancelButton")}
+              </button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Fallback-Dialog: Link manuell kopieren (wenn navigator.share und
           Clipboard-API nicht verfügbar sind) */}
