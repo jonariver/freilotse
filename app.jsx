@@ -2250,9 +2250,12 @@ function Urlaubsplaner({ onPlanReady }) {
             </div>
             {result.periods.length > 0 && (
               <div className="mb-3 max-w-xs">
-                <label htmlFor="trip-destination" className={labelCls}>{t("results.destinationLabel")}</label>
+                <label htmlFor="trip-destination" className={labelCls}>
+                  {t("results.destinationLabel")}
+                  <InfoHint dark={dark} text={t("results.destinationHint")} />
+                </label>
                 <input id="trip-destination" type="text" className={inputCls}
-                  list="destination-suggestions"
+                  list={tripDestination.trim().length >= 3 ? "destination-suggestions" : undefined}
                   value={tripDestination} onChange={(e) => setTripDestination(e.target.value)}
                   placeholder={t("results.destinationPlaceholder")} />
                 <datalist id="destination-suggestions">
@@ -2347,7 +2350,7 @@ function Urlaubsplaner({ onPlanReady }) {
                     {showTripLinks && (
                       <div className="basis-full" onClick={(e) => e.stopPropagation()}>
                         <input type="text" className={`${inputSmCls} max-w-xs`}
-                          list="destination-suggestions"
+                          list={(perPeriodDestination[p.s] ?? "").trim().length >= 3 ? "destination-suggestions" : undefined}
                           value={perPeriodDestination[p.s] ?? ""}
                           onChange={(e) => setPerPeriodDestination((prev) => ({ ...prev, [p.s]: e.target.value }))}
                           aria-label={t("results.destinationPeriodAriaLabel")}

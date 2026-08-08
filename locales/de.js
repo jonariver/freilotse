@@ -457,6 +457,15 @@
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
         {
+          date: "8. August 2026",
+          title: "Verbesserungen bei den Reiseziel-Vorschlägen",
+          items: [
+            "Die Vorschlagsliste bei den Reiseziel-Feldern öffnet sich jetzt erst, wenn du mindestens drei Zeichen eingetippt hast, statt schon beim Anklicken des leeren Felds.",
+            "Deutlich mehr internationale Ziele stehen jetzt zur Auswahl, z. B. Osaka, Taipeh, Shanghai, Dubai, Nairobi oder Buenos Aires.",
+            "Ein kleiner Hinweis (i-Symbol) neben dem Reiseziel-Feld macht klar: Die Vorschläge sind nur eine Hilfestellung, ein eigenes Ziel außerhalb der Liste kannst du jederzeit eintragen.",
+          ],
+        },
+        {
           date: "7. August 2026",
           title: "Trip-Links bei langen freien Zeiträumen",
           items: [
@@ -838,6 +847,8 @@
       exportAllButton: "Gesamten Plan exportieren",
       exportAllTitle: "Alle freien Zeiträume als eine .ics-Datei herunterladen (Apple Kalender, Outlook, iCal; in Google Kalender über \"Kalender importieren\" einbindbar)",
       destinationLabel: "Reiseziel (optional)",
+      destinationHint:
+        "Die Vorschlagsliste erscheint ab drei eingetippten Zeichen und dient nur als Hilfestellung – du kannst genauso gut ein beliebiges eigenes Reiseziel eintragen, das nicht in der Liste steht.",
       destinationPlaceholder: "z. B. Paris, Mallorca …",
       destinationPeriodPlaceholder: (p) =>
         p.fallback ? `Abweichendes Ziel (Standard: ${p.fallback})` : "Abweichendes Reiseziel für diesen Zeitraum",
@@ -869,13 +880,25 @@
         "Fuerteventura", "Lanzarote", "Kreta", "Rhodos", "Korfu", "Santorin",
         "Mykonos", "Sardinien", "Sizilien", "Malta", "Zypern", "Madeira",
         "Algarve", "Côte d'Azur", "Toskana",
-        // Internationale Fernziele
+        // Internationale Fernziele – Nordamerika
         "New York", "Los Angeles", "San Francisco", "Las Vegas", "Miami",
-        "Chicago", "Toronto", "Vancouver", "Mexiko-Stadt", "Cancún",
-        "Rio de Janeiro", "Buenos Aires", "Kapstadt", "Marrakesch", "Kairo",
-        "Dubai", "Abu Dhabi", "Tel Aviv", "Bangkok", "Phuket", "Bali",
-        "Singapur", "Kuala Lumpur", "Hongkong", "Tokio", "Kyoto", "Seoul",
-        "Sydney", "Melbourne", "Malediven",
+        "Chicago", "Boston", "Washington, D.C.", "Seattle", "Orlando",
+        "Honolulu", "Toronto", "Vancouver", "Montreal",
+        // Internationale Fernziele – Mittel- und Südamerika
+        "Mexiko-Stadt", "Cancún", "Havanna", "Punta Cana", "Rio de Janeiro",
+        "São Paulo", "Buenos Aires", "Santiago de Chile", "Lima", "Bogotá",
+        "Cartagena",
+        // Internationale Fernziele – Naher Osten und Afrika
+        "Dubai", "Abu Dhabi", "Doha", "Maskat", "Tel Aviv", "Amman",
+        "Beirut", "Kairo", "Marrakesch", "Kapstadt", "Nairobi", "Sansibar",
+        // Internationale Fernziele – Asien
+        "Bangkok", "Phuket", "Koh Samui", "Chiang Mai", "Bali", "Singapur",
+        "Kuala Lumpur", "Hongkong", "Shanghai", "Peking", "Taipeh", "Tokio",
+        "Kyoto", "Osaka", "Seoul", "Hanoi", "Ho-Chi-Minh-Stadt", "Hoi An",
+        "Da Nang", "Siem Reap", "Manila", "Jakarta", "Delhi", "Mumbai",
+        "Goa", "Colombo", "Kathmandu", "Malediven",
+        // Internationale Fernziele – Ozeanien
+        "Sydney", "Melbourne", "Auckland", "Fidschi",
       ],
       flightsButton: "Flüge",
       flightsTitle: "Flugsuche für diesen Zeitraum öffnen (Google Flights). Ohne Reiseziel oben öffnet sich nur die Startseite ohne Vorbefüllung.",
