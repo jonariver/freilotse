@@ -39,6 +39,23 @@ const TRIP_CITY_IDS = new Map(
     .map((o) => [o.name.trim().toLowerCase(), o.tripCityId])
 );
 
+// Nachschlagetabelle Reiseziel -> IATA-Code des Zielflughafens für Skyscanner.
+// Auch Skyscanner versteht keinen Freitext-Zielort, sondern erwartet den
+// Ortscode im URL-Pfad (/transport/fluge/<von>/<nach>/<jjmmtt>/<jjmmtt>/).
+// Ziele ohne Linienflughafen stehen in skyscannerCode auf null und öffnen
+// Skyscanner bewusst ohne Vorbefüllung – gleiches Prinzip wie bei tripUrl().
+const SKYSCANNER_CODES = new Map(
+  t("results.destinationSuggestions")
+    .filter((o) => o.skyscannerCode)
+    .map((o) => [o.name.trim().toLowerCase(), o.skyscannerCode])
+);
+
+// Nachschlagetabelle Abflughafen-Vorschlag -> IATA-Code. Zusätzlich wird im
+// Feld auch eine direkte Kürzel-Eingabe ("fra") akzeptiert, siehe originCode().
+const ORIGIN_CODES = new Map(
+  t("results.originSuggestions").map((o) => [o.name.trim().toLowerCase(), o.code])
+);
+
 /* ------------------------------------------------------------------ */
 /* Ausgelagerte Module (kein Modulsystem -> window.FREILOTSE.*-Namespaces, */
 /* siehe js/planning.js, js/calendar.js, js/data-sources.js,                */
@@ -63,7 +80,7 @@ const LOCAL_PLANS_STORAGE_KEY = window.FREILOTSE.localPlans.STORAGE_KEY;
 // jsx/common-components.jsx, jsx/support-components.jsx, jsx/landing-page.jsx
 // und jsx/legal-pages.jsx müssen vor app.jsx geladen sein (siehe index.html).
 const {
-  CollapsibleCard, InfoHint,
+  CollapsibleCard, InfoHint, PortalChoiceDialog,
   SiteFooter, SupportFloatingButton,
   LandingPage,
   ImpressumPage, DatenschutzPage,
@@ -311,10 +328,16 @@ function Urlaubsplaner({ onPlanReady }) {
   // nicht persistiert, nicht Teil des Share-Link-Payloads oder gespeicherter Pläne.
   const [tripDestination, setTripDestination] = useState("");
   const [perPeriodDestination, setPerPeriodDestination] = useState({});
-  // Index des Zeitraums, für den der Unterkunfts-Dialog offen ist (null = zu).
-  // Bewusst der Index statt des Zeitraum-Objekts – wie bei dialogDay –, damit
-  // ein zwischenzeitlich neu berechneter Plan keinen veralteten Zeitraum hält.
+  // Optionaler Abflughafen – nur für Skyscanner relevant (Google Flights leitet
+  // den Startpunkt selbst ab). Bewusst nur global und ohne Per-Zeitraum-
+  // Überschreibung: der Abflughafen ändert sich übers Jahr typischerweise nicht.
+  const [tripOrigin, setTripOrigin] = useState("");
+  // Index des Zeitraums, für den der Unterkunfts- bzw. Flug-Dialog offen ist
+  // (null = zu). Bewusst der Index statt des Zeitraum-Objekts – wie bei
+  // dialogDay –, damit ein zwischenzeitlich neu berechneter Plan keinen
+  // veralteten Zeitraum hält.
   const [accDialogIdx, setAccDialogIdx] = useState(null);
+  const [flightsDialogIdx, setFlightsDialogIdx] = useState(null);
   // Übergeordnete Ansicht: "landing" (Startansicht) | "loading" (kurzer,
   // neutraler Zwischenzustand) | "planner" (bestehende Einfach-/Profi-
   // Ansicht). Reines Rendering – kein Reset bestehender Eingaben beim
@@ -938,7 +961,10 @@ function Urlaubsplaner({ onPlanReady }) {
   }, []);
 
   // Export eines freien Zeitraums als Kalendereintrag (ganztägig, Ende exklusiv)
-  const ymdOf = (day) => `${year}${String(day.m + 1).padStart(2, "0")}${String(day.d).padStart(2, "0")}`;
+  // yr wird nur dort übergeben, wo ein Tag aus dem Folgejahr stammt (sicherer
+  // Anhang der Jahreswechsel-Erweiterung); der Default hält alle übrigen
+  // Aufrufstellen unverändert.
+  const ymdOf = (day, yr = year) => `${yr}${String(day.m + 1).padStart(2, "0")}${String(day.d).padStart(2, "0")}`;
   const ymdAfter = (day, yr = year) => {
     const dt = new Date(Date.UTC(yr, day.m, day.d) + DAY);
     return `${dt.getUTCFullYear()}${String(dt.getUTCMonth() + 1).padStart(2, "0")}${String(dt.getUTCDate()).padStart(2, "0")}`;
@@ -1012,6 +1038,42 @@ function Urlaubsplaner({ onPlanReady }) {
     // rein technische, nicht nutzersichtbare Inhalte).
     const query = `Flights to ${dest} on ${enMonthDay(startDay)} through ${enMonthDay(endDay)}`;
     return `https://www.google.com/travel/flights?q=${encodeURIComponent(query)}`;
+  };
+  // Abflug-Ortscode für Skyscanner. Reihenfolge: bekannter Vorschlag aus
+  // results.originSuggestions -> direkt eingetipptes Flughafen-Kürzel ("fra")
+  // -> Länder-Code des gewählten Landes. Skyscanner akzeptiert im Abflug-Feld
+  // ausdrücklich auch Länder ("de"/"at"/"ch") und zeigt dann die günstigsten
+  // Abflugorte des Landes zur Auswahl – das ist der Grund, warum der
+  // Abflughafen optional bleiben kann.
+  const originCode = () => {
+    const raw = tripOrigin.trim().toLowerCase();
+    if (!raw) return country.toLowerCase();
+    return ORIGIN_CODES.get(raw) ?? (/^[a-z]{3}$/.test(raw) ? raw : country.toLowerCase());
+  };
+  const skyscannerCodeFor = (destination) =>
+    SKYSCANNER_CODES.get(destination.trim().toLowerCase()) ?? null;
+  // Datumsbereich eines Zeitraums für die Portal-Dialoge – identische
+  // Darstellung wie in der Zeitraum-Listenzeile, inkl. Jahreswechsel-Erweiterung.
+  const dialogRange = (idx) => {
+    const p = result.periods[idx];
+    const isTransition = idx === result.periods.length - 1 && !!yearTransition;
+    return `${fmtDate(days[p.s])} – ${isTransition
+      ? `${fmtDate(yearTransition.certainEndDate)}${year + 1}`
+      : fmtDate(days[p.e])}`;
+  };
+  // startDay/endDay sind Hin- und Rückreisetag, also der erste und der LETZTE
+  // freie Tag – nicht das exklusive dtEnd aus exportInfo(). endYear deckt den
+  // Fall ab, dass der Rückreisetag im Folgejahr liegt (Jahreswechsel-Erweiterung).
+  const skyscannerUrl = (startDay, endDay, destination, endYear = year) => {
+    const code = skyscannerCodeFor(destination);
+    // Ohne bekannten Flughafen bewusst nur die Startseite (statt einer Suche,
+    // die garantiert ins Leere läuft) – gleiches Prinzip wie tripUrl() ohne
+    // Stadt-ID und googleFlightsUrl() ohne Reiseziel.
+    if (!code) return "https://www.skyscanner.de/transport/fluge/";
+    // Skyscanner erwartet die Daten im Pfad als JJMMTT.
+    const yymmdd = (day, yr) => ymdOf(day, yr).slice(2);
+    return `https://www.skyscanner.de/transport/fluge/${originCode()}/${code}` +
+      `/${yymmdd(startDay, year)}/${yymmdd(endDay, endYear)}/`;
   };
   // Ein VEVENT-Block für einen Zeitraum. stamp wird übergeben (statt selbst
   // berechnet), damit ein Sammel-Export für alle Zeiträume denselben
@@ -2297,20 +2359,37 @@ function Urlaubsplaner({ onPlanReady }) {
               )}
             </div>
             {result.periods.length > 0 && (
-              <div className="mb-3 max-w-xs">
-                <label htmlFor="trip-destination" className={labelCls}>
-                  {t("results.destinationLabel")}
-                  <InfoHint dark={dark} text={t("results.destinationHint")} />
-                </label>
-                <input id="trip-destination" type="text" className={inputCls}
-                  list={tripDestination.trim().length >= 3 ? "destination-suggestions" : undefined}
-                  value={tripDestination} onChange={(e) => setTripDestination(e.target.value)}
-                  placeholder={t("results.destinationPlaceholder")} />
-                <datalist id="destination-suggestions">
-                  {t("results.destinationSuggestions").map((o) => (
-                    <option key={o.name} value={o.name} />
-                  ))}
-                </datalist>
+              <div className="mb-3 flex flex-wrap gap-x-4 gap-y-3">
+                <div className="w-full max-w-xs sm:w-auto sm:flex-1 sm:min-w-[16rem]">
+                  <label htmlFor="trip-destination" className={labelCls}>
+                    {t("results.destinationLabel")}
+                    <InfoHint dark={dark} text={t("results.destinationHint")} />
+                  </label>
+                  <input id="trip-destination" type="text" className={inputCls}
+                    list={tripDestination.trim().length >= 3 ? "destination-suggestions" : undefined}
+                    value={tripDestination} onChange={(e) => setTripDestination(e.target.value)}
+                    placeholder={t("results.destinationPlaceholder")} />
+                  <datalist id="destination-suggestions">
+                    {t("results.destinationSuggestions").map((o) => (
+                      <option key={o.name} value={o.name} />
+                    ))}
+                  </datalist>
+                </div>
+                <div className="w-full max-w-xs sm:w-auto sm:flex-1 sm:min-w-[16rem]">
+                  <label htmlFor="trip-origin" className={labelCls}>
+                    {t("results.originLabel")}
+                    <InfoHint dark={dark} text={t("results.originHint")} />
+                  </label>
+                  <input id="trip-origin" type="text" className={inputCls}
+                    list={tripOrigin.trim().length >= 2 ? "origin-suggestions" : undefined}
+                    value={tripOrigin} onChange={(e) => setTripOrigin(e.target.value)}
+                    placeholder={t("results.originPlaceholder")} />
+                  <datalist id="origin-suggestions">
+                    {t("results.originSuggestions").map((o) => (
+                      <option key={o.code} value={o.name} />
+                    ))}
+                  </datalist>
+                </div>
               </div>
             )}
             {result.periods.length === 0 ? (
@@ -2372,15 +2451,13 @@ function Urlaubsplaner({ onPlanReady }) {
                         </a>
                         {showTripLinks && (
                           <>
-                            <a href={googleFlightsUrl(days[p.s], isTransitionPeriod ? yearTransition.certainEndDate : days[p.e], effectiveDestination(p))}
-                              target="_blank" rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
+                            <button onClick={(e) => { e.stopPropagation(); setFlightsDialogIdx(i); }}
                               title={t("results.flightsTitle")}
                               className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
                                 dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser-hell/30"
                               }`}>
                               {t("results.flightsButton")}
-                            </a>
+                            </button>
                             <button onClick={(e) => { e.stopPropagation(); setAccDialogIdx(i); }}
                               title={t("results.bookingTitle")}
                               className={`rounded-xl border px-2 py-0.5 text-[11px] font-semibold ${
@@ -2602,51 +2679,50 @@ function Urlaubsplaner({ onPlanReady }) {
       {/* Dialog: Unterkunftsportal für einen Zeitraum wählen */}
       {accDialogIdx !== null && result.periods[accDialogIdx] && (() => {
         const p = result.periods[accDialogIdx];
-        const isTransition = accDialogIdx === result.periods.length - 1 && !!yearTransition;
         const dest = effectiveDestination(p);
-        // Identische Datumsdarstellung wie in der Zeitraum-Listenzeile
-        const range = `${fmtDate(days[p.s])} – ${isTransition
-          ? `${fmtDate(yearTransition.certainEndDate)}${year + 1}`
-          : fmtDate(days[p.e])}`;
-        // Im Dark-Mode bewusst border-sonnencreme statt border-tiefwasser-hell:
-        // die Dialogkarte ist selbst tiefwasser-hell, ein gleichfarbiger Rand
-        // wäre unsichtbar und die Optionen sähen aus wie bloßer Text.
-        const optionCls = `block w-full rounded-xl border px-3 py-2 text-center text-sm font-semibold ${
-          dark ? "border-sonnencreme/40 text-sonnencreme hover:bg-sonnencreme/10" : "border-beckenwasser/30 text-espresso hover:bg-beckenwasser-hell/30"
-        }`;
         return (
-          <div role="dialog" aria-modal="true" aria-label={t("results.accommodation.dialogAriaLabel")}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tiefwasser/60"
-            onClick={() => setAccDialogIdx(null)}>
-            <div className={`w-full max-w-xs rounded-3xl p-4 space-y-3 ${dark ? "bg-tiefwasser-hell border border-tiefwasser-hell shadow-warm-dark" : "bg-kalkstein border border-beckenwasser/20 shadow-warm"}`}
-              onClick={(e) => e.stopPropagation()}>
-              <div>
-                <p className="text-sm font-bold">{t("results.accommodation.dialogTitle")}</p>
-                <p className={`text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
-                  {t("results.accommodation.subtitle", { range, destination: dest.trim() })}
-                </p>
-              </div>
-              <div className="space-y-2">
-                <a href={bookingUrl(p, dest)} target="_blank" rel="noopener noreferrer"
-                  onClick={() => setAccDialogIdx(null)} className={optionCls}>
-                  {t("results.accommodation.bookingOption")}
-                </a>
-                <a href={tripUrl(p, dest)} target="_blank" rel="noopener noreferrer"
-                  onClick={() => setAccDialogIdx(null)} className={optionCls}>
-                  {t("results.accommodation.tripOption")}
-                </a>
-              </div>
-              {(!dest.trim() || tripCityIdFor(dest) === null) && (
-                <p className={`text-[11px] ${dark ? "text-sonnencreme/50" : "text-espresso/50"}`}>
-                  {dest.trim() ? t("results.accommodation.tripNoIdHint") : t("results.accommodation.noDestinationHint")}
-                </p>
-              )}
-              <button onClick={() => setAccDialogIdx(null)}
-                className={`w-full rounded-xl px-3 py-2 text-sm ${dark ? "text-sonnencreme/60 hover:bg-tiefwasser-hell" : "text-espresso/60 hover:bg-beckenwasser-hell/30"}`}>
-                {t("results.accommodation.cancelButton")}
-              </button>
-            </div>
-          </div>
+          <PortalChoiceDialog
+            dark={dark}
+            ariaLabel={t("results.accommodation.dialogAriaLabel")}
+            title={t("results.accommodation.dialogTitle")}
+            subtitle={t("results.accommodation.subtitle", { range: dialogRange(accDialogIdx), destination: dest.trim() })}
+            options={[
+              { key: "booking", label: t("results.accommodation.bookingOption"), href: bookingUrl(p, dest) },
+              { key: "trip", label: t("results.accommodation.tripOption"), href: tripUrl(p, dest) },
+            ]}
+            hint={!dest.trim()
+              ? t("results.accommodation.noDestinationHint")
+              : tripCityIdFor(dest) === null ? t("results.accommodation.tripNoIdHint") : ""}
+            cancelLabel={t("results.accommodation.cancelButton")}
+            onClose={() => setAccDialogIdx(null)} />
+        );
+      })()}
+
+      {/* Dialog: Flugportal für einen Zeitraum wählen */}
+      {flightsDialogIdx !== null && result.periods[flightsDialogIdx] && (() => {
+        const p = result.periods[flightsDialogIdx];
+        const isTransition = flightsDialogIdx === result.periods.length - 1 && !!yearTransition;
+        const dest = effectiveDestination(p);
+        // Rückreisetag ist der letzte freie Tag – bei der Jahreswechsel-
+        // Erweiterung also das Ende des sicheren Anhangs im Folgejahr.
+        const endDay = isTransition ? yearTransition.certainEndDate : days[p.e];
+        const endYear = isTransition ? year + 1 : year;
+        return (
+          <PortalChoiceDialog
+            dark={dark}
+            ariaLabel={t("results.flights.dialogAriaLabel")}
+            title={t("results.flights.dialogTitle")}
+            subtitle={t("results.flights.subtitle", { range: dialogRange(flightsDialogIdx), destination: dest.trim() })}
+            options={[
+              { key: "google", label: t("results.flights.googleOption"), href: googleFlightsUrl(days[p.s], endDay, dest) },
+              { key: "skyscanner", label: t("results.flights.skyscannerOption"), href: skyscannerUrl(days[p.s], endDay, dest, endYear) },
+            ]}
+            hint={!dest.trim()
+              ? t("results.flights.noDestinationHint")
+              : skyscannerCodeFor(dest) === null ? t("results.flights.skyscannerNoCodeHint")
+              : !tripOrigin.trim() ? t("results.flights.noOriginHint") : ""}
+            cancelLabel={t("results.flights.cancelButton")}
+            onClose={() => setFlightsDialogIdx(null)} />
         );
       })()}
 

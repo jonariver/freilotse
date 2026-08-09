@@ -457,6 +457,15 @@
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
         {
+          date: "9. August 2026",
+          title: "Flüge jetzt wahlweise bei Google Flights oder Skyscanner",
+          items: [
+            "Ein Klick auf „Flüge\" fragt jetzt zuerst, wo du suchen möchtest – bei Google Flights oder bei Skyscanner. Genau wie schon bei „Unterkunft\".",
+            "Neues optionales Feld „Abflughafen\": Trägst du dort z. B. Frankfurt ein, sucht Skyscanner direkt ab diesem Flughafen. Ohne Angabe zeigt Skyscanner zuerst die günstigsten Abflugorte in deinem Land.",
+            "Kennt Skyscanner für ein eingetipptes Reiseziel keinen Flughafen, sagt der Dialog das offen – der Link zu Google Flights bleibt dann trotzdem vorausgefüllt.",
+          ],
+        },
+        {
           date: "8. August 2026",
           title: "41 neue Reiseziele in der Vorschlagsliste",
           items: [
@@ -887,234 +896,288 @@
       //   Trip.com dort bewusst ohne Vorbefüllung geöffnet wird.
       //   Bei Inseln/Regionen ohne eigene Trip.com-Kennung steht die ID des
       //   touristischen Hauptorts (in Klammern vermerkt).
+      // skyscannerCode = IATA-Code des Zielflughafens für den vorausgefüllten
+      //   Skyscanner-Link. Skyscanner versteht – wie Trip.com – keinen
+      //   Freitext-Zielort, sondern erwartet den Ortscode im URL-Pfad.
+      //   null steht bewusst dort, wo kein Linienflughafen existiert bzw. ein
+      //   Flug unrealistisch ist (z. B. Rügen, Heidelberg, Zermatt); dort
+      //   öffnet sich Skyscanner ohne Vorbefüllung. Bei Inseln/Regionen ohne
+      //   eigenen Flughafen steht der touristische Hauptflughafen (im
+      //   Zeilenkommentar als „Skyscanner: …" vermerkt).
       destinationSuggestions: [
         // Deutschland – große Städte
-        { name: "Berlin", tripCityId: 193 },
-        { name: "Hamburg", tripCityId: 763 },
-        { name: "München", tripCityId: 363 },
-        { name: "Köln", tripCityId: 709 },
-        { name: "Frankfurt am Main", tripCityId: 250 },
-        { name: "Stuttgart", tripCityId: 765 },
-        { name: "Düsseldorf", tripCityId: 762 },
-        { name: "Leipzig", tripCityId: 3463 },
-        { name: "Dresden", tripCityId: 1412 },
-        { name: "Hannover", tripCityId: 1248 },
-        { name: "Nürnberg", tripCityId: 31120 },
-        { name: "Bremen", tripCityId: 1359 },
-        { name: "Bonn", tripCityId: 1450 },
-        { name: "Mannheim", tripCityId: 3464 },
-        { name: "Augsburg", tripCityId: 1415 },
-        { name: "Freiburg im Breisgau", tripCityId: 3466 },
-        { name: "Rostock", tripCityId: 5768 },
-        { name: "Kiel", tripCityId: 1408 },
-        { name: "Heidelberg", tripCityId: 3333 },
-        { name: "Potsdam", tripCityId: 30044 },
+        { name: "Berlin", tripCityId: 193, skyscannerCode: "ber" },
+        { name: "Hamburg", tripCityId: 763, skyscannerCode: "ham" },
+        { name: "München", tripCityId: 363, skyscannerCode: "muc" },
+        { name: "Köln", tripCityId: 709, skyscannerCode: "cgn" },
+        { name: "Frankfurt am Main", tripCityId: 250, skyscannerCode: "fra" },
+        { name: "Stuttgart", tripCityId: 765, skyscannerCode: "str" },
+        { name: "Düsseldorf", tripCityId: 762, skyscannerCode: "dus" },
+        { name: "Leipzig", tripCityId: 3463, skyscannerCode: "lej" }, // Skyscanner: Leipzig/Halle
+        { name: "Dresden", tripCityId: 1412, skyscannerCode: "drs" },
+        { name: "Hannover", tripCityId: 1248, skyscannerCode: "haj" },
+        { name: "Nürnberg", tripCityId: 31120, skyscannerCode: "nue" },
+        { name: "Bremen", tripCityId: 1359, skyscannerCode: "bre" },
+        { name: "Bonn", tripCityId: 1450, skyscannerCode: null },
+        { name: "Mannheim", tripCityId: 3464, skyscannerCode: null },
+        { name: "Augsburg", tripCityId: 1415, skyscannerCode: null },
+        { name: "Freiburg im Breisgau", tripCityId: 3466, skyscannerCode: null },
+        { name: "Rostock", tripCityId: 5768, skyscannerCode: "rlg" }, // Skyscanner: Rostock-Laage
+        { name: "Kiel", tripCityId: 1408, skyscannerCode: null },
+        { name: "Heidelberg", tripCityId: 3333, skyscannerCode: null },
+        { name: "Potsdam", tripCityId: 30044, skyscannerCode: null },
         // Deutschland – beliebte Reiseziele
-        { name: "Trier", tripCityId: 3469 },
-        { name: "Regensburg", tripCityId: 3132 },
-        { name: "Würzburg", tripCityId: 9242 },
-        { name: "Passau", tripCityId: 10082 },
-        { name: "Konstanz", tripCityId: 9805 },
-        { name: "Lindau", tripCityId: 30872 },
-        { name: "Garmisch-Partenkirchen", tripCityId: 3134 },
-        { name: "Sylt", tripCityId: 6863 }, // Westerland
-        { name: "Rügen", tripCityId: 29825 }, // Binz
-        { name: "Usedom", tripCityId: 121764 }, // Heringsdorf
-        { name: "Norderney", tripCityId: 5444 },
-        { name: "Berchtesgaden", tripCityId: 3870 },
+        { name: "Trier", tripCityId: 3469, skyscannerCode: null },
+        { name: "Regensburg", tripCityId: 3132, skyscannerCode: null },
+        { name: "Würzburg", tripCityId: 9242, skyscannerCode: null },
+        { name: "Passau", tripCityId: 10082, skyscannerCode: null },
+        { name: "Konstanz", tripCityId: 9805, skyscannerCode: null },
+        { name: "Lindau", tripCityId: 30872, skyscannerCode: null },
+        { name: "Garmisch-Partenkirchen", tripCityId: 3134, skyscannerCode: null },
+        { name: "Sylt", tripCityId: 6863, skyscannerCode: "gwt" }, // Westerland
+        { name: "Rügen", tripCityId: 29825, skyscannerCode: null }, // Binz
+        { name: "Usedom", tripCityId: 121764, skyscannerCode: null }, // Heringsdorf
+        { name: "Norderney", tripCityId: 5444, skyscannerCode: null },
+        { name: "Berchtesgaden", tripCityId: 3870, skyscannerCode: null },
         // Österreich
-        { name: "Wien", tripCityId: 651 },
-        { name: "Salzburg", tripCityId: 739 },
-        { name: "Graz", tripCityId: 805 },
-        { name: "Innsbruck", tripCityId: 1451 },
-        { name: "Linz", tripCityId: 815 },
-        { name: "Kitzbühel", tripCityId: 9800 },
-        { name: "Zell am See", tripCityId: 3403 },
-        { name: "Villach", tripCityId: 9203 },
+        { name: "Wien", tripCityId: 651, skyscannerCode: "vie" },
+        { name: "Salzburg", tripCityId: 739, skyscannerCode: "szg" },
+        { name: "Graz", tripCityId: 805, skyscannerCode: "grz" },
+        { name: "Innsbruck", tripCityId: 1451, skyscannerCode: "inn" },
+        { name: "Linz", tripCityId: 815, skyscannerCode: "lnz" },
+        { name: "Kitzbühel", tripCityId: 9800, skyscannerCode: null },
+        { name: "Zell am See", tripCityId: 3403, skyscannerCode: null },
+        { name: "Villach", tripCityId: 9203, skyscannerCode: null },
         // Schweiz
-        { name: "Zürich", tripCityId: 434 },
-        { name: "Genf", tripCityId: 666 },
-        { name: "Basel", tripCityId: 806 },
-        { name: "Bern", tripCityId: 834 },
-        { name: "Luzern", tripCityId: 40039 },
-        { name: "Interlaken", tripCityId: 3167 },
-        { name: "Zermatt", tripCityId: 3157 },
-        { name: "St. Moritz", tripCityId: 3144 },
+        { name: "Zürich", tripCityId: 434, skyscannerCode: "zrh" },
+        { name: "Genf", tripCityId: 666, skyscannerCode: "gva" },
+        { name: "Basel", tripCityId: 806, skyscannerCode: "bsl" }, // Skyscanner: EuroAirport
+        { name: "Bern", tripCityId: 834, skyscannerCode: "brn" },
+        { name: "Luzern", tripCityId: 40039, skyscannerCode: null },
+        { name: "Interlaken", tripCityId: 3167, skyscannerCode: null },
+        { name: "Zermatt", tripCityId: 3157, skyscannerCode: null },
+        { name: "St. Moritz", tripCityId: 3144, skyscannerCode: null },
         // Europa – Städte
-        { name: "Paris", tripCityId: 192 },
-        { name: "London", tripCityId: 338 },
-        { name: "Rom", tripCityId: 343 },
-        { name: "Mailand", tripCityId: 361 },
-        { name: "Venedig", tripCityId: 688 },
-        { name: "Florenz", tripCityId: 687 },
-        { name: "Neapel", tripCityId: 1262 },
-        { name: "Turin", tripCityId: 32159 },
-        { name: "Barcelona", tripCityId: 40795 },
-        { name: "Madrid", tripCityId: 357 },
-        { name: "Sevilla", tripCityId: 1350 },
-        { name: "Valencia", tripCityId: 1351 },
-        { name: "Lissabon", tripCityId: 1231 },
-        { name: "Porto", tripCityId: 826 },
-        { name: "Amsterdam", tripCityId: 176 },
-        { name: "Brüssel", tripCityId: 196 },
-        { name: "Kopenhagen", tripCityId: 260 },
-        { name: "Stockholm", tripCityId: 420 },
-        { name: "Oslo", tripCityId: 827 },
-        { name: "Helsinki", tripCityId: 277 },
-        { name: "Reykjavik", tripCityId: 831 },
-        { name: "Dublin", tripCityId: 803 },
-        { name: "Edinburgh", tripCityId: 706 },
-        { name: "Prag", tripCityId: 1288 },
-        { name: "Budapest", tripCityId: 637 },
-        { name: "Warschau", tripCityId: 293 },
-        { name: "Krakau", tripCityId: 1343 },
-        { name: "Athen", tripCityId: 710 },
-        { name: "Istanbul", tripCityId: 532 },
-        { name: "Ljubljana", tripCityId: 1266 },
-        { name: "Brügge", tripCityId: 3128 },
-        { name: "Tallinn", tripCityId: 1737 },
-        { name: "Riga", tripCityId: 4079 },
-        { name: "Vilnius", tripCityId: 786 },
-        { name: "Bukarest", tripCityId: 674 },
-        { name: "Sofia", tripCityId: 792 },
-        { name: "Dubrovnik", tripCityId: 3901 },
-        { name: "Split", tripCityId: 3264 },
-        { name: "Zadar", tripCityId: 6531 },
+        { name: "Paris", tripCityId: 192, skyscannerCode: "cdg" },
+        { name: "London", tripCityId: 338, skyscannerCode: "lhr" },
+        { name: "Rom", tripCityId: 343, skyscannerCode: "fco" },
+        { name: "Mailand", tripCityId: 361, skyscannerCode: "mxp" },
+        { name: "Venedig", tripCityId: 688, skyscannerCode: "vce" },
+        { name: "Florenz", tripCityId: 687, skyscannerCode: "flr" },
+        { name: "Neapel", tripCityId: 1262, skyscannerCode: "nap" },
+        { name: "Turin", tripCityId: 32159, skyscannerCode: "trn" },
+        { name: "Barcelona", tripCityId: 40795, skyscannerCode: "bcn" },
+        { name: "Madrid", tripCityId: 357, skyscannerCode: "mad" },
+        { name: "Sevilla", tripCityId: 1350, skyscannerCode: "svq" },
+        { name: "Valencia", tripCityId: 1351, skyscannerCode: "vlc" },
+        { name: "Lissabon", tripCityId: 1231, skyscannerCode: "lis" },
+        { name: "Porto", tripCityId: 826, skyscannerCode: "opo" },
+        { name: "Amsterdam", tripCityId: 176, skyscannerCode: "ams" },
+        { name: "Brüssel", tripCityId: 196, skyscannerCode: "bru" },
+        { name: "Kopenhagen", tripCityId: 260, skyscannerCode: "cph" },
+        { name: "Stockholm", tripCityId: 420, skyscannerCode: "arn" },
+        { name: "Oslo", tripCityId: 827, skyscannerCode: "osl" },
+        { name: "Helsinki", tripCityId: 277, skyscannerCode: "hel" },
+        { name: "Reykjavik", tripCityId: 831, skyscannerCode: "kef" },
+        { name: "Dublin", tripCityId: 803, skyscannerCode: "dub" },
+        { name: "Edinburgh", tripCityId: 706, skyscannerCode: "edi" },
+        { name: "Prag", tripCityId: 1288, skyscannerCode: "prg" },
+        { name: "Budapest", tripCityId: 637, skyscannerCode: "bud" },
+        { name: "Warschau", tripCityId: 293, skyscannerCode: "waw" },
+        { name: "Krakau", tripCityId: 1343, skyscannerCode: "krk" },
+        { name: "Athen", tripCityId: 710, skyscannerCode: "ath" },
+        { name: "Istanbul", tripCityId: 532, skyscannerCode: "ist" },
+        { name: "Ljubljana", tripCityId: 1266, skyscannerCode: "lju" },
+        { name: "Brügge", tripCityId: 3128, skyscannerCode: null },
+        { name: "Tallinn", tripCityId: 1737, skyscannerCode: "tll" },
+        { name: "Riga", tripCityId: 4079, skyscannerCode: "rix" },
+        { name: "Vilnius", tripCityId: 786, skyscannerCode: "vno" },
+        { name: "Bukarest", tripCityId: 674, skyscannerCode: "otp" },
+        { name: "Sofia", tripCityId: 792, skyscannerCode: "sof" },
+        { name: "Dubrovnik", tripCityId: 3901, skyscannerCode: "dbv" },
+        { name: "Split", tripCityId: 3264, skyscannerCode: "spu" },
+        { name: "Zadar", tripCityId: 6531, skyscannerCode: "zad" },
         // Europa – Inseln und Ferienziele
-        { name: "Mallorca", tripCityId: 1267 }, // Palma de Mallorca
-        { name: "Ibiza", tripCityId: 1768 },
-        { name: "Menorca", tripCityId: 1772 },
-        { name: "Gran Canaria", tripCityId: 1269 },
-        { name: "Teneriffa", tripCityId: 3508 }, // Santa Cruz de Tenerife
-        { name: "Fuerteventura", tripCityId: 9513 }, // Corralejo
-        { name: "Lanzarote", tripCityId: 1766 },
-        { name: "Kreta", tripCityId: 6890 }, // Heraklion
-        { name: "Rhodos", tripCityId: 3570 },
-        { name: "Korfu", tripCityId: 5046 },
-        { name: "Santorin", tripCityId: 3576 },
-        { name: "Mykonos", tripCityId: 42294 },
-        { name: "Sardinien", tripCityId: 1432 }, // Cagliari
-        { name: "Sizilien", tripCityId: 3640 }, // Palermo
-        { name: "Malta", tripCityId: 1214 }, // Valletta
-        { name: "Zypern", tripCityId: 3291 }, // Paphos
-        { name: "Madeira", tripCityId: 3298 }, // Funchal
-        { name: "Algarve", tripCityId: 3725 }, // Albufeira
-        { name: "Côte d'Azur", tripCityId: 775 }, // Nizza
-        { name: "Toskana", tripCityId: 687 }, // Florenz
-        { name: "Larnaka", tripCityId: 40316 },
-        { name: "Paphos", tripCityId: 3291 }, // gleiche ID wie „Zypern"
-        { name: "Kos", tripCityId: 7159 },
-        { name: "Zakynthos", tripCityId: 6565 },
+        { name: "Mallorca", tripCityId: 1267, skyscannerCode: "pmi" }, // Palma de Mallorca
+        { name: "Ibiza", tripCityId: 1768, skyscannerCode: "ibz" },
+        { name: "Menorca", tripCityId: 1772, skyscannerCode: "mah" },
+        { name: "Gran Canaria", tripCityId: 1269, skyscannerCode: "lpa" },
+        { name: "Teneriffa", tripCityId: 3508, skyscannerCode: "tfs" }, // Santa Cruz de Tenerife, Skyscanner: Teneriffa Süd
+        { name: "Fuerteventura", tripCityId: 9513, skyscannerCode: "fue" }, // Corralejo
+        { name: "Lanzarote", tripCityId: 1766, skyscannerCode: "ace" },
+        { name: "Kreta", tripCityId: 6890, skyscannerCode: "her" }, // Heraklion
+        { name: "Rhodos", tripCityId: 3570, skyscannerCode: "rho" },
+        { name: "Korfu", tripCityId: 5046, skyscannerCode: "cfu" },
+        { name: "Santorin", tripCityId: 3576, skyscannerCode: "jtr" },
+        { name: "Mykonos", tripCityId: 42294, skyscannerCode: "jmk" },
+        { name: "Sardinien", tripCityId: 1432, skyscannerCode: "cag" }, // Cagliari
+        { name: "Sizilien", tripCityId: 3640, skyscannerCode: "pmo" }, // Palermo
+        { name: "Malta", tripCityId: 1214, skyscannerCode: "mla" }, // Valletta
+        { name: "Zypern", tripCityId: 3291, skyscannerCode: "lca" }, // Paphos, Skyscanner: Larnaka
+        { name: "Madeira", tripCityId: 3298, skyscannerCode: "fnc" }, // Funchal
+        { name: "Algarve", tripCityId: 3725, skyscannerCode: "fao" }, // Albufeira, Skyscanner: Faro
+        { name: "Côte d'Azur", tripCityId: 775, skyscannerCode: "nce" }, // Nizza
+        { name: "Toskana", tripCityId: 687, skyscannerCode: "psa" }, // Florenz, Skyscanner: Pisa
+        { name: "Larnaka", tripCityId: 40316, skyscannerCode: "lca" },
+        { name: "Paphos", tripCityId: 3291, skyscannerCode: "pfo" }, // gleiche ID wie „Zypern"
+        { name: "Kos", tripCityId: 7159, skyscannerCode: "kgs" },
+        { name: "Zakynthos", tripCityId: 6565, skyscannerCode: "zth" },
         // Türkische Mittelmeerziele – hier statt unter „Naher Osten", weil sie
         // touristisch zu dieser Gruppe gehören und Istanbul ebenfalls unter
         // „Europa – Städte" steht.
-        { name: "Antalya", tripCityId: 1217 },
-        { name: "Bodrum", tripCityId: 1761 },
+        { name: "Antalya", tripCityId: 1217, skyscannerCode: "ayt" },
+        { name: "Bodrum", tripCityId: 1761, skyscannerCode: "bjv" },
         // Internationale Fernziele – Nordamerika
-        { name: "New York", tripCityId: 633 },
-        { name: "Los Angeles", tripCityId: 347 },
-        { name: "San Francisco", tripCityId: 313 },
-        { name: "Las Vegas", tripCityId: 26282 },
-        { name: "Miami", tripCityId: 25773 },
-        { name: "Chicago", tripCityId: 549 },
-        { name: "Boston", tripCityId: 26848 },
-        { name: "Washington, D.C.", tripCityId: 26363 },
-        { name: "Seattle", tripCityId: 511 },
-        { name: "Orlando", tripCityId: 1187 },
-        { name: "Honolulu", tripCityId: 757 },
-        { name: "Toronto", tripCityId: 461 },
-        { name: "Vancouver", tripCityId: 476 },
-        { name: "Montreal", tripCityId: 759 },
+        { name: "New York", tripCityId: 633, skyscannerCode: "jfk" },
+        { name: "Los Angeles", tripCityId: 347, skyscannerCode: "lax" },
+        { name: "San Francisco", tripCityId: 313, skyscannerCode: "sfo" },
+        { name: "Las Vegas", tripCityId: 26282, skyscannerCode: "las" },
+        { name: "Miami", tripCityId: 25773, skyscannerCode: "mia" },
+        { name: "Chicago", tripCityId: 549, skyscannerCode: "ord" },
+        { name: "Boston", tripCityId: 26848, skyscannerCode: "bos" },
+        { name: "Washington, D.C.", tripCityId: 26363, skyscannerCode: "iad" },
+        { name: "Seattle", tripCityId: 511, skyscannerCode: "sea" },
+        { name: "Orlando", tripCityId: 1187, skyscannerCode: "mco" },
+        { name: "Honolulu", tripCityId: 757, skyscannerCode: "hnl" },
+        { name: "Toronto", tripCityId: 461, skyscannerCode: "yyz" },
+        { name: "Vancouver", tripCityId: 476, skyscannerCode: "yvr" },
+        { name: "Montreal", tripCityId: 759, skyscannerCode: "yul" },
         // Internationale Fernziele – Mittel- und Südamerika
-        { name: "Mexiko-Stadt", tripCityId: 691 },
-        { name: "Cancún", tripCityId: 812 },
+        { name: "Mexiko-Stadt", tripCityId: 691, skyscannerCode: "mex" },
+        { name: "Cancún", tripCityId: 812, skyscannerCode: "cun" },
         // Havanna: ID 690 zeigt zwar korrekt "Havanna", liefert aus dem
         // deutschen Markt heraus aber 0 buchbare Unterkünfte – daher null.
-        { name: "Havanna", tripCityId: null },
-        { name: "Punta Cana", tripCityId: 5677 },
-        { name: "Rio de Janeiro", tripCityId: 769 },
-        { name: "São Paulo", tripCityId: 415 },
-        { name: "Buenos Aires", tripCityId: 807 },
-        { name: "Santiago de Chile", tripCityId: 852 },
-        { name: "Lima", tripCityId: 837 },
-        { name: "Bogotá", tripCityId: 824 },
-        { name: "Cartagena", tripCityId: 5123 },
+        { name: "Havanna", tripCityId: null, skyscannerCode: "hav" },
+        { name: "Punta Cana", tripCityId: 5677, skyscannerCode: "puj" },
+        { name: "Rio de Janeiro", tripCityId: 769, skyscannerCode: "gig" },
+        { name: "São Paulo", tripCityId: 415, skyscannerCode: "gru" },
+        { name: "Buenos Aires", tripCityId: 807, skyscannerCode: "eze" },
+        { name: "Santiago de Chile", tripCityId: 852, skyscannerCode: "scl" },
+        { name: "Lima", tripCityId: 837, skyscannerCode: "lim" },
+        { name: "Bogotá", tripCityId: 824, skyscannerCode: "bog" },
+        { name: "Cartagena", tripCityId: 5123, skyscannerCode: "ctg" },
         // Internationale Fernziele – Naher Osten und Afrika
-        { name: "Dubai", tripCityId: 220 },
-        { name: "Abu Dhabi", tripCityId: 766 },
-        { name: "Doha", tripCityId: 1401 },
-        { name: "Maskat", tripCityId: 853 },
-        { name: "Tel Aviv", tripCityId: 462 },
-        { name: "Amman", tripCityId: 1282 },
-        { name: "Beirut", tripCityId: 835 },
-        { name: "Kairo", tripCityId: 332 },
-        { name: "Marrakesch", tripCityId: 1360 },
-        { name: "Kapstadt", tripCityId: 683 },
-        { name: "Nairobi", tripCityId: 825 },
-        { name: "Sansibar", tripCityId: 316972 }, // Zanzibar Town
-        { name: "Hurghada", tripCityId: 3471 },
-        { name: "Sharm el-Sheikh", tripCityId: 36242 },
+        { name: "Dubai", tripCityId: 220, skyscannerCode: "dxb" },
+        { name: "Abu Dhabi", tripCityId: 766, skyscannerCode: "auh" },
+        { name: "Doha", tripCityId: 1401, skyscannerCode: "doh" },
+        { name: "Maskat", tripCityId: 853, skyscannerCode: "mct" },
+        { name: "Tel Aviv", tripCityId: 462, skyscannerCode: "tlv" },
+        { name: "Amman", tripCityId: 1282, skyscannerCode: "amm" },
+        { name: "Beirut", tripCityId: 835, skyscannerCode: "bey" },
+        { name: "Kairo", tripCityId: 332, skyscannerCode: "cai" },
+        { name: "Marrakesch", tripCityId: 1360, skyscannerCode: "rak" },
+        { name: "Kapstadt", tripCityId: 683, skyscannerCode: "cpt" },
+        { name: "Nairobi", tripCityId: 825, skyscannerCode: "nbo" },
+        { name: "Sansibar", tripCityId: 316972, skyscannerCode: "znz" }, // Zanzibar Town
+        { name: "Hurghada", tripCityId: 3471, skyscannerCode: "hrg" },
+        { name: "Sharm el-Sheikh", tripCityId: 36242, skyscannerCode: "ssh" },
         // Internationale Fernziele – Asien
-        { name: "Bangkok", tripCityId: 359 },
-        { name: "Phuket", tripCityId: 725 },
-        { name: "Koh Samui", tripCityId: 1229 },
-        { name: "Chiang Mai", tripCityId: 623 },
-        { name: "Bali", tripCityId: 723 },
-        { name: "Singapur", tripCityId: 73 },
-        { name: "Kuala Lumpur", tripCityId: 315 },
-        { name: "Hongkong", tripCityId: 58 },
-        { name: "Shanghai", tripCityId: 2 },
-        { name: "Peking", tripCityId: 1 },
-        { name: "Taipeh", tripCityId: 617 },
-        { name: "Tokio", tripCityId: 228 },
-        { name: "Kyoto", tripCityId: 734 },
-        { name: "Osaka", tripCityId: 219 },
-        { name: "Seoul", tripCityId: 274 },
-        { name: "Hanoi", tripCityId: 286 },
-        { name: "Ho-Chi-Minh-Stadt", tripCityId: 301 },
-        { name: "Hoi An", tripCityId: 1775 },
-        { name: "Da Nang", tripCityId: 1356 },
-        { name: "Siem Reap", tripCityId: 1369 },
-        { name: "Manila", tripCityId: 364 },
-        { name: "Jakarta", tripCityId: 524 },
-        { name: "Delhi", tripCityId: 495 }, // Neu-Delhi
-        { name: "Mumbai", tripCityId: 724 },
-        { name: "Goa", tripCityId: 36125 }, // Panaji
-        { name: "Colombo", tripCityId: 810 },
-        { name: "Kathmandu", tripCityId: 304 },
-        { name: "Malediven", tripCityId: 1207 }, // Malé
-        { name: "Busan", tripCityId: 253 },
-        { name: "Hiroshima", tripCityId: 262 },
-        { name: "Okinawa", tripCityId: 207 },
-        { name: "Fukuoka", tripCityId: 248 },
-        { name: "Kaohsiung", tripCityId: 720 },
-        { name: "Chengdu", tripCityId: 28 },
-        { name: "Xi'an", tripCityId: 10 },
-        { name: "Shenzhen", tripCityId: 30 },
-        { name: "Guangzhou", tripCityId: 32 },
-        { name: "Cebu", tripCityId: 1239 },
-        { name: "Boracay", tripCityId: 1391 },
-        { name: "Palawan", tripCityId: 4089 },
-        { name: "Krabi", tripCityId: 1405 },
-        { name: "Pattaya", tripCityId: 622 },
-        { name: "Phu Quoc", tripCityId: 5649 },
-        { name: "Nha Trang", tripCityId: 1777 },
-        { name: "Langkawi", tripCityId: 1225 },
-        { name: "Penang", tripCityId: 35926 }, // George Town
-        { name: "Lombok", tripCityId: 1392 },
-        { name: "Yogyakarta", tripCityId: 741 },
-        { name: "Luang Prabang", tripCityId: 3677 },
-        { name: "Phnom Penh", tripCityId: 303 },
-        { name: "Jaipur", tripCityId: 3288 },
-        { name: "Agra", tripCityId: 3318 },
+        { name: "Bangkok", tripCityId: 359, skyscannerCode: "bkk" },
+        { name: "Phuket", tripCityId: 725, skyscannerCode: "hkt" },
+        { name: "Koh Samui", tripCityId: 1229, skyscannerCode: "usm" },
+        { name: "Chiang Mai", tripCityId: 623, skyscannerCode: "cnx" },
+        { name: "Bali", tripCityId: 723, skyscannerCode: "dps" },
+        { name: "Singapur", tripCityId: 73, skyscannerCode: "sin" },
+        { name: "Kuala Lumpur", tripCityId: 315, skyscannerCode: "kul" },
+        { name: "Hongkong", tripCityId: 58, skyscannerCode: "hkg" },
+        { name: "Shanghai", tripCityId: 2, skyscannerCode: "pvg" },
+        { name: "Peking", tripCityId: 1, skyscannerCode: "pek" },
+        { name: "Taipeh", tripCityId: 617, skyscannerCode: "tpe" },
+        { name: "Tokio", tripCityId: 228, skyscannerCode: "nrt" },
+        { name: "Kyoto", tripCityId: 734, skyscannerCode: "kix" }, // Skyscanner: Osaka/Kansai
+        { name: "Osaka", tripCityId: 219, skyscannerCode: "kix" },
+        { name: "Seoul", tripCityId: 274, skyscannerCode: "icn" },
+        { name: "Hanoi", tripCityId: 286, skyscannerCode: "han" },
+        { name: "Ho-Chi-Minh-Stadt", tripCityId: 301, skyscannerCode: "sgn" },
+        { name: "Hoi An", tripCityId: 1775, skyscannerCode: "dad" }, // Skyscanner: Da Nang
+        { name: "Da Nang", tripCityId: 1356, skyscannerCode: "dad" },
+        { name: "Siem Reap", tripCityId: 1369, skyscannerCode: "sai" }, // Skyscanner: Siem Reap-Angkor
+        { name: "Manila", tripCityId: 364, skyscannerCode: "mnl" },
+        { name: "Jakarta", tripCityId: 524, skyscannerCode: "cgk" },
+        { name: "Delhi", tripCityId: 495, skyscannerCode: "del" }, // Neu-Delhi
+        { name: "Mumbai", tripCityId: 724, skyscannerCode: "bom" },
+        { name: "Goa", tripCityId: 36125, skyscannerCode: "goi" }, // Panaji
+        { name: "Colombo", tripCityId: 810, skyscannerCode: "cmb" },
+        { name: "Kathmandu", tripCityId: 304, skyscannerCode: "ktm" },
+        { name: "Malediven", tripCityId: 1207, skyscannerCode: "mle" }, // Malé
+        { name: "Busan", tripCityId: 253, skyscannerCode: "pus" },
+        { name: "Hiroshima", tripCityId: 262, skyscannerCode: "hij" },
+        { name: "Okinawa", tripCityId: 207, skyscannerCode: "oka" },
+        { name: "Fukuoka", tripCityId: 248, skyscannerCode: "fuk" },
+        { name: "Kaohsiung", tripCityId: 720, skyscannerCode: "khh" },
+        { name: "Chengdu", tripCityId: 28, skyscannerCode: "ctu" },
+        { name: "Xi'an", tripCityId: 10, skyscannerCode: "xiy" },
+        { name: "Shenzhen", tripCityId: 30, skyscannerCode: "szx" },
+        { name: "Guangzhou", tripCityId: 32, skyscannerCode: "can" },
+        { name: "Cebu", tripCityId: 1239, skyscannerCode: "ceb" },
+        { name: "Boracay", tripCityId: 1391, skyscannerCode: "mph" }, // Skyscanner: Caticlan
+        { name: "Palawan", tripCityId: 4089, skyscannerCode: "pps" }, // Skyscanner: Puerto Princesa
+        { name: "Krabi", tripCityId: 1405, skyscannerCode: "kbv" },
+        { name: "Pattaya", tripCityId: 622, skyscannerCode: "utp" }, // Skyscanner: U-Tapao
+        { name: "Phu Quoc", tripCityId: 5649, skyscannerCode: "pqc" },
+        { name: "Nha Trang", tripCityId: 1777, skyscannerCode: "cxr" }, // Skyscanner: Cam Ranh
+        { name: "Langkawi", tripCityId: 1225, skyscannerCode: "lgk" },
+        { name: "Penang", tripCityId: 35926, skyscannerCode: "pen" }, // George Town
+        { name: "Lombok", tripCityId: 1392, skyscannerCode: "lop" }, // Skyscanner: Praya
+        { name: "Yogyakarta", tripCityId: 741, skyscannerCode: "yia" }, // Skyscanner: Yogyakarta International
+        { name: "Luang Prabang", tripCityId: 3677, skyscannerCode: "lpq" },
+        { name: "Phnom Penh", tripCityId: 303, skyscannerCode: "pnh" },
+        { name: "Jaipur", tripCityId: 3288, skyscannerCode: "jai" },
+        { name: "Agra", tripCityId: 3318, skyscannerCode: null },
         // Internationale Fernziele – Ozeanien
-        { name: "Sydney", tripCityId: 501 },
-        { name: "Melbourne", tripCityId: 358 },
-        { name: "Auckland", tripCityId: 678 },
-        { name: "Fidschi", tripCityId: 791 }, // Nadi
+        { name: "Sydney", tripCityId: 501, skyscannerCode: "syd" },
+        { name: "Melbourne", tripCityId: 358, skyscannerCode: "mel" },
+        { name: "Auckland", tripCityId: 678, skyscannerCode: "akl" },
+        { name: "Fidschi", tripCityId: 791, skyscannerCode: "nan" }, // Nadi
+      ],
+      originLabel: "Abflughafen (optional)",
+      originHint:
+        "Nur für die Skyscanner-Suche. Ohne Angabe sucht Skyscanner ab allen Flughäfen deines Landes und zeigt zuerst die günstigsten Abflugorte. Du kannst auch direkt einen Flughafen-Kürzel wie FRA oder VIE eintippen.",
+      originPlaceholder: "z. B. Frankfurt, München …",
+      // name = angezeigter Vorschlag im Abflughafen-Feld,
+      // code = IATA-Code für den Skyscanner-Link (siehe skyscannerCode oben).
+      originSuggestions: [
+        // Deutschland
+        { name: "Berlin (BER)", code: "ber" },
+        { name: "Bremen (BRE)", code: "bre" },
+        { name: "Dresden (DRS)", code: "drs" },
+        { name: "Düsseldorf (DUS)", code: "dus" },
+        { name: "Frankfurt am Main (FRA)", code: "fra" },
+        { name: "Hamburg (HAM)", code: "ham" },
+        { name: "Hannover (HAJ)", code: "haj" },
+        { name: "Köln/Bonn (CGN)", code: "cgn" },
+        { name: "Leipzig/Halle (LEJ)", code: "lej" },
+        { name: "München (MUC)", code: "muc" },
+        { name: "Nürnberg (NUE)", code: "nue" },
+        { name: "Stuttgart (STR)", code: "str" },
+        // Österreich
+        { name: "Wien (VIE)", code: "vie" },
+        { name: "Salzburg (SZG)", code: "szg" },
+        { name: "Innsbruck (INN)", code: "inn" },
+        { name: "Graz (GRZ)", code: "grz" },
+        { name: "Linz (LNZ)", code: "lnz" },
+        // Schweiz
+        { name: "Zürich (ZRH)", code: "zrh" },
+        { name: "Genf (GVA)", code: "gva" },
+        { name: "Basel (BSL)", code: "bsl" },
+        { name: "Bern (BRN)", code: "brn" },
       ],
       flightsButton: "Flüge",
-      flightsTitle: "Flugsuche für diesen Zeitraum öffnen (Google Flights). Ohne Reiseziel oben öffnet sich nur die Startseite ohne Vorbefüllung.",
+      flightsTitle: "Flugsuche für diesen Zeitraum öffnen – wahlweise bei Google Flights oder Skyscanner.",
+      flights: {
+        dialogTitle: "Flüge suchen",
+        dialogAriaLabel: "Portal für die Flugsuche wählen",
+        subtitle: (p) => (p.destination ? `${p.range} · ${p.destination}` : p.range),
+        googleOption: "Google Flights",
+        skyscannerOption: "Skyscanner",
+        noDestinationHint:
+          "Ohne Reiseziel öffnet sich nur die Startseite des Portals ohne Vorbefüllung.",
+        skyscannerNoCodeHint:
+          "Skyscanner kennt für dieses Reiseziel keinen Flughafen – dort öffnet sich nur die Startseite ohne Vorbefüllung. Der Link zu Google Flights bleibt vorausgefüllt.",
+        noOriginHint:
+          "Ohne Abflughafen zeigt Skyscanner zuerst die günstigsten Abflugorte in deinem Land zur Auswahl.",
+        cancelButton: "Abbrechen",
+      },
       bookingButton: "Unterkunft",
       bookingTitle: "Unterkunftssuche für diesen Zeitraum öffnen – wahlweise bei Booking.com oder Trip.com.",
       accommodation: {

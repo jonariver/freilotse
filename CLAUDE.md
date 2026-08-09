@@ -54,7 +54,7 @@ innerhalb von `app.jsx` unverändert (keine Umbenennungen).
 | `js/local-plans.js` | `window.FREILOTSE.localPlans` | Reine Speicherhülle für mehrere benannte, lokal gespeicherte Pläne (siehe Abschnitt „Lokales Speichern mehrerer Pläne" unten). `STORAGE_KEY`, `MAX_PLANS`, `makeId()`, `makePlan()`, `findPlan()`, `parseStore()`, `serializeStore()`, `addPlan()`, `updatePlanPayload()`, `renamePlan()`, `removePlan()`, `setActivePlanId()`. Kein `localStorage`-Zugriff im Modul selbst (bleibt in `app.jsx`). |
 | `js/puzzle.js` | `window.FREILOTSE.puzzle` | Deterministische Erzeugung des täglichen Brückentage-Rätsels (siehe Abschnitt „Brückentage-Rätsel des Tages" unten). `generateDailyPuzzle()`, `longestFreeRun()`, `buildEmojiWindow()`, `puzzleNumber()`, `isFreeDay()` sowie die nach Veröffentlichung eingefrorenen Konstanten `STATE_CODES`, `LAUNCH_DATE_KEY`, `MAX_ATTEMPTS`, `QUALITY_MARGIN`, `EMOJI_WINDOW_SIZE`. **Einzige Ausnahme** von der sonst abhängigkeitsfreien Modul-Reihenfolge: setzt `window.FREILOTSE.calendar` und `window.FREILOTSE.planning` voraus. |
 | `js/puzzle-stats.js` | `window.FREILOTSE.puzzleStats` | Reine Speicherhülle für die Rätsel-Statistik (Streak, Verlauf) – Muster identisch zu `js/local-plans.js`. `STORAGE_KEY`, `MAX_HISTORY`, `defaultStats()`, `parseStats()`, `serializeStats()`, `yesterdayKey()`, `hasPlayedToday()`, `getTodayResult()`, `recordResult()`. |
-| `jsx/common-components.jsx` | `window.FREILOTSE.ui` | `CollapsibleCard`, `InfoHint`. |
+| `jsx/common-components.jsx` | `window.FREILOTSE.ui` | `CollapsibleCard`, `InfoHint`, `PortalChoiceDialog` (gemeinsame Hülle der Flug-/Unterkunfts-Portalauswahl, siehe Abschnitt „Trip-Links"). |
 | `jsx/support-components.jsx` | `window.FREILOTSE.ui` | `internalNavigate`, `SiteLink`, `HeartIcon`, `SupportFooterLink`, `SupportFloatingButton`, `SiteFooter` (Site-Chrome + PayPal-Unterstützung, eng gekoppelt). |
 | `jsx/landing-page.jsx` | `window.FREILOTSE.ui` | `ExplainerVideoSection`, `LandingPage`. Nutzt `SiteFooter` aus `support-components.jsx`. |
 | `jsx/legal-pages.jsx` | `window.FREILOTSE.ui` | `LegalLayout`, `LegalSection`, `ExternalLegalLink`, `ProviderDetailsImage`, `ImpressumPage`, `DatenschutzPage`. Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx`. |
@@ -611,23 +611,37 @@ unverändert – die Erweiterung fließt ausschließlich in die Darstellung des
 letzten Listeneintrags ein. Export (ICS/Google) dieses Zeitraums schließt
 den sicheren Anhang mit ein, nicht die hypothetische Verlängerung.
 
-## Trip-Links (Flüge/Unterkunft) und Trip.com-Stadt-IDs
+## Trip-Links (Flüge/Unterkunft), Trip.com-Stadt-IDs und Skyscanner-Codes
 
 ### Zweck und Sichtbarkeit
 Bei freien Zeiträumen ab `TRIP_LINKS_MIN_LEN = 3` zusammenhängenden Tagen
 (`app.jsx`) zeigt die Zeitraum-Liste zusätzlich die Schaltflächen „Flüge" und
 „Unterkunft". Ein optionales Reiseziel-Freitextfeld (`tripDestination`, pro
 Zeitraum überschreibbar via `perPeriodDestination`, aufgelöst durch
-`effectiveDestination(p)`) füllt die Ziel-Portale vor. Beide States sind
-bewusst **rein UI-lokal**: nicht im Share-Link, nicht in gespeicherten Plänen.
+`effectiveDestination(p)`) füllt die Ziel-Portale vor; daneben steht ein
+optionales Abflughafen-Feld (`tripOrigin`), das **nur** Skyscanner betrifft.
+Alle drei States sind bewusst **rein UI-lokal**: nicht im Share-Link, nicht in
+gespeicherten Plänen.
 
-### „Unterkunft" führt zu einer Portal-Auswahl
-„Unterkunft" ist **kein Link**, sondern öffnet einen Dialog (State
-`accDialogIdx` = Index in `result.periods`, `null` = zu; Index statt Objekt,
-damit ein neu berechneter Plan keinen veralteten Zeitraum festhält). Der
-Dialog bietet Booking.com und Trip.com als echte `<a target="_blank">`-Links
-an, damit Neuer-Tab/Mittelklick erhalten bleiben. Die Wahl wird **nicht**
-gespeichert – bei jedem Klick wird neu gefragt.
+`tripOrigin` gibt es bewusst **nur global** und ohne Per-Zeitraum-Überschreibung
+(anders als das Reiseziel): der Abflughafen ändert sich übers Jahr in aller
+Regel nicht, das Reiseziel schon.
+
+### Beide Buttons führen zu einer Portal-Auswahl
+Weder „Flüge" noch „Unterkunft" ist ein Link; beide öffnen einen Dialog
+(States `flightsDialogIdx` bzw. `accDialogIdx` = Index in `result.periods`,
+`null` = zu; Index statt Objekt, damit ein neu berechneter Plan keinen
+veralteten Zeitraum festhält). Die Wahl wird **nicht** gespeichert – bei jedem
+Klick wird neu gefragt.
+
+Beide Dialoge rendern über dieselbe Komponente `PortalChoiceDialog`
+(`jsx/common-components.jsx`, Namespace `window.FREILOTSE.ui`). Sie ist
+absichtlich generisch: Optionen kommen als Liste `{ key, label, href }` herein,
+alle Texte als fertige Strings – die Komponente kennt weder Portale noch
+Zeiträume. Die Optionen **müssen** echte `<a target="_blank">`-Links bleiben,
+damit Neuer-Tab/Mittelklick funktionieren. Den gemeinsamen Datumsbereich für
+beide Dialoge liefert `dialogRange(idx)` in `app.jsx` (identische Darstellung
+wie die Zeitraum-Listenzeile, inklusive Jahreswechsel-Erweiterung).
 
 ### Warum Trip.com eine ID-Tabelle braucht
 Booking.com akzeptiert einen Freitext-Zielort (`&ss=<Ort>`). **Trip.com nicht:**
@@ -680,9 +694,86 @@ Das ist eine bewusste Abwägung: ein brauchbarer Startpunkt in der richtigen
 Region schlägt „gar keine Vorbefüllung". Booking.com erhält in diesen Fällen
 weiterhin den vollen Regionsnamen als Freitext und sucht daher regionsweit.
 
+### Skyscanner: Ortscodes im URL-Pfad
+Skyscanner verhält sich wie Trip.com, nur strenger – es versteht **keinen
+Freitext** und verlangt zusätzlich einen **Abflugort**:
+
+```
+https://www.skyscanner.de/transport/fluge/<von>/<nach>/<JJMMTT>/<JJMMTT>/
+```
+
+- `<nach>`: IATA-Code aus `skyscannerCode` in `results.destinationSuggestions`.
+  Ohne Code öffnet `skyscannerUrl()` bewusst nur
+  `https://www.skyscanner.de/transport/fluge/` **ohne** Vorbefüllung – dasselbe
+  dokumentierte Prinzip wie `tripUrl()` ohne Stadt-ID.
+- `<von>`: `originCode()` in `app.jsx`, Reihenfolge **bekannter Vorschlag aus
+  `results.originSuggestions` → direkt eingetipptes Kürzel (`/^[a-z]{3}$/`) →
+  Länder-Code des gewählten Landes** (`de`/`at`/`ch`). Skyscanner akzeptiert
+  Länder als Abflugort und zeigt dann eine Browse-Ansicht mit den günstigsten
+  Abflugorten des Landes – **genau deshalb** darf das Abflughafen-Feld optional
+  bleiben. Der Dialog weist per `results.flights.noOriginHint` darauf hin.
+- Datumsformat **JJMMTT** (nicht JJJJMMTT). Der Rückreisetag ist der **letzte
+  freie Tag**, nicht das exklusive `dtEnd` aus `exportInfo()`; deshalb bekommt
+  `skyscannerUrl()` – wie `googleFlightsUrl()` – Tagesobjekte statt eines
+  Zeitraums, plus ein `endYear` für die Jahreswechsel-Erweiterung
+  (`ymdOf(day, yr)` hat dafür einen optionalen Jahresparameter).
+
+`skyscannerCode: null` ist ein **gültiger, dokumentierter Zustand** für Ziele
+ohne Linienflughafen (Rügen, Heidelberg, Zermatt, Brügge, Agra …) – aktuell 27
+von 208 Einträgen.
+
+### Verbindliche Regel für neue oder geänderte Skyscanner-Codes
+Auch diese Codes werden **niemals geraten**. Der Trip.com-Weg (Code direkt auf
+der Portalseite gegenprüfen) funktioniert hier jedoch **nicht zuverlässig**:
+Skyscanner steht hinter einem aggressiven Bot-Schutz (PerimeterX). `curl`,
+`WebFetch` und ein Headless-Browser bekommen ausschließlich die Captcha-Seite;
+selbst ein sichtbarer Browser mit persistentem Profil kommt nur wenige Abrufe
+weit, bevor die Session geflaggt wird. Ebenso gesperrt: die Autosuggest-API
+`/g/autosuggest-search/api/v1/search-flight`.
+
+Deshalb gilt ein zweistufiges Verfahren mit **anderer** Grundwahrheit:
+
+1. **Zuordnen gegen einen autoritativen Datensatz (Pflicht):** IATA-Code über
+   den frei verfügbaren OurAirports-Datensatz auflösen
+   (`https://davidmegginson.github.io/ourairports-data/airports.csv`) und
+   bestätigen, dass `municipality`/`name`, `iso_country` und `type`
+   (`large_airport`/`medium_airport`) zum gemeinten Ort passen. Das fängt genau
+   die Fehlerklasse ab, die bei den Trip.com-IDs auffiel (richtig aussehender
+   Code, falscher Ort/falsches Land).
+2. **Stichprobe gegen Skyscanner:** einige Codes über die Browse-Ansicht
+   `…/transport/fluge/de/<code>/<JJMMTT>/<JJMMTT>/` in einem **sichtbaren**
+   Browser prüfen und bestätigen, dass die Kopfzeile den erwarteten Ort zeigt
+   („Deutschland (DE) – Palma de Mallorca (PMI)"). Flächendeckend ist das
+   wegen des Bot-Schutzes nicht möglich und auch nicht nötig, da Schritt 1 die
+   Zuordnung bereits belegt.
+
+Veraltete Codes sind eine reale Fehlerquelle und fallen nur in Schritt 1 auf –
+bei der erstmaligen Pflege betraf das Siem Reap (`rep` stillgelegt → `sai`) und
+Yogyakarta (`jog` → neuer Großflughafen `yia`).
+
+### Bewusst nur Einzelflughäfen, keine Metropol-Codes
+Für Städte mit mehreren Flughäfen (London, Paris, New York, Tokio …) steht
+bewusst **ein konkreter Flughafen** (`lhr`, `cdg`, `jfk`, `nrt`) und **kein**
+Sammel-/Metropolcode. Sammelcodes ließen sich mit Schritt 1 nicht belegen
+(OurAirports führt nur Flughäfen, keine IATA-Stadtcodes) und mit Schritt 2
+wegen des Bot-Schutzes nicht flächendeckend prüfen. Bewusst in Kauf genommener
+Nachteil: Abflüge ab Zweitflughäfen (z. B. London Stansted) tauchen in der
+vorbefüllten Suche nicht auf. Wird der Bot-Schutz einmal umgehbar, können
+Metropolcodes nach Schritt 2 nachgezogen werden.
+
+Bei Inseln/Regionen ohne eigenen Flughafen steht der touristische
+Hauptflughafen (Zeilenkommentar „Skyscanner: …"), z. B. Sardinien → Cagliari,
+Sizilien → Palermo, Toskana → Pisa, Côte d'Azur → Nizza, Malediven → Malé,
+Fidschi → Nadi, Kyoto → Osaka/Kansai. Gleiche Abwägung wie bei den
+Trip.com-IDs: ein brauchbarer Startpunkt in der richtigen Region schlägt „gar
+keine Vorbefüllung".
+
 ### Bewusst nicht enthalten
 Keine Affiliate-/Partner-IDs in den erzeugten Links (weder Booking.com noch
-Trip.com) – die Links sind reine, nicht monetarisierte Deeplinks.
+Trip.com noch Skyscanner) – die Links sind reine, nicht monetarisierte
+Deeplinks. Insbesondere wird **nicht** der Skyscanner-Referral-Endpunkt
+(`/g/referrals/v1/flights/day-view` mit `mediaPartnerId`) verwendet, sondern
+die normale Konsumenten-URL.
 
 ## Brückentage-Rätsel des Tages (`/raetsel`)
 
