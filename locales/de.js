@@ -461,7 +461,7 @@
           title: "Flüge jetzt wahlweise bei Google Flights oder Skyscanner",
           items: [
             "Ein Klick auf „Flüge\" fragt jetzt zuerst, wo du suchen möchtest – bei Google Flights oder bei Skyscanner. Genau wie schon bei „Unterkunft\".",
-            "Neues optionales Feld „Abflughafen\": Trägst du dort z. B. Frankfurt ein, sucht Skyscanner direkt ab diesem Flughafen. Ohne Angabe zeigt Skyscanner zuerst die günstigsten Abflugorte in deinem Land.",
+            "Neues Feld „Abflughafen\": vorbelegt mit dem nächsten größeren Flughafen zu deinem Bundesland bzw. Kanton, aber jederzeit überschreibbar. Leerst du es, zeigt Skyscanner zuerst die günstigsten Abflugorte in deinem Land.",
             "Kennt Skyscanner für ein eingetipptes Reiseziel keinen Flughafen, sagt der Dialog das offen – der Link zu Google Flights bleibt dann trotzdem vorausgefüllt.",
           ],
         },
@@ -1132,7 +1132,7 @@
       ],
       originLabel: "Abflughafen (optional)",
       originHint:
-        "Nur für die Skyscanner-Suche. Ohne Angabe sucht Skyscanner ab allen Flughäfen deines Landes und zeigt zuerst die günstigsten Abflugorte. Du kannst auch direkt einen Flughafen-Kürzel wie FRA oder VIE eintippen.",
+        "Nur für die Skyscanner-Suche. Vorbelegt ist der nächste größere Flughafen zu deinem Bundesland – du kannst ihn jederzeit überschreiben, auch mit einem Kürzel wie FRA oder VIE. Leerst du das Feld, sucht Skyscanner ab allen Flughäfen deines Landes und zeigt zuerst die günstigsten Abflugorte.",
       originPlaceholder: "z. B. Frankfurt, München …",
       // name = angezeigter Vorschlag im Abflughafen-Feld,
       // code = IATA-Code für den Skyscanner-Link (siehe skyscannerCode oben).
@@ -1156,12 +1156,40 @@
         { name: "Innsbruck (INN)", code: "inn" },
         { name: "Graz (GRZ)", code: "grz" },
         { name: "Linz (LNZ)", code: "lnz" },
+        { name: "Klagenfurt (KLU)", code: "klu" },
         // Schweiz
         { name: "Zürich (ZRH)", code: "zrh" },
         { name: "Genf (GVA)", code: "gva" },
         { name: "Basel (BSL)", code: "bsl" },
         { name: "Bern (BRN)", code: "brn" },
       ],
+      // Vorbelegung des Abflughafen-Felds je Bundesland/Kanton. Bewusst NICHT
+      // streng „der geografisch nächste Flughafen", sondern der nächste mit
+      // nennenswertem Linienverkehr – ein Vorschlag ohne Flüge wäre für die
+      // Suche wertlos. Deshalb z. B. Mecklenburg-Vorpommern -> Hamburg statt
+      // Rostock-Laage und Thüringen -> Leipzig/Halle statt Erfurt.
+      // In der Schweiz führen die meisten Kantone auf Zürich, im Westen auf
+      // Genf und im Nordwesten auf Basel; das Feld bleibt frei änderbar.
+      // Schlüssel sind die sprachunabhängigen Bundesland-/Kantonscodes (siehe
+      // states), Werte die IATA-Codes aus originSuggestions.
+      originByState: {
+        DE: {
+          BW: "str", BY: "muc", BE: "ber", BB: "ber", HB: "bre", HH: "ham",
+          HE: "fra", MV: "ham", NI: "haj", NW: "dus", RP: "fra", SL: "fra",
+          SN: "lej", ST: "lej", SH: "ham", TH: "lej",
+        },
+        AT: {
+          BL: "vie", "KÄ": "klu", "NÖ": "vie", "OÖ": "lnz", SB: "szg",
+          SM: "grz", TI: "inn", VA: "zrh", WI: "vie",
+        },
+        CH: {
+          AG: "zrh", AI: "zrh", AR: "zrh", BE: "zrh", BL: "bsl", BS: "bsl",
+          FR: "gva", GE: "gva", GL: "zrh", GR: "zrh", JU: "bsl", LU: "zrh",
+          NE: "gva", NW: "zrh", OW: "zrh", SG: "zrh", SH: "zrh", SO: "bsl",
+          SZ: "zrh", TG: "zrh", TI: "zrh", UR: "zrh", VD: "gva", VS: "gva",
+          ZG: "zrh", ZH: "zrh",
+        },
+      },
       flightsButton: "Flüge",
       flightsTitle: "Flugsuche für diesen Zeitraum öffnen – wahlweise bei Google Flights oder Skyscanner.",
       flights: {

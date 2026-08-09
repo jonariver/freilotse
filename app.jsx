@@ -55,6 +55,18 @@ const SKYSCANNER_CODES = new Map(
 const ORIGIN_CODES = new Map(
   t("results.originSuggestions").map((o) => [o.name.trim().toLowerCase(), o.code])
 );
+// Rückrichtung für die Vorbelegung: IATA-Code -> angezeigter Name, damit im
+// Feld "Frankfurt am Main (FRA)" statt eines nackten "fra" steht.
+const ORIGIN_NAMES = new Map(
+  t("results.originSuggestions").map((o) => [o.code, o.name])
+);
+// Vorbelegung des Abflughafens aus Land + Bundesland/Kanton. Fällt der Code aus
+// results.originByState einmal nicht in originSuggestions, wird er unverändert
+// eingetragen – originCode() akzeptiert ein dreistelliges Kürzel direkt.
+const defaultOriginFor = (country, st) => {
+  const code = (t("results.originByState")[country] ?? {})[st];
+  return code ? (ORIGIN_NAMES.get(code) ?? code) : "";
+};
 
 /* ------------------------------------------------------------------ */
 /* Ausgelagerte Module (kein Modulsystem -> window.FREILOTSE.*-Namespaces, */
@@ -331,7 +343,17 @@ function Urlaubsplaner({ onPlanReady }) {
   // Optionaler Abflughafen – nur für Skyscanner relevant (Google Flights leitet
   // den Startpunkt selbst ab). Bewusst nur global und ohne Per-Zeitraum-
   // Überschreibung: der Abflughafen ändert sich übers Jahr typischerweise nicht.
-  const [tripOrigin, setTripOrigin] = useState("");
+  // Vorbelegt aus Land + Bundesland/Kanton; sobald der Nutzer das Feld selbst
+  // anfasst, wird nicht mehr nachgeführt (siehe originTouched).
+  const [tripOrigin, setTripOrigin] = useState(() => defaultOriginFor(country, st));
+  const originTouched = useRef(false);
+  // Wechselt das Bundesland/Land, zieht die Vorbelegung nach – aber nur, solange
+  // der Nutzer das Feld nicht selbst angefasst hat. Ein bewusst geleertes Feld
+  // (Skyscanner sucht dann landesweit) bleibt deshalb ebenfalls leer.
+  useEffect(() => {
+    if (originTouched.current) return;
+    setTripOrigin(defaultOriginFor(country, st));
+  }, [country, st]);
   // Index des Zeitraums, für den der Unterkunfts- bzw. Flug-Dialog offen ist
   // (null = zu). Bewusst der Index statt des Zeitraum-Objekts – wie bei
   // dialogDay –, damit ein zwischenzeitlich neu berechneter Plan keinen
@@ -2382,7 +2404,8 @@ function Urlaubsplaner({ onPlanReady }) {
                   </label>
                   <input id="trip-origin" type="text" className={inputCls}
                     list={tripOrigin.trim().length >= 2 ? "origin-suggestions" : undefined}
-                    value={tripOrigin} onChange={(e) => setTripOrigin(e.target.value)}
+                    value={tripOrigin}
+                    onChange={(e) => { originTouched.current = true; setTripOrigin(e.target.value); }}
                     placeholder={t("results.originPlaceholder")} />
                   <datalist id="origin-suggestions">
                     {t("results.originSuggestions").map((o) => (

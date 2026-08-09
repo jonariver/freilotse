@@ -627,6 +627,26 @@ gespeicherten Plänen.
 (anders als das Reiseziel): der Abflughafen ändert sich übers Jahr in aller
 Regel nicht, das Reiseziel schon.
 
+### Vorbelegung des Abflughafens
+`tripOrigin` startet **nicht leer**, sondern mit dem Vorschlag aus
+`results.originByState` (`locales/de.js`), aufgelöst über `defaultOriginFor()`
+in `app.jsx` – Schlüssel sind die sprachunabhängigen Bundesland-/Kantonscodes,
+Werte IATA-Codes aus `originSuggestions`. Ins Feld geschrieben wird der
+**Anzeigename** („Frankfurt am Main (FRA)"), nicht das nackte Kürzel; dafür
+gibt es die Rückrichtung `ORIGIN_NAMES`.
+
+Die Zuordnung ist bewusst **nicht** streng „geografisch nächster Flughafen",
+sondern „nächster Flughafen mit nennenswertem Linienverkehr" – ein Vorschlag
+ohne Flüge wäre für die Suche wertlos. Daher z. B. Mecklenburg-Vorpommern →
+Hamburg (statt Rostock-Laage) und Thüringen → Leipzig/Halle (statt Erfurt).
+
+Ein `useEffect` auf `[country, st]` zieht die Vorbelegung bei einem Wechsel
+nach, **solange `originTouched` (ein `useRef`) false ist**. Sobald der Nutzer
+das Feld selbst anfasst, wird nie wieder überschrieben – auch ein bewusst
+geleertes Feld bleibt leer (und bedeutet dann: landesweite Suche). Ein `useRef`
+statt eines States, weil die Information nur den Effekt steuert und kein
+Re-Render auslösen soll.
+
 ### Beide Buttons führen zu einer Portal-Auswahl
 Weder „Flüge" noch „Unterkunft" ist ein Link; beide öffnen einen Dialog
 (States `flightsDialogIdx` bzw. `accDialogIdx` = Index in `result.periods`,
