@@ -795,6 +795,31 @@ Deeplinks. Insbesondere wird **nicht** der Skyscanner-Referral-Endpunkt
 (`/g/referrals/v1/flights/day-view` mit `mediaPartnerId`) verwendet, sondern
 die normale Konsumenten-URL.
 
+**Kein Gepäck (Handgepäck/Aufgabegepäck) in den Flug-Links.** Das ist keine
+Lücke, sondern geprüft und verworfen – nicht erneut versuchen:
+
+- **Google Flights: aktiv schädlich.** Der `?q=`-Freitextparser verwirft bei
+  jeder Gepäck-Formulierung die **komplette** Anfrage und landet auf der leeren
+  „Entdecken"-Seite. Getestet und reproduziert mit `… with carry-on bag and 1
+  checked bag`, `… with carry-on` und `… with 1 bag`; ohne den Zusatz liefert
+  dieselbe Anfrage einwandfrei Treffer. Gleiche Fehlerklasse wie die oben
+  dokumentierte Jahresangabe. Ein Gepäck-Zusatz würde also die funktionierende
+  Vorbefüllung zerstören, ohne selbst anzukommen.
+- **Skyscanner: nicht vorgesehen.** Die dokumentierte Parameterliste
+  (`developers.skyscanner.net/docs/referrals/flights-parameters`) umfasst
+  `origin`, `destination`, `outboundDate`, `inboundDate`, `adultsv2`,
+  `childrenv2`, `cabinclass`, `preferDirects`, `sortby`, `airlines`,
+  `alliances` – **kein** Gepäck. Das separate „Baggage and Additional
+  Attributes" beschreibt Gepäck als Attribut in *API-Antworten*, nicht als
+  Filter im Link; der Gepäck-Filter existiert nur als Zustand in der
+  Ergebnisliste.
+
+Übergebbar wäre bei Skyscanner allenfalls `cabinclass`
+(`economy`/`premiumeconomy`/`business`/`first`). Ob der Parameter auch auf der
+**Konsumenten-URL** greift (und nicht nur auf dem Referral-Endpunkt), ist
+**nicht belegt** und müsste vor einem Einbau wie die Ortscodes verifiziert
+werden. Für Google Flights gibt es keine Entsprechung.
+
 ## Brückentage-Rätsel des Tages (`/raetsel`)
 
 ### Zweck
