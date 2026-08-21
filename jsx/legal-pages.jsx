@@ -62,12 +62,17 @@
         <header className="border-b border-tiefwasser-hell bg-tiefwasser-hell">
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-5">
             <SiteLink to="/" className="font-bold tracking-tight text-sonnencreme hover:text-beckenwasser-hell">FREILOTSE</SiteLink>
-            <SiteLink to="/" className="text-sm text-sonnencreme/80 hover:text-sonnencreme">Zum Urlaubsplaner</SiteLink>
+            <SiteLink to="/" className="text-sm text-sonnencreme/80 hover:text-sonnencreme">{t("legal.backToPlanner")}</SiteLink>
           </div>
         </header>
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
           <article className="rounded-3xl border border-tiefwasser-hell bg-tiefwasser-hell p-5 shadow-warm-dark sm:p-8">
             <h1 className="mb-8 text-3xl font-bold tracking-tight">{title}</h1>
+            {window.I18N.getLocale() === "en" && (
+              <p className="mb-6 rounded-xl border border-tiefwasser-hell/60 bg-tiefwasser px-4 py-3 text-sm text-sonnencreme/80">
+                {t("legal.germanOnlyNotice")}
+              </p>
+            )}
             <div className="space-y-7 text-sm leading-7 text-sonnencreme/80">{children}</div>
           </article>
         </main>

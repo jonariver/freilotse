@@ -93,7 +93,7 @@ const LOCAL_PLANS_STORAGE_KEY = window.FREILOTSE.localPlans.STORAGE_KEY;
 // und jsx/legal-pages.jsx müssen vor app.jsx geladen sein (siehe index.html).
 const {
   CollapsibleCard, InfoHint, PortalChoiceDialog,
-  SiteFooter, SupportFloatingButton,
+  SiteFooter, SupportFloatingButton, LanguageSwitcher,
   LandingPage,
   ImpressumPage, DatenschutzPage,
   AboutPage, ChangelogPage, GuidePage, PuzzlePage,
@@ -208,6 +208,11 @@ function dayTitle(day, selType, st, country, inPeriod) {
 
 function Urlaubsplaner({ onPlanReady }) {
   const currentYear = new Date().getFullYear();
+  // Für die wenigen Stellen, die ein Datum über toLocaleDateString/
+  // toLocaleString formatieren (Tag.Monat-Format wie im Rest der App) –
+  // an die aktive Sprache gekoppelt, kein eigener State nötig (Reload bei
+  // Sprachwechsel, siehe LanguageSwitcher).
+  const dateLocale = window.I18N.getLocale() === "en" ? "en-GB" : "de-DE";
   // Geteilte Planung EINMAL aus dem URL-Fragment lesen, bevor die States
   // initialisiert werden. Das alte #plan=-Format wird synchron dekodiert und
   // fließt direkt in die useState-Initialwerte (kein Flackern, keine Race).
@@ -219,7 +224,40 @@ function Urlaubsplaner({ onPlanReady }) {
     const parsed = frag && frag.type === "plan" ? decodeShare(frag.raw, t("states")) : null;
     sharedRef.current = { frag, parsed, had: !!frag };
   }
-  const shared = sharedRef.current.parsed ? sharedRef.current.parsed.state : null;
+
+  // Übergabe des Eingabezustands nach einem Sprachwechsel (siehe
+  // Sprachumschalter im Header, prepareLocaleSwitch weiter unten): ein
+  // Klick dort speichert den aktuellen Zustand UND die aktuelle Ansicht
+  // (view, siehe unten) synchron in sessionStorage und lädt die Seite neu,
+  // damit die neue Sprache auch für die beim Modul-Laden berechneten
+  // Konstanten (COUNTRIES, STATES, TRIP_CITY_IDS u. Ä.) greift (siehe
+  // CLAUDE.md, Abschnitt "Zentrale technische Entscheidung: Reload statt
+  // Live-Umschaltung"). Hat beim nächsten Laden Vorrang vor Share-Link UND
+  // lokalem Plan – es ist exakt das, was eine Sekunde zuvor auf dem
+  // Bildschirm stand, INKLUSIVE der Landing Page: ein Wechsel dort darf
+  // nicht ungefragt in den Planer springen (anders als bei einem echten
+  // Share-Link/lokalen Plan, wo ein wiederhergestellter Zustand IMMER eine
+  // aktive Planung bedeutet). Kein Toast (interner Kontinuitäts-Mechanismus,
+  // kein "Planung geladen"-Ereignis wie beim Share-Link); die Schlüssel
+  // werden sofort entfernt, damit ein späteres manuelles Neuladen nicht
+  // erneut greift.
+  const localeSwitchRef = useRef(undefined);
+  if (localeSwitchRef.current === undefined) {
+    let restored = null;
+    try {
+      const raw = window.sessionStorage.getItem("freilotse.localeSwitchRestore.v1");
+      const viewRaw = window.sessionStorage.getItem("freilotse.localeSwitchView.v1");
+      if (raw) {
+        window.sessionStorage.removeItem("freilotse.localeSwitchRestore.v1");
+        window.sessionStorage.removeItem("freilotse.localeSwitchView.v1");
+        const validated = validateSharePayload(raw, t("states"));
+        if (validated) restored = { state: validated.state, view: viewRaw === "landing" ? "landing" : "planner" };
+      }
+    } catch (e) { /* z. B. sandboxed Vorschau */ }
+    localeSwitchRef.current = restored;
+  }
+  const shared = localeSwitchRef.current ? localeSwitchRef.current.state
+    : (sharedRef.current.parsed ? sharedRef.current.parsed.state : null);
 
   // Lokal gespeicherte Pläne (localStorage) synchron lesen, bevor die States
   // initialisiert werden – gleiches Muster wie sharedRef oben. Ein Share-Link
@@ -274,10 +312,12 @@ function Urlaubsplaner({ onPlanReady }) {
   // Land-Vorauswahl per IP-/Sprach-Erkennung (bestmöglich, siehe detectCountry
   // in js/data-sources.js) – NUR beim ersten Laden OHNE Share-Link, damit eine
   // bereits geladene geteilte Planung niemals überschrieben wird (gilt für
-  // beide Share-Link-Formate, siehe sharedRef.current.had). Gleiches
-  // ignore-Muster wie bei den übrigen Lade-Effekten weiter unten.
+  // beide Share-Link-Formate, siehe sharedRef.current.had) – und ebenso NICHT
+  // nach einem Sprachwechsel-Reload (localeSwitchRef), sonst würde die
+  // automatische Erkennung das gerade wiederhergestellte Land überschreiben.
+  // Gleiches ignore-Muster wie bei den übrigen Lade-Effekten weiter unten.
   useEffect(() => {
-    if (sharedRef.current.had) return;
+    if (sharedRef.current.had || localeSwitchRef.current) return;
     let ignore = false;
     detectCountry(COUNTRY_CODES).then((detected) => {
       if (ignore || !detected) return;
@@ -371,6 +411,11 @@ function Urlaubsplaner({ onPlanReady }) {
   // schaltet erst nach der asynchronen Validierung auf "planner" (Erfolg)
   // oder "landing" (ungültig/fehlgeschlagen) um (siehe Mount-Effekt unten).
   const [view, setView] = useState(() => {
+    // Sprachwechsel-Reload hat Vorrang und trägt die zuvor angezeigte
+    // Ansicht 1:1 weiter (siehe localeSwitchRef oben) – anders als bei
+    // einem echten Share-Link/lokalen Plan bedeutet wiederhergestellter
+    // Zustand hier NICHT automatisch "aktive Planung".
+    if (localeSwitchRef.current) return localeSwitchRef.current.view;
     if (shared) return "planner";
     if (sharedRef.current.had && sharedRef.current.frag.type === "p") return "loading";
     // Kein Share-Link, aber ein wiederhergestellter lokaler Plan: Landing
@@ -433,13 +478,13 @@ function Urlaubsplaner({ onPlanReady }) {
     setOt(otCalcResult);
   };
 
-  // Dokumenttitel aus der aktiven Locale setzen (aktuell nur Deutsch; der
-  // statische Titel in index.html dient dabei als initialer Fallback, bevor
-  // dieser Effekt beim ersten Render greift). Rein informativ/technisch –
-  // beeinflusst weder Layout noch Planungslogik. Bei einer späteren
-  // Sprachumschaltung muss hier zusätzlich document.documentElement.lang
-  // aktualisiert werden (siehe CLAUDE.md, Abschnitt „Internationalisierung
-  // und UI-Texte").
+  // Dokumenttitel aus der aktiven Locale setzen (der statische Titel in
+  // index.html dient dabei als initialer Fallback, bevor dieser Effekt beim
+  // ersten Render greift). Rein informativ/technisch – beeinflusst weder
+  // Layout noch Planungslogik. document.documentElement.lang wird NICHT
+  // hier, sondern bereits vom Inline-Bootstrap-Script in index.html gesetzt
+  // (läuft vor jedem t()-Aufruf, siehe CLAUDE.md, Abschnitt „Zentrale
+  // technische Entscheidung: Reload statt Live-Umschaltung").
   useEffect(() => {
     document.title = t("common.documentTitle");
 
@@ -768,6 +813,17 @@ function Urlaubsplaner({ onPlanReady }) {
     });
   const shareBaseUrl = () => `${window.location.origin}${window.location.pathname}`;
 
+  // Übergabe an localeSwitchRef (siehe oben) vor einem Sprachwechsel-Reload –
+  // onBeforeSwitch-Prop des LanguageSwitcher in Kopfbereich/LandingPage.
+  // view wird mitgesichert, damit ein Wechsel auf der Landing Page nach dem
+  // Reload NICHT ungefragt in den Planer springt.
+  const prepareLocaleSwitch = () => {
+    try {
+      window.sessionStorage.setItem("freilotse.localeSwitchRestore.v1", JSON.stringify(currentSharePayload()));
+      window.sessionStorage.setItem("freilotse.localeSwitchView.v1", view);
+    } catch (e) { /* z. B. sandboxed Vorschau – Reload verwirft dann unges. Eingaben wie zuvor */ }
+  };
+
   // Synchroner Fallback: unkomprimierter #plan=-Link (immer verfügbar).
   const buildShareUrl = () => `${shareBaseUrl()}#plan=${encodePlain(currentSharePayload())}`;
 
@@ -1019,11 +1075,21 @@ function Urlaubsplaner({ onPlanReady }) {
   // (siehe Zeitraum-Liste); ohne Zielort öffnen beide Links lediglich die
   // jeweilige Startseite ohne Vorbefüllung.
   const toIsoDate = (ymd) => `${ymd.slice(0, 4)}-${ymd.slice(4, 6)}-${ymd.slice(6, 8)}`;
+  // lang/soz/lang_changed: schalten wie hl= bei Google Flights (siehe oben)
+  // ausschließlich die Booking.com-OBERFLÄCHE auf die aktive FREILOTSE-Sprache
+  // um, unabhängig von Booking.com-Konto-/Browsereinstellungen des Besuchers
+  // – manuell gegengeprüft (…&lang=en-gb&soz=1&lang_changed=1 bzw. …&lang=de&
+  // soz=1&lang_changed=1 liefern zuverlässig englische bzw. deutsche
+  // Oberfläche bei identischen Suchergebnissen/Preisen). soz=1 und
+  // lang_changed=1 sind Teil des von Booking.com selbst beim manuellen
+  // Sprachwechsel erzeugten Linkmusters und werden mit übernommen.
+  const bookingLangParams = () =>
+    window.I18N.getLocale() === "en" ? "lang=en-gb&soz=1&lang_changed=1" : "lang=de&soz=1&lang_changed=1";
   const bookingUrl = (p, destination) => {
     const { dtStart, dtEnd } = exportInfo(p);
     const dest = destination.trim();
     return `https://www.booking.com/searchresults.html?checkin=${toIsoDate(dtStart)}&checkout=${toIsoDate(dtEnd)}` +
-      (dest ? `&ss=${encodeURIComponent(dest)}` : "");
+      (dest ? `&ss=${encodeURIComponent(dest)}` : "") + `&${bookingLangParams()}`;
   };
   const tripCityIdFor = (destination) =>
     TRIP_CITY_IDS.get(destination.trim().toLowerCase()) ?? null;
@@ -1050,16 +1116,24 @@ function Urlaubsplaner({ onPlanReady }) {
   // undokumentierten Google-Funktion.
   const EN_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const enMonthDay = (day) => `${EN_MONTHS[day.m]} ${day.d}`;
+  // hl-Parameter: schaltet ausschließlich die Google-Flights-OBERFLÄCHE
+  // (Menüs, Filter, Preisangaben etc.) auf die aktive FREILOTSE-Sprache um,
+  // unabhängig von Google-Konto-/Browsereinstellungen des Besuchers – manuell
+  // im Browser gegengeprüft (…&hl=en / …&hl=de liefern zuverlässig englische
+  // bzw. deutsche Oberfläche bei identischen Ergebnissen). Getrennt vom
+  // q=-Parameter (der bewusst IMMER englisch bleibt, siehe unten) und daher
+  // nicht von dessen Fehleranfälligkeit betroffen.
+  const googleFlightsHl = () => (window.I18N.getLocale() === "en" ? "en" : "de");
   const googleFlightsUrl = (startDay, endDay, destination) => {
     const dest = destination.trim();
-    if (!dest) return "https://www.google.com/travel/flights";
+    if (!dest) return `https://www.google.com/travel/flights?hl=${googleFlightsHl()}`;
     // Bewusst englischsprachig zusammengesetzt (nicht über t()/locale) – das
     // ist kein in FREILOTSE sichtbarer UI-Text, sondern ein technischer
     // URL-Parameter für Google Flights' Textsuche, die nur englische Anfragen
     // zuverlässig erkennt (siehe CLAUDE.md, PRODID-Ausnahme für vergleichbare
     // rein technische, nicht nutzersichtbare Inhalte).
     const query = `Flights to ${dest} on ${enMonthDay(startDay)} through ${enMonthDay(endDay)}`;
-    return `https://www.google.com/travel/flights?q=${encodeURIComponent(query)}`;
+    return `https://www.google.com/travel/flights?q=${encodeURIComponent(query)}&hl=${googleFlightsHl()}`;
   };
   // Abflug-Ortscode für Skyscanner. Reihenfolge: bekannter Vorschlag aus
   // results.originSuggestions -> direkt eingetipptes Flughafen-Kürzel ("fra")
@@ -1086,16 +1160,22 @@ function Urlaubsplaner({ onPlanReady }) {
   // startDay/endDay sind Hin- und Rückreisetag, also der erste und der LETZTE
   // freie Tag – nicht das exklusive dtEnd aus exportInfo(). endYear deckt den
   // Fall ab, dass der Rückreisetag im Folgejahr liegt (Jahreswechsel-Erweiterung).
+  // locale-Parameter: schaltet wie hl= bei Google Flights (siehe oben)
+  // ausschließlich die Skyscanner-OBERFLÄCHE auf die aktive FREILOTSE-Sprache
+  // um, unabhängig vom Browser des Besuchers – manuell gegengeprüft
+  // (…?locale=en / …?locale=de liefern auf skyscanner.de zuverlässig
+  // englische bzw. deutsche Oberfläche bei identischen Ergebnissen/Preisen).
+  const skyscannerLocale = () => (window.I18N.getLocale() === "en" ? "en" : "de");
   const skyscannerUrl = (startDay, endDay, destination, endYear = year) => {
     const code = skyscannerCodeFor(destination);
     // Ohne bekannten Flughafen bewusst nur die Startseite (statt einer Suche,
     // die garantiert ins Leere läuft) – gleiches Prinzip wie tripUrl() ohne
     // Stadt-ID und googleFlightsUrl() ohne Reiseziel.
-    if (!code) return "https://www.skyscanner.de/transport/fluge/";
+    if (!code) return `https://www.skyscanner.de/transport/fluge/?locale=${skyscannerLocale()}`;
     // Skyscanner erwartet die Daten im Pfad als JJMMTT.
     const yymmdd = (day, yr) => ymdOf(day, yr).slice(2);
     return `https://www.skyscanner.de/transport/fluge/${originCode()}/${code}` +
-      `/${yymmdd(startDay, year)}/${yymmdd(endDay, endYear)}/`;
+      `/${yymmdd(startDay, year)}/${yymmdd(endDay, endYear)}/?locale=${skyscannerLocale()}`;
   };
   // Ein VEVENT-Block für einen Zeitraum. stamp wird übergeben (statt selbst
   // berechnet), damit ein Sammel-Export für alle Zeiträume denselben
@@ -1587,7 +1667,7 @@ function Urlaubsplaner({ onPlanReady }) {
                       const vacTipText = vac
                         ? t("calendar.vacationTooltip", {
                             name: vac.name, state: STATES[st],
-                            start: vac.start.toLocaleDateString("de-DE"), end: vac.end.toLocaleDateString("de-DE"),
+                            start: vac.start.toLocaleDateString(dateLocale), end: vac.end.toLocaleDateString(dateLocale),
                           })
                         : null;
                       const titleText = dayTitle(day, selType, st, country, !!periodInfo);
@@ -1781,7 +1861,8 @@ function Urlaubsplaner({ onPlanReady }) {
       ) : view === "landing" ? (
         <LandingPage dark={dark} setDark={setDark} cardCls={cardCls}
           onStartSimple={() => goToPlanner("einfach")}
-          onStartPro={() => goToPlanner("profi")} />
+          onStartPro={() => goToPlanner("profi")}
+          onBeforeLanguageSwitch={prepareLocaleSwitch} />
       ) : (
       <>
       {/* Kopf */}
@@ -1846,6 +1927,7 @@ function Urlaubsplaner({ onPlanReady }) {
             title={t("theme.toggleTitle")}>
             {dark ? t("theme.toLight") : t("theme.toDark")}
           </button>
+          <LanguageSwitcher dark onBeforeSwitch={prepareLocaleSwitch} />
           <div className="text-right">
             <p className="text-4xl font-data font-bold tabular-nums text-sonnenkoralle">{totalFree}</p>
             <p className="text-xs text-sonnencreme/70">
@@ -2824,7 +2906,7 @@ function Urlaubsplaner({ onPlanReady }) {
                       </div>
                       <p className={`text-[11px] ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                         {t("localPlans.modal.updatedAtLabel", {
-                          date: new Date(p.updatedAt).toLocaleString("de-DE", { dateStyle: "medium", timeStyle: "short" }),
+                          date: new Date(p.updatedAt).toLocaleString(dateLocale, { dateStyle: "medium", timeStyle: "short" }),
                         })}
                       </p>
                       <div className="flex flex-wrap gap-3 text-xs">

@@ -157,6 +157,9 @@
       documentTitle: "FREILOTSE – Urlaubsplaner für Brückentage & Feiertage",
       metaDescription: "FREILOTSE plant deine Brückentage automatisch: Feiertage, Schulferien und Urlaubstage passend zu deinem Bundesland oder Kanton – kostenlos und ohne Anmeldung.",
       loadingSharedPlan: "Geteilte Planung wird geladen …",
+      switchToEnglish: "Auf Englisch umschalten",
+      switchToGerman: "Auf Deutsch umschalten",
+      legalNavAriaLabel: "Rechtliches und Unterstützung",
     },
 
     /* ---- Kopfbereich ---- */
@@ -267,6 +270,10 @@
         documentTitle: "Datenschutzerklärung – FREILOTSE",
         metaDescription: "Datenschutzerklärung von FREILOTSE: Informationen zur Verarbeitung personenbezogener Daten, u. a. bei Hosting, Kalenderdaten und Land-Vorauswahl.",
       },
+      backToPlanner: "Zum Urlaubsplaner",
+      germanOnlyNotice: "Diese Seite ist derzeit nur auf Deutsch verfügbar.",
+      impressumLink: "Impressum",
+      datenschutzLink: "Datenschutz",
     },
 
     /* ---- Seite „Über FREILOTSE" (/ueber-freilotse) ---- */
@@ -456,6 +463,23 @@
       pageTitle: "Neuigkeiten",
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
+        {
+          date: "21. August 2026",
+          title: "Flug- und Unterkunftssuche jetzt sprachpassend",
+          items: [
+            "Die Links zu Google Flights und Skyscanner öffnen jetzt auf Englisch, wenn FREILOTSE auf Englisch eingestellt ist – statt sich nach den Konto-/Browsereinstellungen des Besuchers zu richten.",
+            "Der „Unterkunft\"-Link zu Booking.com öffnet jetzt ebenfalls sprachpassend auf Englisch bzw. Deutsch. Trip.com bleibt unverändert Deutsch, da dort kein verlässlicher Sprachparameter existiert.",
+          ],
+        },
+        {
+          date: "20. August 2026",
+          title: "FREILOTSE jetzt auch auf Englisch",
+          items: [
+            "Ein neuer Sprachumschalter im Kopfbereich („EN\"/„DE\") wechselt die komplette Oberfläche zwischen Deutsch und Englisch – die Wahl wird auf diesem Gerät gemerkt.",
+            "Beim Umschalten bleiben deine aktuellen Eingaben erhalten, auch wenn sie noch nicht gespeichert waren.",
+            "Impressum und Datenschutzerklärung bleiben aus rechtlichen Gründen weiterhin auf Deutsch; ein Hinweis macht das im Englisch-Modus kenntlich.",
+          ],
+        },
         {
           date: "9. August 2026",
           title: "Flüge jetzt wahlweise bei Google Flights oder Skyscanner",

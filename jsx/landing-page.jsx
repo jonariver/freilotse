@@ -12,7 +12,7 @@
   "use strict";
   const { useState, useEffect } = React;
   const t = window.I18N.t;
-  const { SiteFooter, SiteLink } = window.FREILOTSE.ui;
+  const { SiteFooter, SiteLink, LanguageSwitcher } = window.FREILOTSE.ui;
 
   // Klick-Vorschau für das Erklärvideo der Landing Page: zeigt zunächst nur ein
   // YouTube-Vorschaubild mit Play-Button; der iframe (youtube-nocookie.com) wird
@@ -93,7 +93,7 @@
     );
   }
 
-  function LandingPage({ dark, setDark, cardCls, onStartSimple, onStartPro }) {
+  function LandingPage({ dark, setDark, cardCls, onStartSimple, onStartPro, onBeforeLanguageSwitch }) {
     const softTextCls = dark ? "text-sonnencreme/80" : "text-espresso/80";
     const mutedTextCls = dark ? "text-sonnencreme/60" : "text-espresso/60";
     const badgeCls = dark ? "bg-beckenwasser/30 text-beckenwasser-hell" : "bg-beckenwasser/10 text-beckenwasser";
@@ -104,11 +104,14 @@
           <div className="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between gap-4">
             <img src="./assets/logo/freilotse-logo-horizontal-dark-bg.svg" alt="FREILOTSE Urlaubsplaner"
               className="w-[165px] md:w-[200px] h-auto" />
-            <button onClick={() => setDark(!dark)}
-              className="rounded-xl border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser focus:outline-none focus:ring-2 focus:ring-beckenwasser"
-              title={t("theme.toggleTitle")}>
-              {dark ? t("theme.toLight") : t("theme.toDark")}
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setDark(!dark)}
+                className="rounded-xl border border-tiefwasser-hell px-2.5 py-1 text-xs font-semibold text-sonnencreme/80 hover:bg-tiefwasser focus:outline-none focus:ring-2 focus:ring-beckenwasser"
+                title={t("theme.toggleTitle")}>
+                {dark ? t("theme.toLight") : t("theme.toDark")}
+              </button>
+              <LanguageSwitcher dark onBeforeSwitch={onBeforeLanguageSwitch} />
+            </div>
           </div>
         </header>
         <div aria-hidden="true" className={`wave-divider ${dark ? "wave-divider-dark" : ""}`}></div>

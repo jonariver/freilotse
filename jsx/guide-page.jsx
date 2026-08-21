@@ -14,7 +14,7 @@
   "use strict";
   const { useState, useEffect } = React;
   const t = window.I18N.t;
-  const { SiteLink, SiteFooter } = window.FREILOTSE.ui;
+  const { SiteLink, SiteFooter, LanguageSwitcher } = window.FREILOTSE.ui;
 
   function GuidePage() {
     const [dark, setDark] = useState(false);
@@ -67,6 +67,7 @@
                 }`}>
                 {dark ? t("theme.toLight") : t("theme.toDark")}
               </button>
+              <LanguageSwitcher dark={dark} />
             </div>
           </div>
         </header>

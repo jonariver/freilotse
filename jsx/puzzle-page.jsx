@@ -14,7 +14,7 @@
   "use strict";
   const { useState, useEffect, useMemo, useRef } = React;
   const t = window.I18N.t;
-  const { SiteLink, SiteFooter, InfoHint } = window.FREILOTSE.ui;
+  const { SiteLink, SiteFooter, InfoHint, LanguageSwitcher } = window.FREILOTSE.ui;
   const { generateDailyPuzzle, longestFreeRun, buildEmojiWindow, EMOJI_WINDOW_SIZE } = window.FREILOTSE.puzzle;
   const {
     STORAGE_KEY: STATS_KEY, defaultStats, parseStats, serializeStats,
@@ -242,6 +242,7 @@
                 }`}>
                 {dark ? t("theme.toLight") : t("theme.toDark")}
               </button>
+              <LanguageSwitcher dark={dark} />
             </div>
           </div>
         </header>

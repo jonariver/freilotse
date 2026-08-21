@@ -13,7 +13,7 @@
   "use strict";
   const { useState, useEffect } = React;
   const t = window.I18N.t;
-  const { SiteLink, SiteFooter, PAYPAL_URL } = window.FREILOTSE.ui;
+  const { SiteLink, SiteFooter, PAYPAL_URL, LanguageSwitcher } = window.FREILOTSE.ui;
 
   const LINKEDIN_URL = "https://www.linkedin.com/in/jonathan-rivera-a701a817b";
 
@@ -81,6 +81,7 @@
                 }`}>
                 {dark ? t("theme.toLight") : t("theme.toDark")}
               </button>
+              <LanguageSwitcher dark={dark} />
             </div>
           </div>
         </header>

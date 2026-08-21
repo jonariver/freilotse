@@ -82,7 +82,24 @@
 <body class="bg-sonnencreme">
   <div id="root"></div>
   <noscript>Bitte JavaScript aktivieren, um den Urlaubsplaner zu nutzen.</noscript>
-  <script src="locales/de.js?v=36"></script>
+  <script src="locales/de.js?v=37"></script>
+  <script src="locales/en.js?v=1"></script>
+  <!-- Bootstrap der gespeicherten Sprachpräferenz: muss vor JEDEM weiteren
+       Skript stehen, da app.jsx u. a. beim Modul-Laden (nicht erst beim
+       Rendern) mehrere Konstanten aus t(...) berechnet (siehe CLAUDE.md,
+       Abschnitt „Zentrale technische Entscheidung: Reload statt
+       Live-Umschaltung"). -->
+  <script>
+    (function () {
+      "use strict";
+      try {
+        if (window.localStorage.getItem("freilotse.locale.v1") === "en") {
+          window.I18N.setLocale("en");
+        }
+      } catch (e) {}
+      document.documentElement.lang = window.I18N.getLocale();
+    })();
+  </script>
   <!-- Reine Planungs-/Kalender-/Datenmodule (kein Modulsystem -> window.FREILOTSE.*,
        siehe CLAUDE.md, Abschnitt „Architektur/Module"). Reihenfolge untereinander
        ist größtenteils unkritisch, muss aber vor den JSX-Dateien geladen sein –
@@ -103,13 +120,13 @@
        support-components; puzzle-page zusätzlich js/puzzle.js/js/puzzle-stats.js).
        app.jsx lädt zuletzt und mountet die App. -->
   <script type="text/babel" data-presets="react" src="jsx/common-components.jsx?v=3"></script>
-  <script type="text/babel" data-presets="react" src="jsx/support-components.jsx?v=4"></script>
-  <script type="text/babel" data-presets="react" src="jsx/landing-page.jsx?v=8"></script>
-  <script type="text/babel" data-presets="react" src="jsx/legal-pages.jsx?v=7"></script>
-  <script type="text/babel" data-presets="react" src="jsx/about-page.jsx?v=6"></script>
-  <script type="text/babel" data-presets="react" src="jsx/changelog-page.jsx?v=4"></script>
-  <script type="text/babel" data-presets="react" src="jsx/guide-page.jsx?v=3"></script>
-  <script type="text/babel" data-presets="react" src="jsx/puzzle-page.jsx?v=6"></script>
-  <script type="text/babel" data-presets="react" src="app.jsx?v=41"></script>
+  <script type="text/babel" data-presets="react" src="jsx/support-components.jsx?v=5"></script>
+  <script type="text/babel" data-presets="react" src="jsx/landing-page.jsx?v=9"></script>
+  <script type="text/babel" data-presets="react" src="jsx/legal-pages.jsx?v=8"></script>
+  <script type="text/babel" data-presets="react" src="jsx/about-page.jsx?v=7"></script>
+  <script type="text/babel" data-presets="react" src="jsx/changelog-page.jsx?v=5"></script>
+  <script type="text/babel" data-presets="react" src="jsx/guide-page.jsx?v=4"></script>
+  <script type="text/babel" data-presets="react" src="jsx/puzzle-page.jsx?v=7"></script>
+  <script type="text/babel" data-presets="react" src="app.jsx?v=45"></script>
 </body>
 </html>

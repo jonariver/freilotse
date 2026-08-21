@@ -820,6 +820,48 @@ Lücke, sondern geprüft und verworfen – nicht erneut versuchen:
 **nicht belegt** und müsste vor einem Einbau wie die Ortscodes verifiziert
 werden. Für Google Flights gibt es keine Entsprechung.
 
+### Sprache der Zielseite (Google Flights, Skyscanner, Booking.com)
+Seit Einführung der englischen Übersetzung (siehe Abschnitt
+„Internationalisierung und UI-Texte") öffnen `googleFlightsUrl()`/
+`skyscannerUrl()`/`bookingUrl()` (`app.jsx`) die Zielseite in derselben
+Sprache wie die aktive FREILOTSE-Oberfläche, unabhängig von Konto-/Browser-
+Spracheinstellungen des Besuchers – jeweils manuell im Browser verifiziert:
+- **Google Flights**: zusätzlicher `hl=`-Parameter (`hl=de`/`hl=en`),
+  getrennt vom `q=`-Freitextparameter. `…&hl=en`/`…&hl=de` liefern
+  zuverlässig englische bzw. deutsche Oberfläche bei identischen
+  Suchergebnissen (Flüge, Preise) – anders als die Gepäck-Zusätze oben ist
+  das ein regulärer, dokumentierter Google-weiter UI-Parameter, kein Teil
+  der fehleranfälligen Freitext-Erkennung.
+- **Skyscanner**: zusätzlicher `?locale=`-Parameter (`?locale=de`/
+  `?locale=en`) auf der bestehenden `skyscanner.de`-Konsumenten-URL – **keine**
+  Domain-/Pfadänderung nötig. Ebenfalls manuell verifiziert: identische
+  Ergebnisse/Preise, nur die Oberflächensprache wechselt. Gilt nur für die
+  Oberfläche, nicht für den o. g. ungeklärten `cabinclass`-Parameter.
+- **Booking.com**: zusätzliche Parameter `lang=en-gb&soz=1&lang_changed=1`
+  (Englisch) bzw. `lang=de&soz=1&lang_changed=1` (Deutsch) – Muster stammt
+  vom eigenen Sprachumschalter der Seite. Beide Richtungen manuell
+  gegengeprüft: identische Suchergebnisse/Preise, nur Oberfläche und
+  Sprachflagge wechseln.
+
+**Trip.com: bewusst NICHT umgesetzt.** `tripUrl()` bleibt unverändert bei
+`de.trip.com` und öffnet unabhängig von der FREILOTSE-Sprache immer Deutsch
+– kein Sprachparameter gefunden, und nicht ohne Weiteres nachrüstbar:
+- Auf `de.trip.com` blieb die Oberfläche mit jedem getesteten
+  `locale=`-Wert (`en-us`, `en_us`, `en-DE`, sogar dem wörtlichen `en_xx`
+  aus einem eigenen Nutzertest) unverändert Deutsch.
+- Alternative „auf `www.trip.com` (ohne Länderpräfix) ausweichen, wenn
+  FREILOTSE auf Englisch steht" wurde geprüft und verworfen: **nicht
+  deterministisch**. Identischer Aufruf derselben `www.trip.com/hotels/
+  list?city=…`-URL lieferte im selben Browser einmal korrekt englische
+  Ergebnisse, ein zweites Mal einen Redirect auf die deutsche Startseite
+  **unter Verlust von Reiseziel und Datum** – schlechter als der jetzige
+  Zustand (immer Deutsch, aber immer korrekt vorausgefüllt). Wirkt session-/
+  cookie-abhängig (`www.trip.com` als bloße Startseite leitet zudem anhand
+  von `navigator.language`/Accept-Language automatisch auf die passende
+  Landes-Subdomain um). Vor einem erneuten Versuch müsste dieses
+  Redirect-Verhalten grundlegend verstanden sein, nicht nur stichprobenhaft
+  getestet werden.
+
 ## Brückentage-Rätsel des Tages (`/raetsel`)
 
 ### Zweck

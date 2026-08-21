@@ -129,9 +129,9 @@
       <footer className={`border-t ${dark ? "border-tiefwasser-hell bg-tiefwasser" : "border-beckenwasser/20 bg-sonnencreme"}`}>
         <div className={`mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-xs sm:flex-row sm:items-center sm:justify-between ${muted}`}>
           <p>© {new Date().getFullYear()} FREILOTSE</p>
-          <nav aria-label="Rechtliches und Unterstützung" className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <SiteLink to="/impressum" className={hover}>Impressum</SiteLink>
-            <SiteLink to="/datenschutz" className={hover}>Datenschutz</SiteLink>
+          <nav aria-label={t("common.legalNavAriaLabel")} className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <SiteLink to="/impressum" className={hover}>{t("legal.impressumLink")}</SiteLink>
+            <SiteLink to="/datenschutz" className={hover}>{t("legal.datenschutzLink")}</SiteLink>
             <SiteLink to="/ueber-freilotse" className={hover}>{t("about.footerLink")}</SiteLink>
             <SiteLink to="/neuigkeiten" className={hover}>{t("changelog.footerLink")}</SiteLink>
             <SiteLink to="/anleitung" className={hover}>{t("guide.footerLink")}</SiteLink>
@@ -143,9 +143,39 @@
     );
   }
 
+  /* Sprachumschalter (Header)                                            */
+  /* ------------------------------------------------------------------ */
+  // Reload-basiert statt Live-Umschaltung: siehe CLAUDE.md, Abschnitt
+  // „Zentrale technische Entscheidung: Reload statt Live-Umschaltung".
+  // onBeforeSwitch (optional) erhält Gelegenheit, vor dem Reload
+  // ungespeicherten Zustand zu sichern (siehe Urlaubsplaner in app.jsx).
+  const LOCALE_STORAGE_KEY = "freilotse.locale.v1";
+
+  function LanguageSwitcher({ dark = true, onBeforeSwitch }) {
+    const target = window.I18N.getLocale() === "de" ? "en" : "de";
+    const label = target === "en" ? t("common.switchToEnglish") : t("common.switchToGerman");
+    const handleClick = () => {
+      if (typeof onBeforeSwitch === "function") {
+        try { onBeforeSwitch(); } catch (e) {}
+      }
+      try { window.localStorage.setItem(LOCALE_STORAGE_KEY, target); } catch (e) {}
+      window.location.reload();
+    };
+    return (
+      <button onClick={handleClick}
+        className={`self-start rounded-xl border px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
+          dark ? "border-tiefwasser-hell text-sonnencreme/80 hover:bg-tiefwasser-hell" : "border-beckenwasser/30 text-espresso/80 hover:bg-beckenwasser/5"
+        }`}
+        title={label} aria-label={label}>
+        {target.toUpperCase()}
+      </button>
+    );
+  }
+
   window.FREILOTSE = window.FREILOTSE || {};
   window.FREILOTSE.ui = window.FREILOTSE.ui || {};
   Object.assign(window.FREILOTSE.ui, {
-    internalNavigate, SiteLink, HeartIcon, SupportFooterLink, SupportFloatingButton, SiteFooter, PAYPAL_URL,
+    internalNavigate, SiteLink, HeartIcon, SupportFooterLink, SupportFloatingButton, SiteFooter,
+    LanguageSwitcher, PAYPAL_URL,
   });
 })();
