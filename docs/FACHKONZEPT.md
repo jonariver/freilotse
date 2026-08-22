@@ -258,10 +258,14 @@ setzen und so den längstmöglichen freien Zeitraum finden – ein einzelnes,
 klar umrissenes Optimierungsproblem (siehe Abschnitt 4.5 zur Abgrenzung
 gegenüber der Zielfunktion des Hauptplaners). Nach der Auswertung wird das
 Ergebnis mit der objektiv besten Lösung verglichen und
-lässt sich als spoiler-freies Emoji-Raster teilen. Es gibt genau **einen
-gewerteten Versuch pro Tag** (Streak/Statistik lokal auf dem Gerät
-gespeichert); danach ist beliebiges Üben möglich, ohne die Wertung zu
-beeinflussen. Das Rätsel hat – anders als der Hauptplaner – **keine**
+lässt sich als spoiler-freies Emoji-Raster teilen. Es gilt die
+Selbstverpflichtung auf **einen gewerteten Versuch pro Tag** (Streak/
+Statistik lokal auf dem Gerät gespeichert); danach ist beliebiges Üben
+möglich, ohne die Wertung zu beeinflussen. Diese Begrenzung ist – wie bei
+vergleichbaren Wordle-artigen Spielen ohne Konto und ohne Server –
+bewusst **nicht technisch erzwungen**: Ohne Backend gibt es keinen Schutz
+gegen ein privates Browserfenster, gelöschten lokalen Speicher oder ein
+zweites Gerät. Das Rätsel hat – anders als der Hauptplaner – **keine**
 Netzwerkabhängigkeit, da es ausschließlich die eingebaute
 Feiertagsberechnung nutzt.
 
