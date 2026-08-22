@@ -425,6 +425,13 @@
       entries: [
         {
           date: "22 August 2026",
+          title: "Public holiday source for the year-end extension is now visible",
+          items: [
+            "If your last free period runs until New Year's Eve, Pro mode now also shows whether the public holidays for the extension into the new year come from the OpenHolidays API or the built-in calculation – just like it already does for the main year.",
+          ],
+        },
+        {
+          date: "22 August 2026",
           title: "Added a note on the Augsburg Peace Festival",
           items: [
             "The hint text in Pro mode (the \"i\" icon below the calendar) now also makes clear that the Augsburg Peace Festival (8 August) – a public holiday only in the city of Augsburg – is not taken into account in planning, since FREILOTSE plans exclusively at the state/canton level.",
@@ -1239,6 +1246,7 @@
       certainLabel: (p) => `${p.len} days certainly free`,
       neededLabel: (p) =>
         `Requires ${p.vac} vacation day${p.vacRaw === 1 ? "" : "s"} from your ${p.year} budget`,
+      sourceLabel: (p) => `Public holiday source for ${p.year}:`,
       hypotheticalBadge: (p) => `Possibility with vacation days from ${p.year}`,
       hypotheticalText: (p) =>
         `With ${p.extra} extra vacation day${p.extraRaw === 1 ? "" : "s"} from ${p.year}, ${p.total} days until ${p.end} would be possible.`,

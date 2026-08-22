@@ -465,6 +465,13 @@
       entries: [
         {
           date: "22. August 2026",
+          title: "Feiertagsquelle der Jahreswechsel-Erweiterung sichtbar",
+          items: [
+            "Reicht dein letzter freier Zeitraum bis Silvester, zeigt der Profi-Modus jetzt zusätzlich an, ob die Feiertage für den Anschluss im neuen Jahr von der OpenHolidays API oder aus der integrierten Berechnung stammen – wie bereits für das Hauptjahr.",
+          ],
+        },
+        {
+          date: "22. August 2026",
           title: "Hinweis auf Augsburger Friedensfest ergänzt",
           items: [
             "Der Hinweistext im Profi-Modus („i“-Symbol unterhalb des Kalenders) macht jetzt zusätzlich deutlich, dass das Augsburger Friedensfest (8. August) – ein gesetzlicher Feiertag nur in der Stadt Augsburg – in der Planung nicht berücksichtigt wird, da FREILOTSE ausschließlich auf Bundesland-/Kantonsebene plant.",
@@ -1358,6 +1365,9 @@
       certainLabel: (p) => `${p.len} Tage sicher frei`,
       neededLabel: (p) =>
         `Benötigt ${p.vac} Urlaubstag${p.vacRaw === 1 ? "" : "e"} aus deinem Kontingent ${p.year}`,
+      // year hier ist das Folgejahr, dessen Feiertagsquelle unabhängig vom
+      // Hauptjahr geladen wird (siehe FACHKONZEPT.md Abschnitt 7).
+      sourceLabel: (p) => `Feiertagsquelle ${p.year}:`,
       hypotheticalBadge: (p) => `Möglichkeit mit Urlaubstagen aus ${p.year}`,
       hypotheticalText: (p) =>
         `Mit ${p.extra} zusätzlichen Urlaubstag${p.extraRaw === 1 ? "" : "en"} aus ${p.year} wären ${p.total} Tage bis ${p.end} möglich.`,

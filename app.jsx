@@ -623,14 +623,21 @@ function Urlaubsplaner({ onPlanReady }) {
   const needsYearTransition = uiMode === "profi" && !!lastPeriod && lastPeriod.e === days.length - 1;
   const [apiHolidaysNext, setApiHolidaysNext] = useState(null);
   const [apiHolidaysNextReady, setApiHolidaysNextReady] = useState(false);
+  // Eigenständiger Status für die Feiertagsquelle des Folgejahres, analog zu
+  // apiStatus oben – die Jahreswechsel-Erweiterung lädt unabhängig vom
+  // Hauptjahr und kann daher auf einer anderen Quelle beruhen (siehe
+  // FACHKONZEPT.md Abschnitt 7).
+  const [apiStatusNext, setApiStatusNext] = useState("laedt"); // "laedt" | "api" | "lokal"
   useEffect(() => {
     let ignore = false;
     setApiHolidaysNext(null);
     setApiHolidaysNextReady(false);
+    setApiStatusNext("laedt");
     if (!needsYearTransition) return () => { ignore = true; };
     loadPublicHolidays(year + 1, st, country).then((nextResult) => {
       if (ignore) return;
       setApiHolidaysNext(nextResult.holidays);
+      setApiStatusNext(nextResult.status);
       setApiHolidaysNextReady(true);
     });
     return () => { ignore = true; };
@@ -2532,6 +2539,12 @@ function Urlaubsplaner({ onPlanReady }) {
                         <span className={`text-right tabular-nums ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                           <span className="block">{t("yearTransition.certainLabel", { len: certainLen })}</span>
                           <span className="block text-xs">{t("yearTransition.neededLabel", { vac: fmtNum(p.vac), vacRaw: p.vac, year })}</span>
+                          <span className="block text-[11px] opacity-70">
+                            {t("yearTransition.sourceLabel", { year: year + 1 })}{" "}
+                            {apiStatusNext === "api" && t("settings.holidaySourceApi")}
+                            {apiStatusNext === "laedt" && t("settings.holidaySourceLoading")}
+                            {apiStatusNext === "lokal" && t("settings.holidaySourceLocal")}
+                          </span>
                         </span>
                       ) : (
                         <span className={`tabular-nums ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
