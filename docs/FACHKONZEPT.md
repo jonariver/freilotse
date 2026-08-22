@@ -91,6 +91,14 @@ Modi arbeiten auf demselben Zustand.
 | Wunschblöcke (Profi-Modus) | feste Wunschzeiträume ("9 Tage am Stück im Juli"), die vorrangig vor der übrigen Automatik eingeplant werden |
 | Manuelle Tage (Profi-Modus) | einzelne Tage per Kalenderklick als Urlaub, Überstundenabbau oder gesperrt festgelegt |
 
+Stehen beide Kontingente zur Wahl, verbraucht die Automatik standardmäßig
+zuerst Urlaubstage; im Profi-Modus lässt sich diese Reihenfolge umkehren
+("Zuerst aufbrauchen: Urlaubstage/Überstunden"), im Einfach-Modus gilt der
+Standard fest, ohne eigene Auswahlmöglichkeit. Ein durch die
+24./31.12.-Regel entstehender halber Urlaubstag zählt in der Anzahl freier
+Tage wie ein vollständiger freier Tag – halbiert wird ausschließlich der
+ausgewiesene Kontingentverbrauch.
+
 ### 4.3 Ergebnis
 
 Die Anwendung zeigt zusammenhängende freie Zeiträume, wie viele Urlaubs-/
@@ -122,6 +130,34 @@ Dienstpläne, wochenabhängig unterschiedliche Arbeitstage, konkrete
 Stundenzahlen pro Tag oder Teilzeitquoten. Für ein 5-Tage-Modell mit fester
 Wochentagsmenge ist die Funktion gedacht – nicht für alles, was sich als
 "Teilzeit" bezeichnen lässt.
+
+### 4.5 Wie die Automatik entscheidet
+
+Die automatische Planung ist ein deterministischer, mehrstufiger
+Algorithmus mit fester Reihenfolge – kein mathematisch bewiesenes globales
+Optimum über alle denkbaren Zielgrößen (Gesamtzahl freier Tage, Länge des
+längsten Blocks, Anzahl Blöcke ab Mindestlänge, Effizienz):
+
+1. Manuelle Festlegungen (siehe Grundsatz 3) werden zuerst eingeplant.
+2. Wunschblöcke (Profi-Modus) werden mit den geringsten Kosten platziert;
+   bei gleichen Kosten gewinnt die bessere Flankierung durch angrenzende
+   bereits freie Tage.
+3. Der 24. und 31. Dezember werden gemäß der gewählten Regel fest
+   eingeplant, damit sie die Feiertagsserie nicht unterbrechen.
+4. Das verbleibende Budget der Automatik wird nach Rendite verteilt (freie
+   Tage pro eingesetztem Tag), gestaffelt nach Lückengröße – zuerst
+   isolierte 1-Tages-Brücken, danach 2-, 3- und 4-Tages-Lücken –, höchstens
+   eine Lücke je Monat pro Runde. Bei gleicher Rendite gewinnt der frühere
+   Zeitpunkt im Jahr.
+
+Diese Rendite-Logik verteilt das Budget bewusst über mehrere Lücken im
+Jahr, statt es zwingend auf die eine Lücke zu konzentrieren, die den
+längsten einzelnen zusammenhängenden freien Zeitraum ergäbe. Das
+unterscheidet sie strukturell vom Brückentage-Rätsel (Abschnitt 8), das
+für ein einzelnes Kalenderfenster und festes Budget ausschließlich den
+längsten zusammenhängenden freien Zeitraum sucht – ein einfacheres,
+eigenständiges Optimierungsproblem, auch wenn beide Funktionen auf
+derselben Planungslogik aufbauen.
 
 ## 5. Feiertage und Schulferien
 
@@ -196,13 +232,22 @@ noch längere Pause ermöglichen würden. Diese hypothetische Verlängerung
 verändert weder das angezeigte Restbudget noch die Gesamtzahl freier Tage
 und ist beim Kalenderexport nicht enthalten.
 
+Für diese Prüfung lädt FREILOTSE die Feiertage des Folgejahres eigenständig
+nach – ein zweiter, vom Hauptjahr unabhängiger Abruf (mit demselben
+Offline-Fallback wie unter Abschnitt 5.1 beschrieben). Fällt die externe
+Quelle nur für das Folgejahr aus, kann die Jahreswechsel-Erweiterung
+technisch auf einer anderen Datenquelle beruhen als der übrige Plan; das
+ist aktuell nicht separat sichtbar.
+
 ## 8. Brückentage-Rätsel des Tages (`/raetsel`)
 
 Ein tägliches, Wordle-artiges Minispiel, unabhängig vom eigentlichen
 Urlaubsplaner: Für ein zufällig, aber deterministisch gewähltes
 Bundesland/Monat/Budget müssen Nutzer:innen per Klick selbst Urlaubstage
-setzen und so den längstmöglichen freien Zeitraum finden. Nach der
-Auswertung wird das Ergebnis mit der objektiv besten Lösung verglichen und
+setzen und so den längstmöglichen freien Zeitraum finden – ein einzelnes,
+klar umrissenes Optimierungsproblem (siehe Abschnitt 4.5 zur Abgrenzung
+gegenüber der Zielfunktion des Hauptplaners). Nach der Auswertung wird das
+Ergebnis mit der objektiv besten Lösung verglichen und
 lässt sich als spoiler-freies Emoji-Raster teilen. Es gibt genau **einen
 gewerteten Versuch pro Tag** (Streak/Statistik lokal auf dem Gerät
 gespeichert); danach ist beliebiges Üben möglich, ohne die Wertung zu
@@ -242,7 +287,14 @@ gewählte Sprache, soweit das jeweilige externe Portal das unterstützt.
 - **Determinismus:** Für identische Eingaben und identisch geladene
   Feiertage/Schulferien liefert die Planung immer exakt dasselbe Ergebnis –
   Voraussetzung dafür, dass geteilte Links beim Empfänger dasselbe Ergebnis
-  zeigen wie beim Absender.
+  zeigen wie beim Absender. Diese Voraussetzung ist nicht garantiert: Laden
+  Absender und Empfänger unterschiedliche Feiertagsquellen (API vs.
+  Offline-Berechnung, siehe Abschnitt 5.1) oder öffnet der Empfänger den
+  Link nach einer Weiterentwicklung der Planungslogik, kann das Ergebnis
+  trotz identischer Eingaben abweichen. Das betrifft auch „Gemeinsam frei"
+  (Abschnitt 6.3): Die dort für eine dritte Person neu berechnete Planung
+  kann von deren eigenem Ergebnis abweichen, ohne dass diese Person das
+  selbst bemerkt oder validiert, da sie das Ergebnis nie zu Gesicht bekommt.
 - **Keine Registrierung, kein Backend:** durchgängiges Produktprinzip, nicht
   nur eine technische Einschränkung.
 
