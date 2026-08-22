@@ -303,6 +303,23 @@ statt (historisch leitete `_redirects` `freilotse.de` per 302 auf
 - **Drittanbieter-Datenfluss**: An externe APIs (OpenHolidays,
   `schulferien-api.de`) werden ausschließlich Jahr und Bundeslandcode
   übertragen — keine personenbezogenen oder planungsbezogenen Daten.
+- **AVV (Art. 28 DSGVO) mit Netlify**: besteht automatisch — Netlifys
+  Data Processing Agreement (DPA) ist laut Netlifys eigener GDPR/CCPA-Seite
+  „incorporated by reference" in dessen Nutzungsbedingungen, gilt also
+  bereits durch die reguläre Nutzung von Netlify als Hoster; ein separater
+  Vertragsschluss ist nicht nötig. Live verifiziert (nicht nur behauptet):
+  aktuelle DPA-Fassung vom 9. Juni 2026, abrufbar unter
+  https://www.netlify.com/pdf/netlify-dpa.pdf; als Transfermechanismus für
+  Datenübermittlungen in die USA nennt der DPA primär das EU-US Data
+  Privacy Framework, mit EU-Standardvertragsklauseln als Rückfallebene,
+  falls das DPF für ungültig erklärt wird — deckungsgleich mit der Angabe
+  in `jsx/legal-pages.jsx` §2 „Hosting über Netlify". Ein Nachweis-Download
+  des DPA-PDFs für die eigenen Unterlagen wird trotzdem empfohlen.
+- **Verzeichnis von Verarbeitungstätigkeiten (Art. 30 DSGVO)**: bewusst
+  **kein** Bestandteil von FREILOTSE oder dieser Dokumentation — das ist
+  ein internes organisatorisches Dokument, das der/die Verantwortliche
+  unabhängig von der Website führen muss, keine Code- oder
+  Website-Angelegenheit.
 
 ## 13. Nicht-funktionale technische Anforderungen
 
