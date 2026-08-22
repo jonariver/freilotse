@@ -79,9 +79,10 @@ const { plan, minimalBridgeBudget } = window.FREILOTSE.planning;
 const { DAY, buildDays, vacationDayMap } = window.FREILOTSE.calendar;
 const { loadPublicHolidays, loadSchoolHolidays, detectCountry } = window.FREILOTSE.dataSources;
 const {
-  SHARE_MAX_URL, SHARE_MAX_DECODED, HAS_COMPRESSION,
+  SHARE_VERSION, SHARE_MAX_URL, SHARE_MAX_DECODED, HAS_COMPRESSION,
   buildSharePayload, encodePlain, validateSharePayload, decodeShare,
   readShareFragment, deflateToB64url, inflateFromB64url,
+  getPayloadVersion, b64urlToBytes,
 } = window.FREILOTSE.shareLink;
 const {
   MAX_PLANS: LOCAL_PLANS_MAX,
@@ -1277,15 +1278,29 @@ function Urlaubsplaner({ onPlanReady }) {
     setSharedLinkLoading(true);
     try {
       let res;
+      let jsonStr = null; // nur für die Versions-Erkennung im Fehlerfall unten
       if (frag.type === "plan") {
+        try { jsonStr = new TextDecoder().decode(b64urlToBytes(frag.raw)); } catch (e) { jsonStr = null; }
         res = decodeShare(frag.raw, t("states"));
       } else if (frag.raw.length <= SHARE_MAX_DECODED) {
-        const json = await inflateFromB64url(frag.raw);
-        res = validateSharePayload(json, t("states"));
+        jsonStr = await inflateFromB64url(frag.raw);
+        res = validateSharePayload(jsonStr, t("states"));
       } else {
         res = null;
       }
-      if (!res || !res.state) { setSharedLinkError(t("sharedFree.linkInvalid")); return; }
+      if (!res || !res.state) {
+        // validateSharePayload()/decodeShare() liefern bei JEDEM Fehler
+        // einheitlich null - hier gezielt unterscheiden, ob konkret eine
+        // unbekannte/veraltete SHARE_VERSION die Ursache war, um einen
+        // treffenderen Hinweis als den generischen "ungültig" zu zeigen.
+        const linkVersion = jsonStr != null ? getPayloadVersion(jsonStr) : undefined;
+        setSharedLinkError(
+          linkVersion !== undefined && linkVersion !== SHARE_VERSION
+            ? t("sharedFree.linkVersionMismatch")
+            : t("sharedFree.linkInvalid")
+        );
+        return;
+      }
       const s = res.state;
       if (s.year !== year) {
         setSharedLinkError(t("sharedFree.differentYearWarning", { year: s.year, ownYear: year }));
@@ -2626,7 +2641,10 @@ function Urlaubsplaner({ onPlanReady }) {
 
           {/* Gemeinsam frei (Kollegen-/Partner-Überschneidungs-Check) */}
           <section className={`${cardCls} p-4 space-y-3`}>
-            <h2 className="text-sm font-bold">{t("sharedFree.heading")}</h2>
+            <h2 className="flex items-center gap-1.5 text-sm font-bold">
+              {t("sharedFree.heading")}
+              <InfoHint dark={dark} text={t("sharedFree.privacyHint")} />
+            </h2>
             <div className="flex flex-wrap gap-2">
               <input className={`${inputCls} flex-1 min-w-[12rem]`} type="text"
                 placeholder={t("sharedFree.linkPlaceholder")} value={sharedLinkInput}

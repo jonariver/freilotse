@@ -144,6 +144,20 @@
   // Rückgabe:
   //   { state, warning }  – ladbar (warning=true: Teile korrigiert/verworfen)
   //   null                – nicht ladbar (kaputt / falsche Version / zu groß)
+  // Best-effort: liefert NUR das "version"-Feld eines bereits dekodierten
+  // Payload-JSON-Strings, ohne volle Validierung. Für Aufrufer, die bei
+  // einem fehlgeschlagenen validateSharePayload()/decodeShare() (beide
+  // liefern bei JEDEM Fehler einheitlich null) unterscheiden wollen, ob es
+  // konkret an einer unbekannten/veralteten SHARE_VERSION lag (siehe
+  // "Gemeinsam frei" in app.jsx) oder an einem anderweitig kaputten Link.
+  // Wirft nie, liefert undefined bei kaputtem JSON oder fehlendem Feld.
+  function getPayloadVersion(jsonStr) {
+    try {
+      const payload = JSON.parse(jsonStr);
+      return payload && typeof payload === "object" ? payload.version : undefined;
+    } catch (e) { return undefined; }
+  }
+
   function validateSharePayload(jsonStr, statesByCountry) {
     if (typeof jsonStr !== "string" || jsonStr.length > SHARE_MAX_DECODED) return null;
     let payload;
@@ -302,5 +316,6 @@
     HAS_COMPRESSION,
     buildSharePayload, encodePlain, validateSharePayload, decodeShare,
     readShareFragment, deflateToB64url, inflateFromB64url,
+    getPayloadVersion, b64urlToBytes,
   };
 })();

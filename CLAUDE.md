@@ -160,14 +160,20 @@ bestehende Warnmechanismus (`warning: true`) ausgelöst.
 
 ### Zweck
 Aktuellen Planungsstand über einen teilbaren Link weitergeben – ohne Backend,
-lauffähig auf GitHub Pages.
+lauffähig auf Netlify (siehe Abschnitt „Deployment und Hosting" in
+docs/IT-KONZEPT.md).
 
 ### Speicherort der Logik
 - Reine Helfer in `js/share-link.js` (Namespace `window.FREILOTSE.shareLink`,
   siehe Abschnitt „Architektur/Module" oben): `bytesToB64url` / `b64urlToBytes`,
   `isValidMd`, `buildSharePayload`, `encodePlain`, `decodeShare`,
-  `validateSharePayload`, `readShareFragment`, `deflateToB64url`/
-  `inflateFromB64url`, `getHashParam` sowie die Konstanten `SHARE_VERSION`,
+  `validateSharePayload`, `getPayloadVersion` (liest best-effort nur das
+  `version`-Feld aus einem bereits dekodierten Payload-JSON-String, ohne
+  volle Validierung – für Aufrufer, die bei einem fehlgeschlagenen
+  `validateSharePayload()`/`decodeShare()` gezielt zwischen einer
+  Versions-Inkompatibilität und einem anderweitig kaputten Link
+  unterscheiden wollen, siehe „Gemeinsam frei" unten), `readShareFragment`,
+  `deflateToB64url`/`inflateFromB64url`, `getHashParam` sowie die Konstanten `SHARE_VERSION`,
   `SHARE_MAX_URL`, `SHARE_MAX_DECODED`, `SHARE_MAX_OVERRIDES`,
   `SHARE_MAX_BLOCKS`, `HAS_COMPRESSION`. `validateSharePayload`/`decodeShare`
   erhalten bekannte Bundesland-Codes als Parameter, statt selbst auf `STATES`
@@ -179,8 +185,8 @@ lauffähig auf GitHub Pages.
 
 ### Datenformat (Version 1)
 Kodierung: `base64url(UTF-8(JSON))` im **URL-Fragment**: `…/#plan=<code>`.
-Fragment, weil es auf GitHub Pages ohne Backend funktioniert und nicht an den
-Server übertragen wird. Kodiert ≠ verschlüsselt.
+Fragment, weil es auf statischem Hosting (Netlify) ohne Backend funktioniert
+und nicht an den Server übertragen wird. Kodiert ≠ verschlüsselt.
 
 Es werden **nur Eingaben** gespeichert (kompakte Kurzfelder):
 
@@ -394,8 +400,8 @@ Texte müssen ab jetzt **in beiden** Sprachdateien gepflegt werden.
 ### Speicherort der Übersetzungen
 - `locales/de.js`: deutsche Sprachdatei (weiterhin die Referenzstruktur für
   Schlüssel). Definiert das globale Objekt `window.I18N` (keine ES-Module,
-  kein Bundler – reines Script, kompatibel mit Babel-Standalone/GitHub Pages)
-  mit:
+  kein Bundler – reines Script, kompatibel mit Babel-Standalone/statischem
+  Hosting) mit:
   - der zentralen Funktion `t(key, params)`,
   - `setLocale(loc)` / `getLocale()`,
   - `registerLocale(loc, dict)` zur Registrierung weiterer Sprachen,
@@ -636,7 +642,9 @@ direkt klar statt eines separaten Bestätigungsschritts).
 Findet gemeinsame freie Tage mit einer anderen Person: deren Share-Link
 einfügen, FREILOTSE zeigt überlappende freie Zeiträume. Rein clientseitig,
 der eingefügte Link wird nirgends gespeichert, nur für die aktuelle Sitzung
-ausgewertet.
+ausgewertet. Ein `InfoHint` neben der Überschrift (`sharedFree.privacyHint`)
+weist genau darauf hin, da der eingefügte Link Planungseinstellungen einer
+fremden Person enthält.
 
 ### Technik
 `decodeShare()`/`validateSharePayload()` (`js/share-link.js`) sind rein
@@ -659,6 +667,16 @@ auftauchen.
 Ungültiger/kaputter Link → Inline-Fehlertext (analog zum Ton bestehender
 Share-Link-Toasts). Abweichendes Jahr → Hinweistext statt stiller
 Fehlberechnung, die Person wird nicht in die Überschneidung einbezogen.
+
+Da `validateSharePayload()`/`decodeShare()` bei jedem Fehlschlag einheitlich
+`null` liefern (kaputtes Base64/JSON ebenso wie eine unbekannte/veraltete
+`SHARE_VERSION`), prüft `addSharedPerson()` (`app.jsx`) im Fehlerfall
+zusätzlich per `getPayloadVersion()` (`js/share-link.js`) best-effort das
+`version`-Feld des bereits dekodierten Payloads. Weicht es von der eigenen
+`SHARE_VERSION` ab, erscheint der gezieltere Hinweis
+`sharedFree.linkVersionMismatch` statt des generischen
+`sharedFree.linkInvalid` – ohne die eigentliche Validierung in
+`validateSharePayload()` zu verändern oder zu duplizieren.
 
 ## Jahreswechsel-Erweiterung (Profi-Modus)
 

@@ -465,6 +465,14 @@
       entries: [
         {
           date: "22. August 2026",
+          title: "„Gemeinsam frei“ mit Datenschutzhinweis und klarerer Fehlermeldung",
+          items: [
+            "Ein neuer Hinweis („i“-Symbol neben der Überschrift) erklärt, dass ein eingefügter Share-Link nur lokal in deinem Browser ausgewertet und nirgends gespeichert wird.",
+            "Stammt ein eingefügter Link aus einer nicht mehr unterstützten, alten Version von FREILOTSE, erscheint jetzt eine passende Fehlermeldung statt des allgemeinen Hinweises auf einen ungültigen Link.",
+          ],
+        },
+        {
+          date: "22. August 2026",
           title: "Feiertagsquelle der Jahreswechsel-Erweiterung sichtbar",
           items: [
             "Reicht dein letzter freier Zeitraum bis Silvester, zeigt der Profi-Modus jetzt zusätzlich an, ob die Feiertage für den Anschluss im neuen Jahr von der OpenHolidays API oder aus der integrierten Berechnung stammen – wie bereits für das Hauptjahr.",
@@ -1383,6 +1391,8 @@
       removeButton: "Entfernen",
       personLabel: (p) => `Person ${p.index}`,
       linkInvalid: "Dieser Link ist ungültig oder beschädigt.",
+      linkVersionMismatch: "Dieser Link stammt aus einer nicht mehr unterstützten Version von FREILOTSE und kann nicht gelesen werden.",
+      privacyHint: "Der eingefügte Link wird ausschließlich lokal in deinem Browser ausgewertet, nirgends gespeichert und nicht an einen Server übertragen. Er enthält die Planungseinstellungen der anderen Person – füge nur Links ein, die dir bewusst zum Vergleich geteilt wurden.",
       differentYearWarning: (p) =>
         `Diese Planung bezieht sich auf ${p.year} – keine Überschneidung mit deinem Jahr ${p.ownYear} möglich.`,
       emptyNoPeople: "Füge den Share-Link einer anderen Person hinzu, um gemeinsame freie Tage zu finden.",

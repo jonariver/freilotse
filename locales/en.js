@@ -425,6 +425,14 @@
       entries: [
         {
           date: "22 August 2026",
+          title: "\"Shared time off\" gets a privacy note and a clearer error message",
+          items: [
+            "A new hint (the \"i\" icon next to the heading) explains that a pasted share link is only evaluated locally in your browser and never stored anywhere.",
+            "If a pasted link comes from an old, no-longer-supported version of FREILOTSE, you now get a matching error message instead of the generic \"invalid link\" notice.",
+          ],
+        },
+        {
+          date: "22 August 2026",
           title: "Public holiday source for the year-end extension is now visible",
           items: [
             "If your last free period runs until New Year's Eve, Pro mode now also shows whether the public holidays for the extension into the new year come from the OpenHolidays API or the built-in calculation – just like it already does for the main year.",
@@ -1259,6 +1267,8 @@
       removeButton: "Remove",
       personLabel: (p) => `Person ${p.index}`,
       linkInvalid: "This link is invalid or corrupted.",
+      linkVersionMismatch: "This link was created with a version of FREILOTSE that is no longer supported and can't be read.",
+      privacyHint: "The link you paste in is only evaluated locally in your browser, never stored, and never sent to any server. It contains the other person's planning settings – only paste links that were deliberately shared with you for comparison.",
       differentYearWarning: (p) =>
         `This plan refers to ${p.year} – no overlap possible with your year ${p.ownYear}.`,
       emptyNoPeople: "Add another person's share link to find shared days off.",

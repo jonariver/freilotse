@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Explizite Referrer-Policy (Defense-in-Depth, siehe CLAUDE.md-Abschnitt
+       „Share-Link-Funktion" und Datenschutz-Review): entspricht dem
+       ohnehin geltenden Browser-Default, macht ihn aber unabhängig davon
+       verbindlich. Da der Share-Link-Payload ausschließlich im URL-Fragment
+       liegt (nie in Query-String/Pfad), wird dadurch ohnehin nie an einen
+       Referrer-Header weitergegeben – diese Policy ist zusätzliche
+       Absicherung, kein funktionaler Fix. -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>FREILOTSE – Urlaubsplaner für Brückentage &amp; Feiertage</title>
   <meta name="description" content="FREILOTSE plant deine Brückentage automatisch: Feiertage, Schulferien und Urlaubstage passend zu deinem Bundesland oder Kanton – kostenlos und ohne Anmeldung.">
   <meta name="robots" content="index, follow">
@@ -82,8 +90,8 @@
 <body class="bg-sonnencreme">
   <div id="root"></div>
   <noscript>Bitte JavaScript aktivieren, um den Urlaubsplaner zu nutzen.</noscript>
-  <script src="locales/de.js?v=39"></script>
-  <script src="locales/en.js?v=3"></script>
+  <script src="locales/de.js?v=40"></script>
+  <script src="locales/en.js?v=4"></script>
   <!-- Bootstrap der gespeicherten Sprachpräferenz: muss vor JEDEM weiteren
        Skript stehen, da app.jsx u. a. beim Modul-Laden (nicht erst beim
        Rendern) mehrere Konstanten aus t(...) berechnet (siehe CLAUDE.md,
@@ -109,7 +117,7 @@
   <script src="js/planning.js?v=1"></script>
   <script src="js/calendar.js?v=2"></script>
   <script src="js/data-sources.js?v=4"></script>
-  <script src="js/share-link.js?v=3"></script>
+  <script src="js/share-link.js?v=4"></script>
   <script src="js/local-plans.js?v=1"></script>
   <script src="js/puzzle.js?v=1"></script>
   <script src="js/puzzle-stats.js?v=1"></script>
@@ -127,6 +135,6 @@
   <script type="text/babel" data-presets="react" src="jsx/changelog-page.jsx?v=5"></script>
   <script type="text/babel" data-presets="react" src="jsx/guide-page.jsx?v=4"></script>
   <script type="text/babel" data-presets="react" src="jsx/puzzle-page.jsx?v=7"></script>
-  <script type="text/babel" data-presets="react" src="app.jsx?v=46"></script>
+  <script type="text/babel" data-presets="react" src="app.jsx?v=47"></script>
 </body>
 </html>
