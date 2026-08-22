@@ -464,6 +464,13 @@
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
         {
+          date: "22. August 2026",
+          title: "Hinweis auf Augsburger Friedensfest ergänzt",
+          items: [
+            "Der Hinweistext im Profi-Modus („i“-Symbol unterhalb des Kalenders) macht jetzt zusätzlich deutlich, dass das Augsburger Friedensfest (8. August) – ein gesetzlicher Feiertag nur in der Stadt Augsburg – in der Planung nicht berücksichtigt wird, da FREILOTSE ausschließlich auf Bundesland-/Kantonsebene plant.",
+          ],
+        },
+        {
           date: "21. August 2026",
           title: "Flug- und Unterkunftssuche jetzt sprachpassend",
           items: [
@@ -1300,7 +1307,7 @@
       // bundesweit gelten (keine Sonderfälle abzubilden).
       detail: (p) => {
         const regionalCaveats = {
-          DE: "Mariä Himmelfahrt gilt in Bayern nur in Gemeinden mit überwiegend katholischer Bevölkerung; Fronleichnam gilt in Sachsen und Thüringen nur in einzelnen Regionen und ist hier nicht berücksichtigt. ",
+          DE: "Mariä Himmelfahrt gilt in Bayern nur in Gemeinden mit überwiegend katholischer Bevölkerung; Fronleichnam gilt in Sachsen und Thüringen nur in einzelnen Regionen, das Augsburger Friedensfest (8. August) nur in der Stadt Augsburg – beide Sonderfälle sind hier nicht berücksichtigt. ",
           CH: "Es werden nur kantonsweite Feiertage berücksichtigt; Feiertage, die nur in einzelnen Bezirken oder Gemeinden eines Kantons gelten (z. B. Teile des Kantons Aargau), sowie rein lokale Bräuche wie Sechseläuten oder Knabenschiessen (Stadt Zürich) werden nicht berücksichtigt. ",
         };
         const intro = "Die Optimierung setzt Wunschblöcke zuerst; der 24.12. und der 31.12. werden bei 100%- oder 50%-Regelung immer fest eingeplant, damit sie die Feiertagsserie nicht unterbrechen. Die automatische Verteilung kauft mit dem Minimalbudget nur isolierte 1-Tages-Brücken (1 Tag → 4 freie Tage); mehr Budget schaltet 2-, 3- und 4-Tages-Lücken frei – verteilt über das Jahr, höchstens eine Lücke je Monat pro Runde. Reine Urlaubswochen ohne Feiertag werden nie automatisch verplant; nicht eingesetzte Tage bleiben als Rest übrig.";

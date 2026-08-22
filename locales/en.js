@@ -424,6 +424,13 @@
       intro: "Here you'll find the latest updates and news from FREILOTSE – newest first.",
       entries: [
         {
+          date: "22 August 2026",
+          title: "Added a note on the Augsburg Peace Festival",
+          items: [
+            "The hint text in Pro mode (the \"i\" icon below the calendar) now also makes clear that the Augsburg Peace Festival (8 August) – a public holiday only in the city of Augsburg – is not taken into account in planning, since FREILOTSE plans exclusively at the state/canton level.",
+          ],
+        },
+        {
           date: "21 August 2026",
           title: "Flight and accommodation search now matches the interface language",
           items: [
@@ -1189,7 +1196,7 @@
       text: "Desired blocks first, then bridge days strictly by return.",
       detail: (p) => {
         const regionalCaveats = {
-          DE: "Assumption Day is a public holiday in Bavaria only in municipalities with a predominantly Catholic population; Corpus Christi is a public holiday in Saxony and Thuringia only in certain regions and is not accounted for here. ",
+          DE: "Assumption Day is a public holiday in Bavaria only in municipalities with a predominantly Catholic population; Corpus Christi is a public holiday in Saxony and Thuringia only in certain regions, and the Augsburg Peace Festival (8 August) only in the city of Augsburg – neither special case is accounted for here. ",
           CH: "Only cantonwide public holidays are taken into account; holidays that apply only in individual districts or municipalities of a canton (e.g. parts of the canton of Aargau), as well as purely local customs such as Sechseläuten or Knabenschiessen (city of Zurich), are not taken into account. ",
         };
         const intro = "The optimisation places desired blocks first; 24 and 31 December are always fixed under the 100% or 50% rule so they don't break the run of public holidays. With the minimum budget, the automatic distribution only buys isolated 1-day bridges (1 day → 4 days off); more budget unlocks 2-, 3- and 4-day gaps – spread across the year, at most one gap per month per round. Vacation weeks with no public holiday are never planned automatically; unused days remain as budget left over.";

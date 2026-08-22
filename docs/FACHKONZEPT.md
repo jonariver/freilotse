@@ -129,10 +129,16 @@ Wochentagsmenge ist die Funktion gedacht – nicht für alles, was sich als
 
 Feiertage werden primär über eine externe API abgerufen (landesweite bzw.
 exakt zum gewählten Bundesland passende Einträge; rein kommunale
-Sonderfeiertage werden herausgefiltert). Ist die API nicht erreichbar oder
-liefert keine verwertbaren Daten, berechnet FREILOTSE die Feiertage
-vollständig offline selbst – für die Nutzer:in ohne sichtbaren
-Funktionsverlust.
+Sonderfeiertage wie das Augsburger Friedensfest werden herausgefiltert, da
+die App ausschließlich auf Bundesland-/Kantonsebene plant, nicht auf
+Gemeindeebene). Ist die API nicht erreichbar oder liefert keine verwertbaren
+Daten, berechnet FREILOTSE die Feiertage vollständig offline selbst –
+identisches Ergebnis für alle landesweiten Feiertage. Regionale
+Sonderfälle, bei denen ein Feiertag gesetzlich nur in Teilen eines
+Bundeslands gilt (Mariä Himmelfahrt in Bayern, Fronleichnam in Sachsen und
+Thüringen, das Augsburger Friedensfest), bildet FREILOTSE bewusst
+vereinfacht ab und weist im Profi-Modus sichtbar darauf hin (Hinweistext
+unterhalb des Kalenders).
 
 ### 5.2 Schulferien
 
