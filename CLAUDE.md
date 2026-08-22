@@ -352,26 +352,36 @@ sondern nur den Hinweis bei fehlenden Daten.
 ## Internationalisierung und UI-Texte
 
 ### Grundprinzip
-Die Anwendung ist aktuell **ausschließlich Deutsch**. Es gibt keinen sichtbaren
-Sprachumschalter, und es darf ohne ausdrückliche Anweisung auch keiner ergänzt
-werden. Die technische Struktur ist aber bereits so vorbereitet, dass eine
-weitere Sprache später ergänzt werden kann, ohne `app.jsx` grundlegend
-umzubauen.
+FREILOTSE ist **Deutsch und Englisch** verfügbar, umschaltbar über einen
+sichtbaren Sprachumschalter im Header (siehe Abschnitt „Sprachumschalter
+(Header)" unten). Deutsch bleibt die Standardsprache beim ersten Besuch;
+Englisch wird nur aktiv, wenn die Nutzer:in explizit umschaltet (Wahl wird in
+`localStorage` gemerkt, siehe unten). Neue oder geänderte nutzersichtbare
+Texte müssen ab jetzt **in beiden** Sprachdateien gepflegt werden.
 
 ### Speicherort der Übersetzungen
-- `locales/de.js`: einzige aktive Sprachdatei. Definiert das globale Objekt
-  `window.I18N` (keine ES-Module, kein Bundler – reines Script, kompatibel mit
-  Babel-Standalone/GitHub Pages) mit:
+- `locales/de.js`: deutsche Sprachdatei (weiterhin die Referenzstruktur für
+  Schlüssel). Definiert das globale Objekt `window.I18N` (keine ES-Module,
+  kein Bundler – reines Script, kompatibel mit Babel-Standalone/GitHub Pages)
+  mit:
   - der zentralen Funktion `t(key, params)`,
   - `setLocale(loc)` / `getLocale()`,
-  - `registerLocale(loc, dict)` für spätere zusätzliche Sprachen,
-  - `LOCALES` (Objekt mit den registrierten Sprachwörterbüchern, aktuell nur `de`).
-- `locales/en.js`: **inaktive** Strukturvorlage für eine spätere englische
-  Übersetzung. Wird aktuell **nicht** geladen und **nicht** registriert und hat
-  keinerlei Effekt auf die Anwendung.
-- `index.html` lädt `locales/de.js` als normales, synchron ausgeführtes
-  `<script>` **vor** `app.jsx`. Dadurch ist `window.I18N` beim Start von
-  `app.jsx` garantiert vorhanden – keine Race Condition, kein Flackern.
+  - `registerLocale(loc, dict)` zur Registrierung weiterer Sprachen,
+  - `LOCALES` (Objekt mit den registrierten Sprachwörterbüchern: `de`, `en`).
+- `locales/en.js`: vollständige, aktive englische Übersetzung (gleiche
+  Schlüsselstruktur und Funktionssignaturen wie `locales/de.js`), ruft am
+  Dateiende `window.I18N.registerLocale("en", EN)` auf.
+- `index.html` lädt `locales/de.js`, dann `locales/en.js`, beide als normale,
+  synchron ausgeführte `<script>`-Tags **vor** `app.jsx` – `window.I18N` ist
+  beim Start von `app.jsx` garantiert vorhanden, keine Race Condition, kein
+  Flackern. Direkt danach liest ein kleines Inline-Bootstrap-Script die
+  gespeicherte Sprachpräferenz (`localStorage["freilotse.locale.v1"]`) und
+  ruft bei `"en"` sofort `window.I18N.setLocale("en")` auf, **bevor** irgendein
+  weiteres Skript (insbesondere die `js/*`- und `jsx/*`-Module) lädt – das ist
+  Voraussetzung dafür, dass beim Modul-Laden berechnete Konstanten (z. B.
+  `COUNTRIES`, `STATES`, `TRIP_CITY_IDS` in `app.jsx`) bereits in der
+  richtigen Sprache entstehen. Dasselbe Bootstrap-Script setzt außerdem
+  `document.documentElement.lang = window.I18N.getLocale()`.
 - `app.jsx` definiert direkt zu Beginn `const t = window.I18N.t;` und nutzt ab
   dort ausschließlich `t(...)` für sichtbare Texte.
 
@@ -432,14 +442,14 @@ umzubauen.
   oder gespeicherte Einstellungen beeinflussen. Bundesland-**Codes** (z. B.
   `"BY"`) sind von Übersetzungen ausdrücklich ausgenommen und bleiben
   sprachunabhängig (siehe `STATE_CODES` in `app.jsx`).
-- Deutsch bleibt bis zur ausdrücklichen Einführung weiterer Sprachen die
-  einzige aktive Sprache. Eine englische Übersetzung oder ein sichtbarer
-  Sprachumschalter dürfen erst nach ausdrücklicher Anweisung ergänzt werden.
-- **Bei einer späteren Sprachumschaltung** (sobald diese ausdrücklich
-  beauftragt wird) muss neben `document.title` auch
-  `document.documentElement.lang` (aktuell statisch `"de"` in `index.html`)
-  passend zur gewählten Sprache aktualisiert werden, damit Screenreader und
-  Browser die Sprache korrekt erkennen.
+- Ein neuer oder geänderter Schlüssel wird **immer in `de.js` und `en.js`
+  gemeinsam** gepflegt (gleiche Schlüsselstruktur, gleiche
+  Funktionssignaturen) – nie nur in einer der beiden Dateien, sonst greift für
+  die andere Sprache stillschweigend der Deutsch-Fallback (siehe „Fehlende
+  Schlüssel" unten).
+- `document.documentElement.lang` wird bereits beim Laden gesetzt (siehe
+  Bootstrap-Script in `index.html` oben) und muss bei Änderungen an der
+  Sprachumschaltung konsistent gehalten werden.
 - Bei jeder künftigen Änderung an `app.jsx` ist zu prüfen, ob dabei neue
   sichtbare String-Literale außerhalb der Locale-Dateien entstanden sind
   (z. B. per Textsuche nach Umlauten oder typischen deutschen Wörtern in
@@ -451,15 +461,52 @@ zurück; fehlt er auch dort, gibt `t()` sichtbar `⚠ <key>` zurück und schreib
 eine Warnung in die Browser-Konsole – ein fehlender Schlüssel führt also nie zu
 einem stillen Absturz, sondern ist im Entwicklungsfall sofort erkennbar.
 
-### Spätere Ergänzung von `locales/en.js`
-1. `locales/en.js` vollständig und korrekt ins Englische übersetzen (gleiche
-   Schlüsselstruktur und gleiche Funktionssignaturen wie `locales/de.js`).
-2. In `index.html` zusätzlich **vor** `app.jsx` laden (nach `locales/de.js`).
-3. Am Ende der Datei `window.I18N.registerLocale("en", EN)` aufrufen.
-4. Erst danach `window.I18N.setLocale("en")` aktiv nutzbar machen und einen
-   Sprachumschalter ergänzen – beides ist ausdrücklich **nicht** Teil der
-   aktuellen Vorbereitung und erfordert eine gesonderte, ausdrückliche
-   Anweisung.
+### Sprachumschalter (Header)
+`LanguageSwitcher` (`jsx/support-components.jsx`, Namespace
+`window.FREILOTSE.ui`) ist ein Header-Button, der zwischen `de`/`en` umschaltet
+(zeigt jeweils die **Zielsprache** als Kürzel, z. B. „EN" während die Seite
+Deutsch anzeigt). Eingebunden auf: Planer (`app.jsx`), Landing Page,
+Anleitung, Neuigkeiten, Über FREILOTSE, Rätsel-Seite. **Nicht** auf
+Impressum/Datenschutz (`jsx/legal-pages.jsx`) – bewusst ausgelassen, analog zu
+deren generellem „noindex"/Sonderrolle als reine Rechtsseiten.
+
+Die gewählte Sprache wird in `localStorage["freilotse.locale.v1"]` gemerkt
+(Werte `"de"`/`"en"`, fehlender Eintrag = Deutsch) und wirkt seitenübergreifend.
+
+### Zentrale technische Entscheidung: Reload statt Live-Umschaltung
+Ein Klick auf `LanguageSwitcher` schaltet **nicht** live um, sondern
+speichert die neue Sprache in `localStorage` und lädt die Seite per
+`window.location.reload()` neu. Grund: mehrere Konstanten (u. a. `COUNTRIES`,
+`STATES`, `TRIP_CITY_IDS` in `app.jsx`) werden bereits **beim Modul-Laden**
+aus `t(...)` berechnet, nicht erst beim Rendern – eine Live-Umschaltung ohne
+Reload würde diese Konstanten in der falschen Sprache stehen lassen. Das
+Inline-Bootstrap-Script in `index.html` (siehe oben) sorgt dafür, dass
+`window.I18N.setLocale("en")` bereits **vor** dem Laden dieser Module
+ausgeführt wird, sodass sie nach dem Reload korrekt in der neuen Sprache
+berechnet werden.
+
+Damit ein Sprachwechsel dabei keine ungespeicherte Planung verwirft, ruft
+`Urlaubsplaner` (`app.jsx`) dem `LanguageSwitcher` eine `onBeforeSwitch`-Prop
+(`prepareLocaleSwitch`) mit: sie legt den aktuellen Eingabezustand (identisches
+Format wie `buildSharePayload()`) **und** die aktuelle `view` synchron in
+`sessionStorage` ab (Schlüssel `freilotse.localeSwitchRestore.v1` /
+`freilotse.localeSwitchView.v1`), bevor die Seite neu lädt. Ein eigener
+`useRef` (`localeSwitchRef`, analog zu `sharedRef`/`localStoreRef`) liest
+diese Schlüssel synchron vor der State-Initialisierung, entfernt sie sofort
+(kein erneutes Greifen bei einem späteren manuellen Reload) und hat beim
+Laden **Vorrang vor Share-Link und lokalem Plan** – es ist exakt der Zustand,
+der eine Sekunde zuvor auf dem Bildschirm stand, inklusive Landing Page (ein
+Wechsel dort springt nach dem Reload **nicht** ungefragt in den Planer). Kein
+Toast, da es sich um einen internen Kontinuitäts-Mechanismus handelt, kein
+sichtbares „Planung geladen"-Ereignis wie beim echten Share-Link.
+
+Zusätzlich an die aktive Sprache gekoppelt (kein eigener State, da ohnehin nur
+per Reload wechselbar): `dateLocale` in `app.jsx` (`"en-GB"`/`"de-DE"` für die
+wenigen `toLocaleDateString`/`toLocaleString`-Aufrufe) sowie die
+Sprachparameter der Trip-Links (siehe Abschnitt „Trip-Links" weiter unten) –
+`googleFlightsUrl()` (`hl=`), `skyscannerUrl()` (`locale=`), `bookingUrl()`
+(`lang=`). **Ausnahme:** `tripUrl()` (Trip.com) bleibt unabhängig von der
+FREILOTSE-Sprache immer Deutsch (siehe dortige Begründung).
 
 ## Neuigkeiten-Seite (Changelog)
 

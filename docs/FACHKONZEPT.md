@@ -100,6 +100,14 @@ Abschnitt 8, Jahreswechsel-Erweiterung). Jeder Zeitraum lässt sich einzeln
 oder gesammelt als Kalenderdatei exportieren bzw. direkt in Google Kalender
 öffnen.
 
+Ab einer gewissen Mindestlänge bietet jeder freie Zeitraum zusätzlich
+„Flüge"- und „Unterkunft"-Schaltflächen an: Die Nutzer:in wählt jeweils
+zwischen zwei Anbietern (Google Flights oder Skyscanner; Booking.com oder
+Trip.com), optional vorbefüllt mit einem selbst eingetragenen Reiseziel und
+einem anhand des Bundeslands/Kantons vorgeschlagenen Abflughafen. Es handelt
+sich um reine, nicht monetarisierte Weiterleitungen zu den jeweiligen
+Anbietern – kein eigenes Buchungs- oder Preisvergleichsfeature.
+
 ### 4.4 Regelmäßige Arbeitstage
 
 Nutzer:innen legen fest, an welchen Wochentagen sie regelmäßig arbeiten
@@ -208,11 +216,14 @@ Feiertagsberechnung nutzt.
 
 ## 10. Sprache
 
-FREILOTSE ist aktuell ausschließlich auf Deutsch verfügbar. Es gibt bewusst
-keinen sichtbaren Sprachumschalter. Die technische Struktur ist zwar bereits
-so vorbereitet, dass später weitere Sprachen ergänzt werden könnten, dies
-ist jedoch kein aktuell umgesetztes Feature und erfordert eine gesonderte
-Entscheidung.
+FREILOTSE ist auf Deutsch und Englisch verfügbar. Ein Sprachumschalter im
+Header (auf Planer, Startseite, Anleitung, Neuigkeiten, Über FREILOTSE und
+Rätsel-Seite; nicht auf den rechtlichen Pflichtseiten) wechselt jederzeit
+zwischen beiden Sprachen; die Wahl wird im Browser gemerkt und gilt beim
+nächsten Besuch automatisch wieder. Deutsch bleibt die Standardsprache beim
+ersten Besuch. Ein Sprachwechsel verwirft keine begonnene Planung. Auch die
+Weiterleitungen zu Flug-/Unterkunftssuche (siehe 4.3) berücksichtigen die
+gewählte Sprache, soweit das jeweilige externe Portal das unterstützt.
 
 ## 11. Nicht-funktionale Anforderungen
 
@@ -240,4 +251,4 @@ Entscheidung.
 - Automatisches Einplanen der Jahreswechsel-Verlängerung (Abschnitt 7) oder
   jeglicher Einsatz von Urlaubstagen ohne explizite Zustimmung der
   Nutzer:in.
-- Andere Sprachen als Deutsch (siehe Abschnitt 10).
+- Weitere Sprachen über Deutsch/Englisch hinaus (siehe Abschnitt 10).
