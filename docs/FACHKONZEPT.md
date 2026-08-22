@@ -201,7 +201,13 @@ personenbezogenen Daten und keine abgeleiteten Ergebnisse. Jede Person mit
 diesem Link kann die Planung öffnen; das wird der Nutzer:in vor dem Teilen
 transparent mitgeteilt. Ältere, bereits erzeugte Links bleiben dauerhaft
 funktionsfähig, auch wenn die Anwendung seither um neue Einstellungen
-erweitert wurde.
+erweitert wurde – getragen von einer additiv-only-Regel für das Datenformat
+(jede neue Einstellung bekommt einen Vorgabewert, der das Ergebnis alter
+Links unverändert lässt; siehe `CLAUDE.md`, Abschnitt
+„Versionierungsstrategie (SHARE_VERSION)"). Sollte einmal eine bestehende
+Einstellung ihre Bedeutung ändern müssen, statt nur um eine neue ergänzt zu
+werden, wird das nur mit einer mitgelieferten Kompatibilitätslogik für
+ältere Links umgesetzt, nicht durch ersatzloses Verwerfen.
 
 ### 6.2 Mehrere Pläne lokal speichern
 
@@ -209,7 +215,11 @@ Nutzer:innen können beliebig viele benannte Pläne direkt im eigenen Browser
 speichern (z. B. "Urlaub 2027", "Sommerferien Familie"), öffnen, umbenennen,
 duplizieren oder löschen – ganz ohne Konto oder Server. Ist der lokale
 Speicher des Geräts nicht verfügbar, blendet sich diese Funktion einfach
-aus, ohne dass etwas fehlschlägt.
+aus, ohne dass etwas fehlschlägt. Gespeicherte Pläne verwenden dasselbe
+Datenformat wie Share-Links und unterliegen derselben
+Kompatibilitätszusage aus Abschnitt 6.1 – wichtiger noch als dort, da ein
+lokal gespeicherter Plan typischerweise deutlich länger in Verwendung
+bleibt als ein einzelner geteilter Link.
 
 ### 6.3 "Gemeinsam frei" – Überschneidung mit anderen Personen
 

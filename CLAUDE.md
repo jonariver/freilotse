@@ -215,6 +215,38 @@ Bewusst **nicht** gespeichert (weil ableitbar bzw. UI-lokal): Feiertage,
 Schulferien, `days`, das Planungsergebnis, sowie `dark`, `panels`, `clickMode`,
 `drag`, `dialogDay`, `vacTip`, `showSimpleCal`. Keine personenbezogenen Daten.
 
+### Versionierungsstrategie (SHARE_VERSION)
+`validateSharePayload()` lehnt jeden Payload mit abweichender `version` hart
+ab (`if (payload.version !== SHARE_VERSION) return null;`, `js/share-link.js`)
+– es gibt **keine** Versions-Dispatch-/Migrationslogik. Das ist eine bewusste,
+dokumentierte Entscheidung (YAGNI), keine übersehene Lücke:
+
+- **Grundregel: additiv-only für immer.** Jede neue Einstellung wird als
+  optionales Feld mit einem Default ergänzt, der das Ergebnis für Links/
+  Pläne **ohne** dieses Feld exakt auf das Verhalten **vor** Einführung der
+  Einstellung zurückführt (Beispiel `ww`, siehe oben: fehlt es, gilt
+  Montag–Freitag – identisch zum Verhalten vor der Funktion
+  „Regelmäßige Arbeitstage"). Solange das gelingt, bleibt `SHARE_VERSION`
+  unverändert, auch bei größeren neuen Features.
+- **Für den (bislang nie eingetretenen) Fall einer echten Bedeutungsänderung**
+  einer bestehenden Einstellung (nicht nur eines neuen Feldes) gilt die
+  Selbstverpflichtung: `SHARE_VERSION` wird erhöht **und zum selben
+  Zeitpunkt** eine Versions-Dispatch-Logik in `validateSharePayload()`/
+  `decodeShare()` ergänzt, die Version 1 weiterhin korrekt interpretiert –
+  kein ersatzloses Verwerfen alter Links. Diese Logik wird bewusst **nicht
+  im Voraus** gebaut, da ihre konkrete Form vom tatsächlichen Bruch abhängt
+  und sich vorher nicht sinnvoll entwerfen lässt.
+- **Gilt identisch für lokal gespeicherte Pläne** (siehe Abschnitt „Lokales
+  Speichern mehrerer Pläne" unten): `payload` dort ist strukturgleich zur
+  Share-Link-Hülle und durchläuft dieselbe `validateSharePayload()`-Prüfung.
+  Lokale Pläne sind potenziell noch länger im Umlauf als Share-Links – die
+  additiv-only-Regel gilt für sie ohne Ausnahme genauso.
+- Scheitert die Validierung heute schon (z. B. kaputter/fremder Payload):
+  kein Absturz. Ein Share-Link zeigt einen Lade-Fehler-Toast; ein lokaler
+  Plan bleibt in „Meine Pläne" sichtbar gelistet (nur die äußere Hülle wird
+  von `local-plans.js` geprüft), scheitert aber beim Öffnen mit einem
+  eigenen Fehler-Toast – kein stiller Datenverlust, auch ohne Migration.
+
 ### Urlaub vs. Überstunden, manuell vs. automatisch
 - **Urlaub/Überstunden** werden über den Override-Wert unterschieden (`vac`/`ot`),
   in `ov.v` bzw. `ov.o` abgelegt; Datumsformat der Tage effektiv `YYYY-MM-DD`
@@ -560,7 +592,9 @@ technisch identisch zu einem Share-Link-Payload, nur ohne Base64/
 Kompression. `local-plans.js` prüft nur die Speicher-**Hülle** (ist der
 Eintrag plan-förmig); die inhaltliche Validierung (Enums,
 Bundesland-Gültigkeit) übernimmt weiterhin `validateSharePayload()` beim
-tatsächlichen Laden.
+tatsächlichen Laden – inklusive derselben `SHARE_VERSION`-Prüfung und
+damit derselben additiv-only-Versionierungsstrategie wie bei Share-Links
+(siehe Abschnitt „Versionierungsstrategie (SHARE_VERSION)" oben).
 
 ### Restore-on-Load und Autosave
 `localStoreRef` (`app.jsx`) liest **synchron vor jedem `useState`**, analog

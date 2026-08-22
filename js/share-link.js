@@ -22,6 +22,15 @@
 (function () {
   "use strict";
 
+  // Versionierungsstrategie (siehe CLAUDE.md, Abschnitt „Versionierungs-
+  // strategie (SHARE_VERSION)"): bleibt additiv-only, solange jede neue
+  // Einstellung mit einem Default ergänzbar ist, der das Verhalten alter
+  // Links/Pläne unverändert lässt (siehe validateSharePayload() unten,
+  // z. B. ww/ct). Erst wenn eine echte Bedeutungsänderung unvermeidbar
+  // wird, wird SHARE_VERSION erhöht UND zeitgleich eine
+  // Versions-Dispatch-Logik ergänzt, die Version 1 weiterhin interpretiert
+  // – kein ersatzloses Verwerfen alter Links/Pläne. Diese Logik existiert
+  // bewusst noch nicht (YAGNI), da es bislang nie eine Breaking Change gab.
   const SHARE_VERSION = 1;
   const SHARE_MAX_URL = 8000;        // praktische URL-Obergrenze
   const SHARE_MAX_DECODED = 100000;  // Schutz vor übermäßig großen (auch dekomprimierten) Payloads
