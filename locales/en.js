@@ -365,6 +365,13 @@
             "Every free period can be downloaded individually as an .ics file or opened directly in Google Calendar. \"Export entire plan\" bundles all periods into a single file.",
           ],
         },
+        {
+          heading: "Data sources",
+          body: [
+            "FREILOTSE gets public holidays and school holidays primarily from the OpenHolidays API. If no school holiday data is available for Germany, it falls back to schulferien-api.de by Maximilian Leistner.",
+            "If neither source is reachable, FREILOTSE calculates the statutory public holidays fully offline in your browser – with no network access at all.",
+          ],
+        },
       ],
     },
 
@@ -432,6 +439,13 @@
       pageTitle: "News",
       intro: "Here you'll find the latest updates and news from FREILOTSE – newest first.",
       entries: [
+        {
+          date: "23 August 2026",
+          title: "Data sources now also listed in the guide",
+          items: [
+            "A new \"Data sources\" section in the guide names the OpenHolidays API and the schulferien-api.de fallback – previously that only appeared in a status line in Pro mode.",
+          ],
+        },
         {
           date: "23 August 2026",
           title: "Calendar days now have screen reader labels",

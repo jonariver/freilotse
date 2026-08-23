@@ -402,6 +402,22 @@ mit der tatsächlich verwendeten Schulferienquelle (`vacStatus`-abhängig: grün
 neutral = wird geladen). Der Einfachmodus zeigt keine dauerhafte Quellenzeile,
 sondern nur den Hinweis bei fehlenden Daten.
 
+### Namensnennungspflicht der Ersatzquelle (Lizenz)
+Die Ersatzquelle `schulferien-api.de` (Autor Maximilian Leistner) steht unter
+CC-BY-4.0 — anders als die OpenHolidays API erlaubt das zwar ausdrücklich
+kommerzielle Nutzung, verlangt aber eine echte Namensnennung. Die
+`vacStatus`-Zeile oben erfüllt das nur bedingt: sie ist konditional (nur
+sichtbar, wenn die Ersatzquelle *in der aktuellen Sitzung* tatsächlich
+gegriffen hat) und existiert nur im Profi-Modus. Die verbindliche,
+dauerhafte und modusunabhängige Namensnennung steht daher zusätzlich als
+eigener Abschnitt „Datenquellen“ auf der Anleitung-Seite
+(`locales/de.js`/`en.js`, `guide.sections`, letzter Eintrag) — erreichbar
+aus **beiden** Modi über den Footer-Link „Anleitung“, unabhängig davon, ob
+die Ersatzquelle in der jeweiligen Sitzung überhaupt aufgerufen wurde. Die
+Datenschutzerklärung (`jsx/legal-pages.jsx`, §3) nennt und verlinkt
+`schulferien-api.de` ebenfalls, dient aber primär der
+DSGVO-Datenfluss-Erklärung, nicht der Attribution.
+
 ## Internationalisierung und UI-Texte
 
 ### Grundprinzip

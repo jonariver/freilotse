@@ -403,6 +403,13 @@
             "Jeder freie Zeitraum lässt sich einzeln als .ics-Datei herunterladen oder direkt in Google Kalender öffnen. „Gesamten Plan exportieren\" bündelt alle Zeiträume in einer einzigen Datei.",
           ],
         },
+        {
+          heading: "Datenquellen",
+          body: [
+            "Feiertage und Schulferien bezieht FREILOTSE vorrangig von der OpenHolidays API. Sind für Deutschland keine Schulferiendaten verfügbar, greift als Ersatzquelle schulferien-api.de von Maximilian Leistner.",
+            "Ist keine der beiden Quellen erreichbar, berechnet FREILOTSE die gesetzlichen Feiertage vollständig offline im Browser – ohne Netzwerkzugriff.",
+          ],
+        },
       ],
     },
 
@@ -472,6 +479,13 @@
       pageTitle: "Neuigkeiten",
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
+        {
+          date: "23. August 2026",
+          title: "Datenquellen jetzt auch in der Anleitung genannt",
+          items: [
+            "Ein neuer Abschnitt „Datenquellen“ in der Anleitung nennt OpenHolidays API und die Ersatzquelle schulferien-api.de – bisher stand das nur in einer Statuszeile im Profi-Modus.",
+          ],
+        },
         {
           date: "23. August 2026",
           title: "Kalendertage jetzt mit Screenreader-Beschriftung",
