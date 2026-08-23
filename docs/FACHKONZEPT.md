@@ -324,3 +324,30 @@ gewählte Sprache, soweit das jeweilige externe Portal das unterstützt.
   jeglicher Einsatz von Urlaubstagen ohne explizite Zustimmung der
   Nutzer:in.
 - Weitere Sprachen über Deutsch/Englisch hinaus (siehe Abschnitt 10).
+
+## 13. Rechtliche Einordnung: geprüft, nicht einschlägig
+
+Folgende Regelungen wurden im Rahmen einer rechtlichen Review-Runde geprüft
+und als für FREILOTSE nicht einschlägig eingestuft — bewusst hier
+festgehalten, damit sie nicht wiederholt neu aufgerollt werden müssen. Bei
+strukturellen Änderungen (insbesondere Einführung kostenpflichtiger
+Funktionen) ist die Einschätzung jeweils erneut zu prüfen.
+
+- **§ 312j Abs. 3 BGB (Button-Lösung)**: setzt einen entgeltlichen
+  Verbrauchervertrag voraus. FREILOTSE ist vollständig kostenlos, ohne
+  Konto, ohne Bezahlfunktion; der einzige Zahlungsbezug ist ein externer,
+  freiwilliger Spendenlink zu PayPal (`PAYPAL_URL`,
+  `jsx/support-components.jsx`), kein Kauf-/Checkout-Vorgang innerhalb der
+  App. Damit entfallen in diesem Kontext auch Widerrufsrecht und die
+  Verbraucherschlichtungs-Informationspflicht. Ändert sich sofort, sobald
+  es irgendeine kostenpflichtige Funktion gibt.
+- **DSA (Digital Services Act) / Haftung für Nutzerinhalte**: FREILOTSE
+  hostet oder verbreitet keine fremden Inhalte. Share-Links sind
+  Punkt-zu-Punkt über das URL-Fragment codiert (siehe Abschnitt 6 sowie
+  CLAUDE.md, Abschnitt „Share-Link-Funktion") — die Daten liegen nie auf
+  einem Server. Melde- und Abhilfeverfahren, Notice-and-Action sowie
+  Hostprovider-Haftung entfallen damit strukturell, als direkte Folge der
+  No-Backend-Entscheidung.
+- **Gewinnspielrecht beim Rätsel** (Abschnitt 8): keine Preise, keine
+  Teilnahmegebühr, kein Glücksspielbezug — das tägliche Rätsel ist ein
+  reines Übungs-/Vergleichsspiel ohne Auslobung.
