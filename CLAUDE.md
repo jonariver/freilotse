@@ -1042,3 +1042,24 @@ Streak/Statistik und überschreiben das gewertete Ergebnis nicht;
 „Ergebnis teilen" bezieht sich immer auf den gewerteten Erstversuch, nie
 auf einen Übungsversuch (hält geteilte Ergebnisse zwischen Spielern fair
 vergleichbar).
+
+### Tageswechsel: bewusst lokale Geräte-Zeit, keine feste Zeitzone
+`todayKey()` (`jsx/puzzle-page.jsx`) bestimmt „heute" über die **lokale**
+Kalenderzeit des Geräts (`new Date()`), nicht über UTC oder eine feste
+Zeitzone wie Europe/Berlin – exakt wie bei Wordle/NYT-Spielen. Das ist eine
+bewusst geprüfte und beibehaltene Design-Entscheidung, kein Bug: Nutzer:innen
+erwarten, dass sich „das heutige Rätsel" um ihre eigene Mitternacht ändert,
+nicht zu einer für sie untypischen Uhrzeit.
+
+Bekannter, akzeptierter Kompromiss: Zwei Personen in unterschiedlichen
+Zeitzonen sehen „das heutige Rätsel" dadurch nicht zwingend synchron – wer
+z. B. in Tokio schon den nächsten Tag hat, während es in Deutschland noch
+gestern ist, spielt ein anderes Rätsel als eine Freundin in Deutschland, bis
+auch dort Mitternacht vergangen ist. Das betrifft **nicht** den
+Rätsel-Inhalt selbst: `js/puzzle.js` seedet rein aus dem Datumsstring, ein
+gegebenes Datum liefert weltweit identischen Inhalt (siehe Abschnitt
+„Erzeugung" oben) – nur der Zeitpunkt des Wechsels zwischen zwei
+Datumsstrings unterscheidet sich je nach Zeitzone. Eine Umstellung auf eine
+feste Referenzzeitzone würde daran nichts Grundsätzliches verbessern
+(würde für Nutzer:innen außerhalb dieser Zeitzone den Wechsel auf eine
+untypische lokale Uhrzeit verschieben) und wurde deshalb bewusst verworfen.
