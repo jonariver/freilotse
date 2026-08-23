@@ -432,6 +432,13 @@
       entries: [
         {
           date: "23 August 2026",
+          title: "English now works correctly when opening info pages directly",
+          items: [
+            "Opening a page like /raetsel or /anleitung directly (instead of navigating from the homepage) now correctly shows English if that was set previously – this didn't reliably work before.",
+          ],
+        },
+        {
+          date: "23 August 2026",
           title: "New terms of use and a notice on the results",
           items: [
             "A new \"Terms of Use\" page (linked in the footer) explains the liability limitation, availability, and that FREILOTSE does not replace legal or employment law advice.",

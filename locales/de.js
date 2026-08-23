@@ -472,6 +472,13 @@
       entries: [
         {
           date: "23. August 2026",
+          title: "Englische Sprache jetzt auch bei direktem Aufruf von Info-Seiten",
+          items: [
+            "Wer z. B. /raetsel oder /anleitung direkt aufruft (statt über die Startseite zu navigieren), bekommt jetzt korrekt Englisch angezeigt, falls das zuvor so eingestellt wurde – das hatte zuvor nicht zuverlässig funktioniert.",
+          ],
+        },
+        {
+          date: "23. August 2026",
           title: "Neue Nutzungsbedingungen und Hinweis bei der Planung",
           items: [
             "Eine neue Seite „Nutzungsbedingungen“ (verlinkt im Footer) erklärt Haftungsbeschränkung, Verfügbarkeit und dass FREILOTSE keine Rechts- oder Arbeitsrechtsberatung ersetzt.",
