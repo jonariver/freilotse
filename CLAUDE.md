@@ -57,7 +57,7 @@ innerhalb von `app.jsx` unverändert (keine Umbenennungen).
 | `jsx/common-components.jsx` | `window.FREILOTSE.ui` | `CollapsibleCard`, `InfoHint`, `PortalChoiceDialog` (gemeinsame Hülle der Flug-/Unterkunfts-Portalauswahl, siehe Abschnitt „Trip-Links"). |
 | `jsx/support-components.jsx` | `window.FREILOTSE.ui` | `internalNavigate`, `SiteLink`, `HeartIcon`, `SupportFooterLink`, `SupportFloatingButton`, `SiteFooter` (Site-Chrome + PayPal-Unterstützung, eng gekoppelt). |
 | `jsx/landing-page.jsx` | `window.FREILOTSE.ui` | `ExplainerVideoSection`, `LandingPage`. Nutzt `SiteFooter` aus `support-components.jsx`. |
-| `jsx/legal-pages.jsx` | `window.FREILOTSE.ui` | `LegalLayout`, `LegalSection`, `ExternalLegalLink`, `ProviderDetailsImage`, `ImpressumPage`, `DatenschutzPage`. Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx`. |
+| `jsx/legal-pages.jsx` | `window.FREILOTSE.ui` | `LegalLayout`, `LegalSection`, `ExternalLegalLink`, `ProviderDetailsImage`, `ImpressumPage`, `DatenschutzPage`, `NutzungsbedingungenPage`. Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx`. |
 | `jsx/about-page.jsx` | `window.FREILOTSE.ui` | `AboutPage` (Seite „Über FREILOTSE" unter `/ueber-freilotse`). Nutzt `SiteLink`/`SiteFooter`/`PAYPAL_URL` aus `support-components.jsx`. Anders als `LegalLayout` bewusst **ohne** „noindex" (soll indexierbar sein) und mit eigenem, lokalem Dark/Light-State (kein Zugriff auf den Dark-State von `Urlaubsplaner`, da eigenständig über `App()` geroutet). |
 | `jsx/changelog-page.jsx` | `window.FREILOTSE.ui` | `ChangelogPage` (Seite „Neuigkeiten" unter `/neuigkeiten`). Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx`. Analog zu `about-page.jsx` bewusst **ohne** „noindex" (soll indexierbar sein) und mit eigenem, lokalem Dark/Light-State. |
 | `jsx/guide-page.jsx` | `window.FREILOTSE.ui` | `GuidePage` (Seite „Anleitung" unter `/anleitung`). Nutzt `SiteLink`/`SiteFooter` aus `support-components.jsx`. Analog zu `about-page.jsx`/`changelog-page.jsx` bewusst **ohne** „noindex" und mit eigenem, lokalem Dark/Light-State. Inhalt liegt vollständig in `locales/de.js` unter `guide.sections` (Array aus `{ heading, body[] }`), reines Datenobjekt ohne eigene Rendering-Logik in der Seite selbst. |
@@ -505,8 +505,9 @@ einem stillen Absturz, sondern ist im Entwicklungsfall sofort erkennbar.
 (zeigt jeweils die **Zielsprache** als Kürzel, z. B. „EN" während die Seite
 Deutsch anzeigt). Eingebunden auf: Planer (`app.jsx`), Landing Page,
 Anleitung, Neuigkeiten, Über FREILOTSE, Rätsel-Seite. **Nicht** auf
-Impressum/Datenschutz (`jsx/legal-pages.jsx`) – bewusst ausgelassen, analog zu
-deren generellem „noindex"/Sonderrolle als reine Rechtsseiten.
+Impressum/Datenschutz/Nutzungsbedingungen (`jsx/legal-pages.jsx`) – bewusst
+ausgelassen, analog zu deren generellem „noindex"/Sonderrolle als reine
+Rechtsseiten.
 
 Die gewählte Sprache wird in `localStorage["freilotse.locale.v1"]` gemerkt
 (Werte `"de"`/`"en"`, fehlender Eintrag = Deutsch) und wirkt seitenübergreifend.

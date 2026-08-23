@@ -94,9 +94,9 @@ const LOCAL_PLANS_STORAGE_KEY = window.FREILOTSE.localPlans.STORAGE_KEY;
 // und jsx/legal-pages.jsx müssen vor app.jsx geladen sein (siehe index.html).
 const {
   CollapsibleCard, InfoHint, PortalChoiceDialog,
-  SiteFooter, SupportFloatingButton, LanguageSwitcher,
+  SiteLink, SiteFooter, SupportFloatingButton, LanguageSwitcher,
   LandingPage,
-  ImpressumPage, DatenschutzPage,
+  ImpressumPage, DatenschutzPage, NutzungsbedingungenPage,
   AboutPage, ChangelogPage, GuidePage, PuzzlePage,
 } = window.FREILOTSE.ui;
 
@@ -2149,6 +2149,12 @@ function Urlaubsplaner({ onPlanReady }) {
                     <p className={`mt-4 text-sm ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
                       {t("simple.summarySentence", { usedVac: fmtNum(usedVac), totalVac: fmtNum(num(vac)), totalFree, periods: periodCount })}
                     </p>
+                    <p className={`mt-3 text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
+                      {t("common.resultsDisclaimer")}{" "}
+                      <SiteLink to="/nutzungsbedingungen" className={`underline ${dark ? "hover:text-sonnencreme" : "hover:text-espresso"}`}>
+                        {t("common.resultsDisclaimerLink")}
+                      </SiteLink>
+                    </p>
                   </section>
 
                   <section className={`${cardCls} p-4`}>
@@ -2484,6 +2490,12 @@ function Urlaubsplaner({ onPlanReady }) {
                 </button>
               )}
             </div>
+            <p className={`mb-3 text-xs ${dark ? "text-sonnencreme/60" : "text-espresso/60"}`}>
+              {t("common.resultsDisclaimer")}{" "}
+              <SiteLink to="/nutzungsbedingungen" className={`underline ${dark ? "hover:text-sonnencreme" : "hover:text-espresso"}`}>
+                {t("common.resultsDisclaimerLink")}
+              </SiteLink>
+            </p>
             {result.periods.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-x-4 gap-y-3">
                 <div className="w-full max-w-xs sm:w-auto sm:flex-1 sm:min-w-[16rem]">
@@ -2996,6 +3008,7 @@ function App() {
 
   const page = path === "/impressum" ? <ImpressumPage />
     : path === "/datenschutz" ? <DatenschutzPage />
+    : path === "/nutzungsbedingungen" ? <NutzungsbedingungenPage />
     : path === "/ueber-freilotse" ? <AboutPage />
     : path === "/neuigkeiten" ? <ChangelogPage />
     : path === "/anleitung" ? <GuidePage />

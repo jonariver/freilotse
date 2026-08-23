@@ -207,9 +207,42 @@
     );
   }
 
+  function NutzungsbedingungenPage() {
+    return (
+      <LegalLayout title="Nutzungsbedingungen" documentTitle={t("legal.nutzungsbedingungen.documentTitle")} metaDescription={t("legal.nutzungsbedingungen.metaDescription")}>
+        <p>Stand: 23. August 2026</p>
+
+        <LegalSection title="1. Geltungsbereich und unentgeltlicher Dienst">
+          <p>Diese Nutzungsbedingungen gelten für die Nutzung von FREILOTSE. FREILOTSE ist ein kostenloses Werkzeug ohne Registrierung, Konto oder Zahlungspflicht. Beim Aufruf und bei der Nutzung von FREILOTSE kommt kein entgeltlicher Vertrag zustande.</p>
+        </LegalSection>
+
+        <LegalSection title="2. Keine Gewähr für die Richtigkeit der Berechnung">
+          <p>Die von FREILOTSE berechneten Feiertage, Schulferien und Urlaubsvorschläge erfolgen automatisiert auf Basis der in den jeweiligen Bundesländern bzw. Kantonen geltenden Regeln sowie externer Datenquellen (siehe Datenschutzerklärung, Abschnitt 3). Trotz sorgfältiger Umsetzung kann die Richtigkeit, Vollständigkeit und Aktualität dieser Angaben nicht garantiert werden – etwa bei Ausfällen externer Schnittstellen, veralteten oder fehlerhaften Ferien- bzw. Feiertagsdaten oder rein kommunalen Feiertagen, die FREILOTSE bewusst nicht bundeslandweit abbildet.</p>
+          <p>Alle Angaben erfolgen daher ohne Gewähr. Maßgeblich für deinen tatsächlichen Urlaubsanspruch und dessen Genehmigung sind ausschließlich die Regelungen deines Arbeitgebers sowie die gesetzlichen und tariflichen Vorschriften deines Bundeslands bzw. Kantons.</p>
+        </LegalSection>
+
+        <LegalSection title="3. Haftungsbeschränkung">
+          <p>Da FREILOTSE unentgeltlich zur Verfügung gestellt wird, hafte ich nur für Schäden, die auf Vorsatz oder grober Fahrlässigkeit beruhen. Für leichte Fahrlässigkeit hafte ich nicht, insbesondere nicht für Schäden, die aus einer fehlerhaften Urlaubsplanung, einem daraus resultierenden falsch beantragten Urlaub oder der Nichtverfügbarkeit von FREILOTSE entstehen. Die gesetzliche Haftung für Vorsatz, grobe Fahrlässigkeit sowie für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit bleibt hiervon unberührt.</p>
+        </LegalSection>
+
+        <LegalSection title="4. Verfügbarkeit">
+          <p>Es besteht kein Anspruch auf eine bestimmte Verfügbarkeit von FREILOTSE. Wartungsarbeiten, technische Störungen oder der Ausfall externer Datenquellen können die Nutzung vorübergehend einschränken.</p>
+        </LegalSection>
+
+        <LegalSection title="5. Keine Rechts- oder Arbeitsrechtsberatung">
+          <p>FREILOTSE berechnet ausschließlich Kalendertage auf Basis von Feiertags-, Schulferien- und Nutzereingaben. Das stellt keine Rechts- oder Arbeitsrechtsberatung dar und trifft insbesondere keine Aussage zu deinem individuellen gesetzlichen Urlaubsanspruch nach dem Bundesurlaubsgesetz (BUrlG) oder zu tariflichen bzw. arbeitsvertraglichen Regelungen. Bei Fragen zu deinem konkreten Urlaubsanspruch wende dich an deinen Arbeitgeber oder eine entsprechend qualifizierte Rechtsberatung.</p>
+        </LegalSection>
+
+        <LegalSection title="6. Änderungen dieser Nutzungsbedingungen">
+          <p>Ich passe diese Nutzungsbedingungen an, wenn sich Funktionen von FREILOTSE oder rechtliche Anforderungen ändern.</p>
+        </LegalSection>
+      </LegalLayout>
+    );
+  }
+
   window.FREILOTSE = window.FREILOTSE || {};
   window.FREILOTSE.ui = window.FREILOTSE.ui || {};
   Object.assign(window.FREILOTSE.ui, {
-    LegalLayout, LegalSection, ExternalLegalLink, ProviderDetailsImage, ImpressumPage, DatenschutzPage,
+    LegalLayout, LegalSection, ExternalLegalLink, ProviderDetailsImage, ImpressumPage, DatenschutzPage, NutzungsbedingungenPage,
   });
 })();

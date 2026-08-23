@@ -136,6 +136,8 @@
       switchToEnglish: "Switch to English",
       switchToGerman: "Switch to German",
       legalNavAriaLabel: "Legal and support",
+      resultsDisclaimer: "All information is provided without guarantee – the rules of your employer and your state apply.",
+      resultsDisclaimerLink: "More in the terms of use",
     },
 
     header: {
@@ -238,10 +240,15 @@
         documentTitle: "Privacy Policy – FREILOTSE",
         metaDescription: "Privacy policy for FREILOTSE: information on the processing of personal data, including hosting, calendar data and country pre-selection.",
       },
+      nutzungsbedingungen: {
+        documentTitle: "Terms of Use – FREILOTSE",
+        metaDescription: "Terms of use for FREILOTSE: liability limitation, availability, and the boundary to legal advice for this free vacation planner.",
+      },
       backToPlanner: "Back to planner",
       germanOnlyNotice: "This page is currently only available in German.",
       impressumLink: "Legal Notice",
       datenschutzLink: "Privacy Policy",
+      nutzungsbedingungenLink: "Terms of Use",
     },
 
     about: {
@@ -423,6 +430,14 @@
       pageTitle: "News",
       intro: "Here you'll find the latest updates and news from FREILOTSE – newest first.",
       entries: [
+        {
+          date: "23 August 2026",
+          title: "New terms of use and a notice on the results",
+          items: [
+            "A new \"Terms of Use\" page (linked in the footer) explains the liability limitation, availability, and that FREILOTSE does not replace legal or employment law advice.",
+            "Your planning result now shows a short notice: all information is provided without guarantee – the rules of your employer and your state apply.",
+          ],
+        },
         {
           date: "22 August 2026",
           title: "\"Shared time off\" gets a privacy note and a clearer error message",

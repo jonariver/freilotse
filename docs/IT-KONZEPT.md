@@ -235,15 +235,15 @@ nutzersichtbare Zeichenkette muss laut verbindlicher Projektregel über
 
 ## 10. Routing und Mehrseiten-Struktur
 
-Für GitHub Pages/Netlify als reines statisches Hosting ohne
-Server-Rendering kombiniert FREILOTSE zwei Techniken:
+Für Netlify als reines statisches Hosting ohne Server-Rendering kombiniert
+FREILOTSE zwei Techniken:
 
 1. **Physische HTML-Shells** pro Route (`index.html`, `anleitung.html`,
    `neuigkeiten.html`, `ueber-freilotse.html`, `raetsel.html`,
-   `impressum.html`, `datenschutz.html`) — jede mit eigenen, statisch
-   gerenderten `<title>`/`<meta description>`/Open-Graph-Tags für
-   Suchmaschinen und Social-Share-Vorschauen, aber identischem
-   Skript-Ladepfad.
+   `impressum.html`, `datenschutz.html`, `nutzungsbedingungen.html`) — jede
+   mit eigenen, statisch gerenderten `<title>`/`<meta description>`/
+   Open-Graph-Tags für Suchmaschinen und Social-Share-Vorschauen, aber
+   identischem Skript-Ladepfad.
 2. **Client-seitiges Routing** in `App()` (`app.jsx`) über
    `window.location.pathname` plus `popstate`-Listener; interne Links
    navigieren über `internalNavigate()` (`history.pushState`) ohne

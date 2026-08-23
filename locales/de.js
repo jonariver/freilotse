@@ -160,6 +160,8 @@
       switchToEnglish: "Auf Englisch umschalten",
       switchToGerman: "Auf Deutsch umschalten",
       legalNavAriaLabel: "Rechtliches und Unterstützung",
+      resultsDisclaimer: "Alle Angaben ohne Gewähr – maßgeblich sind die Regelungen deines Arbeitgebers und deines Bundeslands.",
+      resultsDisclaimerLink: "Mehr dazu in den Nutzungsbedingungen",
     },
 
     /* ---- Kopfbereich ---- */
@@ -270,10 +272,15 @@
         documentTitle: "Datenschutzerklärung – FREILOTSE",
         metaDescription: "Datenschutzerklärung von FREILOTSE: Informationen zur Verarbeitung personenbezogener Daten, u. a. bei Hosting, Kalenderdaten und Land-Vorauswahl.",
       },
+      nutzungsbedingungen: {
+        documentTitle: "Nutzungsbedingungen – FREILOTSE",
+        metaDescription: "Nutzungsbedingungen von FREILOTSE: Haftungsbeschränkung, Verfügbarkeit und Abgrenzung zur Rechtsberatung bei diesem kostenlosen Urlaubsplaner.",
+      },
       backToPlanner: "Zum Urlaubsplaner",
       germanOnlyNotice: "Diese Seite ist derzeit nur auf Deutsch verfügbar.",
       impressumLink: "Impressum",
       datenschutzLink: "Datenschutz",
+      nutzungsbedingungenLink: "Nutzungsbedingungen",
     },
 
     /* ---- Seite „Über FREILOTSE" (/ueber-freilotse) ---- */
@@ -463,6 +470,14 @@
       pageTitle: "Neuigkeiten",
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
+        {
+          date: "23. August 2026",
+          title: "Neue Nutzungsbedingungen und Hinweis bei der Planung",
+          items: [
+            "Eine neue Seite „Nutzungsbedingungen“ (verlinkt im Footer) erklärt Haftungsbeschränkung, Verfügbarkeit und dass FREILOTSE keine Rechts- oder Arbeitsrechtsberatung ersetzt.",
+            "Direkt bei deinem Planungsergebnis steht jetzt ein kurzer Hinweis: Alle Angaben ohne Gewähr, maßgeblich sind die Regelungen deines Arbeitgebers und deines Bundeslands.",
+          ],
+        },
         {
           date: "22. August 2026",
           title: "„Gemeinsam frei“ mit Datenschutzhinweis und klarerer Fehlermeldung",

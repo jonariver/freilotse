@@ -75,14 +75,14 @@
 
     useEffect(() => {
       if (!planReady || autoShownRef.current) return;
-      if (path === "/impressum" || path === "/datenschutz" || path === "/ueber-freilotse" || path === "/neuigkeiten" || path === "/anleitung" || path === "/raetsel") return;
+      if (path === "/impressum" || path === "/datenschutz" || path === "/nutzungsbedingungen" || path === "/ueber-freilotse" || path === "/neuigkeiten" || path === "/anleitung" || path === "/raetsel") return;
       // Einmaliger 1-Minuten-Timer nach dem ersten sichtbaren Planungsergebnis;
       // sofort gesperrt, damit eine erneute Berechnung keinen zweiten Timer
       // startet.
       autoShownRef.current = true;
       delayTimerRef.current = setTimeout(() => {
         delayTimerRef.current = null;
-        if (pathRef.current === "/impressum" || pathRef.current === "/datenschutz" || pathRef.current === "/ueber-freilotse" || pathRef.current === "/neuigkeiten" || pathRef.current === "/anleitung" || pathRef.current === "/raetsel") return;
+        if (pathRef.current === "/impressum" || pathRef.current === "/datenschutz" || pathRef.current === "/nutzungsbedingungen" || pathRef.current === "/ueber-freilotse" || pathRef.current === "/neuigkeiten" || pathRef.current === "/anleitung" || pathRef.current === "/raetsel") return;
         // Auf schmalen Smartphone-Displays wird der automatische Hinweis
         // unterdrückt, da der längere Hinweistext dort Inhalte verdecken
         // könnte; Tippen öffnet PayPal weiterhin direkt (unverändertes
@@ -132,6 +132,7 @@
           <nav aria-label={t("common.legalNavAriaLabel")} className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <SiteLink to="/impressum" className={hover}>{t("legal.impressumLink")}</SiteLink>
             <SiteLink to="/datenschutz" className={hover}>{t("legal.datenschutzLink")}</SiteLink>
+            <SiteLink to="/nutzungsbedingungen" className={hover}>{t("legal.nutzungsbedingungenLink")}</SiteLink>
             <SiteLink to="/ueber-freilotse" className={hover}>{t("about.footerLink")}</SiteLink>
             <SiteLink to="/neuigkeiten" className={hover}>{t("changelog.footerLink")}</SiteLink>
             <SiteLink to="/anleitung" className={hover}>{t("guide.footerLink")}</SiteLink>
