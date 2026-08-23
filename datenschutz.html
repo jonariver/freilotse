@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Explizite Referrer-Policy (Defense-in-Depth, siehe CLAUDE.md-Abschnitt
+       „Share-Link-Funktion" und Datenschutz-Review): entspricht dem
+       ohnehin geltenden Browser-Default, macht ihn aber unabhängig davon
+       verbindlich. Da der Share-Link-Payload ausschließlich im URL-Fragment
+       liegt (nie in Query-String/Pfad), wird dadurch ohnehin nie an einen
+       Referrer-Header weitergegeben – diese Policy ist zusätzliche
+       Absicherung, kein funktionaler Fix. -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Datenschutzerklärung – FREILOTSE</title>
   <meta name="description" content="Datenschutzerklärung von FREILOTSE: Informationen zur Verarbeitung personenbezogener Daten, u. a. bei Hosting, Kalenderdaten und Land-Vorauswahl.">
   <meta name="robots" content="noindex, follow, noarchive">
@@ -66,7 +74,24 @@
 <body class="bg-sonnencreme">
   <div id="root"></div>
   <noscript>Bitte JavaScript aktivieren, um den Urlaubsplaner zu nutzen.</noscript>
-  <script src="locales/de.js?v=22"></script>
+  <script src="locales/de.js?v=41"></script>
+  <script src="locales/en.js?v=5"></script>
+  <!-- Bootstrap der gespeicherten Sprachpräferenz: muss vor JEDEM weiteren
+       Skript stehen, da app.jsx u. a. beim Modul-Laden (nicht erst beim
+       Rendern) mehrere Konstanten aus t(...) berechnet (siehe CLAUDE.md,
+       Abschnitt „Zentrale technische Entscheidung: Reload statt
+       Live-Umschaltung"). -->
+  <script>
+    (function () {
+      "use strict";
+      try {
+        if (window.localStorage.getItem("freilotse.locale.v1") === "en") {
+          window.I18N.setLocale("en");
+        }
+      } catch (e) {}
+      document.documentElement.lang = window.I18N.getLocale();
+    })();
+  </script>
   <!-- Reine Planungs-/Kalender-/Datenmodule (kein Modulsystem -> window.FREILOTSE.*,
        siehe CLAUDE.md, Abschnitt „Architektur/Module"). Reihenfolge untereinander
        ist größtenteils unkritisch, muss aber vor den JSX-Dateien geladen sein –
@@ -76,7 +101,7 @@
   <script src="js/planning.js?v=1"></script>
   <script src="js/calendar.js?v=2"></script>
   <script src="js/data-sources.js?v=4"></script>
-  <script src="js/share-link.js?v=2"></script>
+  <script src="js/share-link.js?v=4"></script>
   <script src="js/local-plans.js?v=1"></script>
   <script src="js/puzzle.js?v=1"></script>
   <script src="js/puzzle-stats.js?v=1"></script>
@@ -86,14 +111,14 @@
        changelog-page, guide-page und puzzle-page (alle nutzen Komponenten aus
        support-components; puzzle-page zusätzlich js/puzzle.js/js/puzzle-stats.js).
        app.jsx lädt zuletzt und mountet die App. -->
-  <script type="text/babel" data-presets="react" src="jsx/common-components.jsx?v=2"></script>
-  <script type="text/babel" data-presets="react" src="jsx/support-components.jsx?v=4"></script>
-  <script type="text/babel" data-presets="react" src="jsx/landing-page.jsx?v=8"></script>
-  <script type="text/babel" data-presets="react" src="jsx/legal-pages.jsx?v=6"></script>
-  <script type="text/babel" data-presets="react" src="jsx/about-page.jsx?v=6"></script>
-  <script type="text/babel" data-presets="react" src="jsx/changelog-page.jsx?v=4"></script>
-  <script type="text/babel" data-presets="react" src="jsx/guide-page.jsx?v=3"></script>
-  <script type="text/babel" data-presets="react" src="jsx/puzzle-page.jsx?v=6"></script>
-  <script type="text/babel" data-presets="react" src="app.jsx?v=31"></script>
+  <script type="text/babel" data-presets="react" src="jsx/common-components.jsx?v=3"></script>
+  <script type="text/babel" data-presets="react" src="jsx/support-components.jsx?v=6"></script>
+  <script type="text/babel" data-presets="react" src="jsx/landing-page.jsx?v=9"></script>
+  <script type="text/babel" data-presets="react" src="jsx/legal-pages.jsx?v=11"></script>
+  <script type="text/babel" data-presets="react" src="jsx/about-page.jsx?v=7"></script>
+  <script type="text/babel" data-presets="react" src="jsx/changelog-page.jsx?v=5"></script>
+  <script type="text/babel" data-presets="react" src="jsx/guide-page.jsx?v=4"></script>
+  <script type="text/babel" data-presets="react" src="jsx/puzzle-page.jsx?v=7"></script>
+  <script type="text/babel" data-presets="react" src="app.jsx?v=48"></script>
 </body>
 </html>

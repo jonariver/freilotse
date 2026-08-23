@@ -85,6 +85,21 @@ npm-basierter Build-Schritt – jede Datei bleibt ein direkt ladbares
 `<script>` (JS-Dateien ohne JSX regulär, JSX-Dateien über
 `type="text/babel" data-presets="react"`).
 
+**Wichtig:** Derselbe Skript-Block (identische `<script src="…?v=…">`-Zeilen)
+existiert zusätzlich **redundant** in sieben weiteren statischen HTML-Shells
+im Repo-Root (`anleitung.html`, `neuigkeiten.html`, `ueber-freilotse.html`,
+`raetsel.html`, `impressum.html`, `datenschutz.html`,
+`nutzungsbedingungen.html` – siehe Abschnitt „Routing und Mehrseiten-Struktur"
+in `docs/IT-KONZEPT.md`). Jede Versionsänderung in `index.html` **muss**
+identisch in allen sieben Shells nachgezogen werden, sonst laufen sie
+auseinander (genau das ist bereits einmal passiert und wurde nachtraeglich
+synchronisiert). Am einfachsten: den Skript-Block ab
+`<link rel="icon" href="./assets/logo/freilotse-favicon.ico" …>` bis zum
+Dateiende aus `index.html` unverändert in alle sieben Shells kopieren – nur
+die davor stehenden, seitenspezifischen `<title>`/`<meta description>`/
+`og:*`/`twitter:*`/`canonical`/`robots`-Zeilen bleiben pro Datei
+unterschiedlich.
+
 ## Regelmäßige Arbeitstage
 
 ### Zweck und Abgrenzung
