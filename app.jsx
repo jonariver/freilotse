@@ -1302,6 +1302,16 @@ function Urlaubsplaner({ onPlanReady }) {
         return;
       }
       const s = res.state;
+      // Selbstvergleich abfangen: eigenen aktuellen Stand durch dieselbe
+      // Normalisierung schicken (validateSharePayload), damit beide Seiten
+      // exakt vergleichbar sind (unterschiedliche Rohformate sonst nicht
+      // 1:1 vergleichbar) - ein per JSON-Deep-Equal erkannter eigener Link
+      // wird nicht als weitere Person aufgenommen.
+      const ownValidated = validateSharePayload(JSON.stringify(currentSharePayload()), t("states"));
+      if (ownValidated && ownValidated.state && JSON.stringify(ownValidated.state) === JSON.stringify(s)) {
+        setSharedLinkError(t("sharedFree.ownLinkWarning"));
+        return;
+      }
       if (s.year !== year) {
         setSharedLinkError(t("sharedFree.differentYearWarning", { year: s.year, ownYear: year }));
         return;

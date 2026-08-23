@@ -481,6 +481,13 @@
       entries: [
         {
           date: "23. August 2026",
+          title: "Gemeinsam frei erkennt jetzt den eigenen Link",
+          items: [
+            "Fügst du versehentlich deinen eigenen Share-Link bei „Gemeinsam frei“ ein, weist dich FREILOTSE jetzt gezielt darauf hin, statt dich mit dir selbst zu vergleichen.",
+          ],
+        },
+        {
+          date: "23. August 2026",
           title: "Datenquellen jetzt auch in der Anleitung genannt",
           items: [
             "Ein neuer Abschnitt „Datenquellen“ in der Anleitung nennt OpenHolidays API und die Ersatzquelle schulferien-api.de – bisher stand das nur in einer Statuszeile im Profi-Modus.",
@@ -1437,6 +1444,7 @@
       personLabel: (p) => `Person ${p.index}`,
       linkInvalid: "Dieser Link ist ungültig oder beschädigt.",
       linkVersionMismatch: "Dieser Link stammt aus einer nicht mehr unterstützten Version von FREILOTSE und kann nicht gelesen werden.",
+      ownLinkWarning: "Das ist dein eigener Link – füge stattdessen den Link einer anderen Person hinzu, um gemeinsame freie Tage zu finden.",
       privacyHint: "Der eingefügte Link wird ausschließlich lokal in deinem Browser ausgewertet, nirgends gespeichert und nicht an einen Server übertragen. Er enthält die Planungseinstellungen der anderen Person – füge nur Links ein, die dir bewusst zum Vergleich geteilt wurden.",
       differentYearWarning: (p) =>
         `Diese Planung bezieht sich auf ${p.year} – keine Überschneidung mit deinem Jahr ${p.ownYear} möglich.`,

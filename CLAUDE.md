@@ -710,6 +710,21 @@ zusätzlich per `getPayloadVersion()` (`js/share-link.js`) best-effort das
 `sharedFree.linkInvalid` – ohne die eigentliche Validierung in
 `validateSharePayload()` zu verändern oder zu duplizieren.
 
+**Selbstvergleich**: Fügt man versehentlich den eigenen Share-Link ein,
+wird das erkannt und abgefangen (`sharedFree.ownLinkWarning`), statt sich
+selbst still als weitere „Person" hinzuzufügen. Dafür durchläuft der
+aktuelle eigene Stand (`currentSharePayload()`) dieselbe
+`validateSharePayload()`-Normalisierung wie der eingefügte Link, danach
+werden beide normalisierten `state`-Objekte per `JSON.stringify`-Vergleich
+auf Gleichheit geprüft (beide Seiten laufen durch denselben Code-Pfad mit
+fester Schlüsselreihenfolge, daher ist der String-Vergleich hier sicher).
+Erkannt wird damit **nur** ein Link, der exakt dem *aktuellen* eigenen
+Planungsstand entspricht – ein zuvor erzeugter, inzwischen veralteter
+eigener Link (nach eigenen Änderungen am Plan) wird bewusst **nicht**
+erkannt, da das den Aufwand nicht rechtfertigen würde und der eigentliche
+Zweck (versehentliches Einfügen des gerade kopierten eigenen Links)
+dadurch trotzdem abgedeckt ist.
+
 ## Jahreswechsel-Erweiterung (Profi-Modus)
 
 ### Zweck

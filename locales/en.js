@@ -441,6 +441,13 @@
       entries: [
         {
           date: "23 August 2026",
+          title: "\"Shared time off\" now recognizes your own link",
+          items: [
+            "If you accidentally paste your own share link into \"Shared time off\", FREILOTSE now points that out directly instead of comparing you with yourself.",
+          ],
+        },
+        {
+          date: "23 August 2026",
           title: "Data sources now also listed in the guide",
           items: [
             "A new \"Data sources\" section in the guide names the OpenHolidays API and the schulferien-api.de fallback – previously that only appeared in a status line in Pro mode.",
@@ -1313,6 +1320,7 @@
       personLabel: (p) => `Person ${p.index}`,
       linkInvalid: "This link is invalid or corrupted.",
       linkVersionMismatch: "This link was created with a version of FREILOTSE that is no longer supported and can't be read.",
+      ownLinkWarning: "This is your own link – add another person's link instead to find shared days off.",
       privacyHint: "The link you paste in is only evaluated locally in your browser, never stored, and never sent to any server. It contains the other person's planning settings – only paste links that were deliberately shared with you for comparison.",
       differentYearWarning: (p) =>
         `This plan refers to ${p.year} – no overlap possible with your year ${p.ownYear}.`,
