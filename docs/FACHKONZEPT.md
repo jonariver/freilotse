@@ -24,6 +24,17 @@ kombiniert dafür:
 Die App ist kostenlos, werbefrei, ohne Registrierung nutzbar und läuft
 vollständig im Browser der Nutzer:in.
 
+> **Rechtlicher Vorbehalt zur Schweiz:** Die Schweiz ist bereits heute als
+> Land in der Urlaubsplanung wählbar (Feiertage/Kantone, siehe Abschnitt 5) —
+> das ist reine Funktionsunterstützung, keine gezielte Markt- oder
+> Werbeausrichtung auf die Schweiz (kein Schweizer Marketing, keine
+> `.ch`-Domain). Sobald sich FREILOTSE tatsächlich gezielt an Nutzer:innen in
+> der Schweiz richten sollte, kommt zusätzlich das revidierte Schweizer
+> Datenschutzgesetz (revDSG) zur Anwendung, inklusive einer möglichen
+> Vertretungspflicht in der Schweiz — das ist keine Nebensächlichkeit,
+> sondern eine eigene rechtliche Prüfung, die erst bei einer solchen
+> Ausrichtung fällig wird und aktuell nicht akut ist.
+
 ## 2. Zielgruppe
 
 - Arbeitnehmer:innen, die ihren Jahresurlaub planen und Brückentage
