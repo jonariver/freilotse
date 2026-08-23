@@ -424,6 +424,8 @@
         legendSelected: "dein Urlaub",
         legendWorking: "Arbeitstag",
         budgetCounter: (p) => `${p.used} von ${p.budget} ausgewählt`,
+        dayAriaLabel: (p) =>
+          `${p.day}. ${p.month}, ${p.status}${p.holiday ? ` · ${p.holiday}` : ""}`,
       },
       actions: {
         evaluateButton: "Auswerten",
@@ -470,6 +472,13 @@
       pageTitle: "Neuigkeiten",
       intro: "Hier findest du die wichtigsten Neuerungen und Updates von FREILOTSE – neueste zuerst.",
       entries: [
+        {
+          date: "23. August 2026",
+          title: "Kalendertage jetzt mit Screenreader-Beschriftung",
+          items: [
+            "Die Tage im Kalender (Planer und Brückentage-Rätsel) haben jetzt eine vollständige Beschriftung für Screenreader – bisher wurde dort nur die nackte Tageszahl vorgelesen.",
+          ],
+        },
         {
           date: "23. August 2026",
           title: "Englische Sprache jetzt auch bei direktem Aufruf von Info-Seiten",

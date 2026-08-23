@@ -351,3 +351,16 @@ Funktionen) ist die Einschätzung jeweils erneut zu prüfen.
 - **Gewinnspielrecht beim Rätsel** (Abschnitt 8): keine Preise, keine
   Teilnahmegebühr, kein Glücksspielbezug — das tägliche Rätsel ist ein
   reines Übungs-/Vergleichsspiel ohne Auslobung.
+- **BFSG (Barrierefreiheitsstärkungsgesetz, gilt seit 28.06.2025)**:
+  voraussichtlich nicht anwendbar. Erfasst sind u. a. Dienstleistungen im
+  elektronischen Geschäftsverkehr, die auf einen Verbrauchervertrag
+  gerichtet sind — FREILOTSE ist ein unentgeltliches Werkzeug ohne
+  Vertragsabschluss (siehe § 312j-Punkt oben), ergänzend greift die
+  Ausnahme für Kleinstunternehmen bei Dienstleistungen. Anders als die
+  drei Punkte oben ist das nur eine Einschätzung, keine abschließende
+  Feststellung — bei Einführung von Partnerlinks oder kostenpflichtigen
+  Funktionen ist sie neu zu bewerten. Unabhängig davon bleibt BITV-nahe
+  Zugänglichkeit (Tastaturbedienbarkeit, Kontraste,
+  Screenreader-Beschriftung) schlicht Qualität und wird laufend verfolgt
+  (z. B. `aria-label` auf den Kalendertagen in `app.jsx` und beim
+  Brückentage-Rätsel, `jsx/puzzle-page.jsx`).

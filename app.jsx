@@ -1693,9 +1693,15 @@ function Urlaubsplaner({ onPlanReady }) {
                           })
                         : null;
                       const titleText = dayTitle(day, selType, st, country, !!periodInfo);
+                      // aria-label statt Verlass auf den title-Tooltip: der wird von
+                      // Screenreadern unzuverlässig vorgelesen und ist auf Touch-Geräten
+                      // gar nicht erreichbar; ohne aria-label wäre der zugängliche Name
+                      // sonst nur die nackte Tageszahl (day.d).
+                      const a11yText = vacTipText ? `${titleText} · ${vacTipText}` : titleText;
                       return (
                         <button key={day.i} type="button"
-                          title={vacTipText ? `${titleText} · ${vacTipText}` : titleText}
+                          title={a11yText}
+                          aria-label={a11yText}
                           data-dayindex={day.i}
                           onClick={() => {
                             if (dragAppliedRef.current) { dragAppliedRef.current = false; return; }

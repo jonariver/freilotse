@@ -385,6 +385,8 @@
         legendSelected: "your vacation",
         legendWorking: "working day",
         budgetCounter: (p) => `${p.used} of ${p.budget} selected`,
+        dayAriaLabel: (p) =>
+          `${p.month} ${p.day}, ${p.status}${p.holiday ? ` · ${p.holiday}` : ""}`,
       },
       actions: {
         evaluateButton: "Evaluate",
@@ -430,6 +432,13 @@
       pageTitle: "News",
       intro: "Here you'll find the latest updates and news from FREILOTSE – newest first.",
       entries: [
+        {
+          date: "23 August 2026",
+          title: "Calendar days now have screen reader labels",
+          items: [
+            "The days in the calendar (planner and bridge-day puzzle) now have a full label for screen readers – previously only the bare day number was announced.",
+          ],
+        },
         {
           date: "23 August 2026",
           title: "English now works correctly when opening info pages directly",

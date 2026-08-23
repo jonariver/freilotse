@@ -289,10 +289,19 @@
                     const isFree = day.cost === 0;
                     const isSelected = playerSel[idx] === "vac";
                     const clickable = !isFree;
+                    // aria-label statt Verlass auf den title-Tooltip (unzuverlässig für
+                    // Screenreader, auf Touch nicht erreichbar) – ohne aria-label wäre
+                    // der zugängliche Name sonst nur die nackte Tageszahl (day.d).
+                    const dayAriaLabel = t("puzzle.calendar.dayAriaLabel", {
+                      day: day.d, month: MONTHS[puzzle.month],
+                      status: isFree ? t("puzzle.calendar.legendFree") : isSelected ? t("puzzle.calendar.legendSelected") : t("puzzle.calendar.legendWorking"),
+                      holiday: day.holiday || "",
+                    });
                     return (
                       <button key={idx} type="button" onClick={() => toggleDay(idx)}
                         disabled={!clickable}
                         title={day.holiday || undefined}
+                        aria-label={dayAriaLabel}
                         className={`rounded-xl aspect-square flex items-center justify-center text-sm font-semibold font-data transition-colors focus:outline-none focus:ring-2 focus:ring-beckenwasser ${
                           isFree
                             ? (dark ? "bg-beckenwasser-hell/20 text-sonnencreme" : "bg-beckenwasser-hell/60 text-espresso")
